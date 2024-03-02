@@ -1,1 +1,4 @@
 ﻿venv/*
+backend/config.py
+backend/data/db/*
+**/__pycache__/**
