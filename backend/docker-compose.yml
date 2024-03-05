@@ -2,6 +2,7 @@ version: '3' # version
 services:
   db: # server name
     image: postgres 
+    container_name: mycontainername # I don't konw if this works
     restart: always
     volumes:
       - ./data/db:/var/lib/postgresql/data
