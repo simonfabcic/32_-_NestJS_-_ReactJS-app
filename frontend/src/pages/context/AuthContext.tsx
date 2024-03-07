@@ -1,9 +1,11 @@
-import { ReactNode, createContext } from "react"
+import { ReactNode, createContext, useState } from "react"
+import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
-  key1: string;
-  isAuthenticated: boolean;
   loggedInUser: string;
+  setUser: React.Dispatch<React.SetStateAction<string>>;
+  loginUser: () => void;
+  logoutUser: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType)
@@ -11,11 +13,26 @@ export default AuthContext
 
 export const AuthProvider = ({children}: {children: ReactNode}) => { // TODO which type should be here
 
+  const [user, setUser] = useState("user_one")
+  const navigate = useNavigate()
+
+  // let loginUser = async () => {
+  // }
+
+  let loginUser = () => {
+    setUser("user_one")
+  }
+
+  let logoutUser = () => {
+    setUser("")
+    navigate("/")
+  }
 
   let contextData = {
-    key1:  'value1',
-    isAuthenticated: false,
-    loggedInUser: 'User1',
+    loggedInUser: user,
+    setUser: setUser,
+    loginUser: loginUser,
+    logoutUser: logoutUser,
   }
 
   return (
