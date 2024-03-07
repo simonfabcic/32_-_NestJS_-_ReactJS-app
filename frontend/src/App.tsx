@@ -1,40 +1,32 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from './pages/HomePage'
 import Header from './components/Header'
+import Login from './pages/restricted/Login';
+import Register from './pages/restricted/Register';
+import PrivateRoute from './pages/utils/PrivateRoute';
+import Dashboard from "./pages/Dashboard";
+import Orders from "./pages/Orders";
+import Users from "./pages/users/Users";
+import { AuthProvider } from "./pages/context/AuthContext";
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Header />
-      <Routes>
-        <Route path='/'  element={<HomePage />}></Route>
-      </Routes>
+      <AuthProvider>
+        <Header />
+        <Routes>
+          <Route path='/'  element={<HomePage />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route element={<PrivateRoute />}>
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="orders" element={<Orders />} />
+            <Route path="users" element={<Users />} />
+            <Route path="user/add-edit/:user_id?" element={<Users />} />
+          </Route>
+          <Route path="*" element={<h1>Page not found</h1>} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
-    // <BrowserRouter>
-    //   <Header />
-    //   <Routes>
-    //     <Route path='/' element={<HomePage />} exact />
-    //     <Route path='about' element={<About />} />
-    //     <Route path='posts' element={<Posts />} >
-    //       <Route path='new' element={<> <PostsHeader /> <NewPost /> </PostsHeader>} /> {/* A nested route! */}
-    //       <Route path=':postId' element={<> <PostsHeader /> <Post /> </PostsHeader>} /> {/* A nested route! */}
-    //     </Route>
-    //     <Route path="*" element={<h1>Page not fund</h1>}/>
-    //   </Routes>
-    // </BrowserRouter>
   )
 }
-
-
-// function App() {
-
-//   return (
-//     <>
-//       <h1 className="text-3xl font-bold underline">
-//       Hello world!
-//     </h1>
-//     </>
-//   )
-// }
-
-// export default App
