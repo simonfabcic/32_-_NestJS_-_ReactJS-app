@@ -1,7 +1,9 @@
 import React from 'react'
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 
 const Register = () => {
+
+  const location =  useLocation()
 
   const styleInputText = "border rounded-md"
 
@@ -11,7 +13,9 @@ const Register = () => {
 
   return (
     <div className="max-w-sm mx-auto">
-      SignUp
+      {location.pathname === "/register" && ("Register")}
+      {location.pathname === "/me" && "Edit profile"}
+      
       <form
         action="submit"
         className="flex flex-col"
@@ -32,22 +36,26 @@ const Register = () => {
         <label htmlFor="confirmPassword">Confirm password:</label>
         <input type="password" id="confirmPassword" name="confirmPassword" className={styleInputText} />
 
-        <div
-          className="flex flex-row justify-between"
-        >
-          <p>Already have an account?</p>
-          <Link
-            type="button"
-            to={"/login"}
+        {location.pathname === "/register" && 
+          <div
+            className="flex flex-row justify-between"
           >
-            Login
-          </Link>
-        </div>
+            <p>Already have an account?</p>
+            <Link
+              type="button"
+              to={"/login"}
+            >
+              Login
+            </Link>
+          </div>
+        }
 
       <button
         type="submit"
       >
-        Create an account
+        
+        {location.pathname === "/register" && ("Create an account")}
+        {location.pathname === "/me" && "Edit account"}
       </button>
 
       </form>

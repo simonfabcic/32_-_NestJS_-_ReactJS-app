@@ -7,3 +7,6 @@ class Customer(models.Model):
     # https://docs.djangoproject.com/en/5.0/ref/contrib/auth/
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     # TODO avatar = 
+
+class Role(models.Model):
+    name=models.CharField(max_length=20)

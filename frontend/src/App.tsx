@@ -2,12 +2,13 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from './pages/HomePage'
 import Header from './pages/components/Header'
 import Login from './pages/restricted/Login';
-import Register from './pages/restricted/Register';
+import RegisterMe from './pages/restricted/RegisterMe';
 import PrivateRoute from './pages/utils/PrivateRoute';
 import Dashboard from "./pages/Dashboard";
 import Orders from "./pages/Orders";
 import Users from "./pages/users/Users";
 import { AuthProvider } from "./pages/context/AuthContext";
+import RestrictedRoute from "./pages/utils/RestrictedRoute";
 
 export default function App() {
   return (
@@ -17,8 +18,11 @@ export default function App() {
           <Header />
           <Routes>
             <Route path='/'  element={<HomePage />} />
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
+            <Route element={<RestrictedRoute />} >
+              <Route path="login" element={<Login />} />
+              <Route path="register" element={<RegisterMe />} />
+            </Route>
+              <Route path="me" element={<RegisterMe />} />
             <Route element={<PrivateRoute />}>
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="orders" element={<Orders />} />
