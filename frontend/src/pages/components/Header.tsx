@@ -13,8 +13,8 @@ const Header = () => {
   const styleLink = " "
 
   return (
-    <>
-      <div className="flex justify-between h-11 bg-gray-100 content-evenly">
+    <div className="h-20 bg-gray-100 flex flex-col justify-end rounded-b-2xl">
+      <div className="flex justify-between h-11 content-evenly w-full overflow-hidden"> 
         <Link to="/">
           <img
             src="../images/logo.png"
@@ -90,7 +90,7 @@ const Header = () => {
           )}
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

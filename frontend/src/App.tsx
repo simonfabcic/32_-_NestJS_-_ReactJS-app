@@ -9,6 +9,7 @@ import Orders from "./pages/Orders";
 import Users from "./pages/users/Users";
 import { AuthProvider } from "./pages/context/AuthContext";
 import RestrictedRoute from "./pages/utils/RestrictedRoute";
+import Footer from "./pages/components/Footer";
 
 export default function App() {
   return (
@@ -22,15 +23,16 @@ export default function App() {
               <Route path="login" element={<Login />} />
               <Route path="register" element={<RegisterMe />} />
             </Route>
-              <Route path="me" element={<RegisterMe />} />
             <Route element={<PrivateRoute />}>
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="orders" element={<Orders />} />
               <Route path="users" element={<Users />} />
               <Route path="user/add-edit/:user_id?" element={<Users />} />
+              <Route path="me" element={<RegisterMe />} />
             </Route>
             <Route path="*" element={<h1>Page not found</h1>} />
           </Routes>
+          <Footer />
         </AuthProvider>
       </BrowserRouter>
     </div>
