@@ -4,9 +4,9 @@ import Header from './pages/components/Header'
 import Login from './pages/restricted/Login';
 import RegisterMe from './pages/restricted/RegisterMe';
 import PrivateRoute from './pages/utils/PrivateRoute';
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/dashboard/Dashboard";
 import Orders from "./pages/Orders";
-import Users from "./pages/users/Users";
+import Users from "./pages/dashboard/users/Users";
 import { AuthProvider } from "./pages/context/AuthContext";
 import RestrictedRoute from "./pages/utils/RestrictedRoute";
 import Footer from "./pages/components/Footer";
@@ -16,23 +16,32 @@ export default function App() {
     <div className="max-w-screen-lg mx-auto">
       <BrowserRouter>
         <AuthProvider>
-          <Header />
-          <Routes>
-            <Route path='/'  element={<HomePage />} />
-            <Route element={<RestrictedRoute />} >
-              <Route path="login" element={<Login />} />
-              <Route path="register" element={<RegisterMe />} />
-            </Route>
-            <Route element={<PrivateRoute />}>
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="orders" element={<Orders />} />
-              <Route path="users" element={<Users />} />
-              <Route path="user/add-edit/:user_id?" element={<Users />} />
-              <Route path="me" element={<RegisterMe />} />
-            </Route>
-            <Route path="*" element={<h1>Page not found</h1>} />
-          </Routes>
-          <Footer />
+
+          <div className="flex flex-col min-h-screen justify-between">
+            <div>
+              <Header />
+              <Routes>
+                <Route path='/'  element={<HomePage />} />
+                <Route element={<RestrictedRoute />} >
+                  <Route path="login" element={<Login />} />
+                  <Route path="register" element={<RegisterMe />} />
+                </Route>
+                <Route element={<PrivateRoute />}>
+                  <Route path="dashboard">
+                    <Route index element={<Dashboard />} />
+                    <Route path="users" element={<Users />} />
+                    <Route path="roles" element={<Users />} />
+                    <Route path="products" element={<Users />} />
+                    <Route path="orders" element={<Orders />} />
+                  </Route>
+                  <Route path="user/add-edit/:user_id?" element={<RegisterMe />} />
+                  <Route path="me" element={<RegisterMe />} />
+                </Route>
+                <Route path="*" element={<h1>Page not found</h1>} />
+              </Routes>
+            </div>
+            <Footer />
+          </div>
         </AuthProvider>
       </BrowserRouter>
     </div>
