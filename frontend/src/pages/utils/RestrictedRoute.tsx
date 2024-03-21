@@ -6,7 +6,7 @@ import { useContext } from "react"
 const RestrictedRoute = () => {
   // TODO check if user exists
   // let { user } = useContext(AuthContext)
-  let { loggedInUser } = useContext(AuthContext)
+  let { userAccessToken: loggedInUser } = useContext(AuthContext)
   return (
     !loggedInUser ? (
       <Outlet />

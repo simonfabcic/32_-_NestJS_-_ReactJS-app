@@ -6,7 +6,7 @@ import { useContext } from "react"
 const PrivateRoute = () => {
   // TODO check if user exists
   // let { user } = useContext(AuthContext)
-  let { loggedInUser } = useContext(AuthContext)
+  let { userAccessToken: loggedInUser } = useContext(AuthContext)
   return (
     loggedInUser ? (
       <Outlet />
@@ -17,3 +17,13 @@ const PrivateRoute = () => {
 }
 
 export default PrivateRoute
+
+
+// from 'Prog. commands.md:
+
+// const PrivateRoute = () => {
+//   const authenticated = false // or true
+//   return authenticated ? <Outlet /> : <Navigate to="/login" />;
+// }
+
+// export default PrivateRoute;
