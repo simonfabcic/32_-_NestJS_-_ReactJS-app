@@ -5,22 +5,10 @@ import { Link } from "react-router-dom"
 const Login = () => {
   let { loginUser } = useContext(AuthContext)
 
-  const styleInputText = "border rounded-md"
-
-  const handleSubmit  = (event: React.SyntheticEvent<HTMLFormElement>) => {
-    event.preventDefault()
-  }
+  const styleInputText = "border rounded-md mb-3 pl-2"
 
   return (
-    <div className="max-w-sm mx-auto">
-      <div className="border border-pink-600 w-fit px-3">
-        <p>[tmp]Login user with click:</p>
-        {/*  TODO: Implement login functionality */}
-        <button
-          // onClick={loginUser}
-          className="rounded-md bg-yellow-200 px-3 border border-yellow-400 m-3"
-        >Login now</button>
-      </div>
+    <div className="max-w-sm mx-auto mt-8">
       <form
         action="submit"
         className="flex flex-col"
@@ -28,22 +16,23 @@ const Login = () => {
       >
         {/* TODO change login credentials from username to email */}
         <label htmlFor="username">Username:</label>
-        <input type="text" id="username" name="username" autoComplete="current-username" className={styleInputText} required/>
+        <input type="text" id="username" name="username" autoComplete="current-username" className={styleInputText} placeholder="John Doe" />
 
         <label htmlFor="email">Email:</label>
-        <input type="email" id="email" name="email" className={styleInputText} /> 
+        <input type="email" id="email" name="email" className={styleInputText} placeholder="email@example.com"/> 
 
         <label htmlFor="password">Password:</label>
-        <input type="password" id="password" name="password" className={styleInputText} autoComplete="current-password" />
+        <input type="password" id="password" name="password" className={styleInputText} autoComplete="current-password" required placeholder="********" />
 
 
         <div
-          className="flex flex-row justify-between"
+          className="flex flex-row justify-between mb-3"
         >
           <p>Don't have an account yet?</p>
           <Link
             type="button"
             to={"/register"}
+            className="text-blue-600"
           >
             Register
           </Link>
@@ -51,6 +40,7 @@ const Login = () => {
 
         <button
           type="submit"
+          className="bg-blue-500 hover:bg-blue-700 text-white py-1 px-4 rounded-md"
         >        
           Login
         </button>

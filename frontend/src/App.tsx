@@ -10,6 +10,8 @@ import Users from "./pages/dashboard/users/Users";
 import { AuthProvider } from "./pages/context/AuthContext";
 import RestrictedRoute from "./pages/utils/RestrictedRoute";
 import Footer from "./pages/components/Footer";
+import Roles from "./pages/dashboard/roles/Roles";
+import Products from "./pages/dashboard/products/Products";
 
 export default function App() {
   return (
@@ -30,8 +32,8 @@ export default function App() {
                   <Route path="dashboard">
                     <Route index element={<Dashboard />} />
                     <Route path="users" element={<Users />} />
-                    <Route path="roles" element={<Users />} />
-                    <Route path="products" element={<Users />} />
+                    <Route path="roles" element={<Roles />} />
+                    <Route path="products" element={<Products />} />
                     <Route path="orders" element={<Orders />} />
                   </Route>
                   <Route path="user/add-edit/:user_id?" element={<RegisterMe />} />

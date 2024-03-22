@@ -21,6 +21,9 @@ const Register = () => {
         className="flex flex-col"
         onSubmit={handleSubmit}
       >
+        <label htmlFor="avatar">Avatar:</label>
+        <input type="file" />
+
         <label htmlFor="firstName">First name:</label>
         <input type="text" id="firstName" name="firstName" className={styleInputText} />
 
