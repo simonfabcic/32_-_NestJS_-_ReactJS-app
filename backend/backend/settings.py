@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "corsheaders",
 
     'core.apps.CoreConfig',
+    'shop.apps.ShopConfig'
 ]
 
 AUTH_USER_MODEL = 'core.User'

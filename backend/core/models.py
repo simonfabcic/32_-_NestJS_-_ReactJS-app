@@ -14,21 +14,13 @@ class User(AbstractUser):
     def profile(self):
         profile = Profile.objects.get(user=self)
         return profile
-
-class Role(models.Model):
-    name=models.CharField(max_length=20)
     
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     # avatar = models.ImageField(upload_to='images/') # https://codinggear.org/how-to-upload-images-in-django/
-    role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
-    # bio = models.CharField(max_length=100)
     # verifiedEmail = models.BooleanField(default=False)
-    
-
-
 
 # # This stuff works:
 # class Role(models.Model):

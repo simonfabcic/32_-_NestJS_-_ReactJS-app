@@ -1,6 +1,29 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import useAxios from "../../utils/useAxios"
+
 
 const Users = () => {
+  let api = useAxios()
+
+  // API REQUESTS -------------------------------------------------------------
+  // --------------------------------------------------------------------------
+  
+  // Get all profiles
+  useEffect(() => {
+    getProfiles()
+  }, [])
+  let getProfiles = async () => {
+    try {
+      let response = await api.get('http://127.0.0.1:8000/core-api-v1/profiles/')
+    } catch (err: any) {
+      console.error("During getting 'Users', err occurred: ", err.message);
+    }
+  }
+
+
+  // RETURN -------------------------------------------------------------------
+  // --------------------------------------------------------------------------
+
   return (
     <>
       <div>Users</div>
