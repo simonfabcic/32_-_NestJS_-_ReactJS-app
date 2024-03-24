@@ -80,3 +80,11 @@ profile = Profile.objects.create(
 )
 
 # profile = Profile.objects.create(user=User.objects.get(username="john"), first_name='John', last_name='Doe')
+
+profile = Profile.objects.create(
+  user = User.objects.get(username="john"),
+  role = role_administrator,
+  first_name = "John",
+  last_name = "Lennon",
+)
+

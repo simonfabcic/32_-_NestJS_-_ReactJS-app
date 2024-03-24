@@ -10,4 +10,7 @@ class Role(models.Model):
     return self.name
 
 class Profile(Profile):
-  role = models.OneToOneField(Role, on_delete=models.SET_NULL, null=True)
+  role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
+
+  def __str__(self) -> str:
+    return self.first_name + " " + self.last_name
