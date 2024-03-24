@@ -35,10 +35,10 @@ from shop.models import Profile, Role
 # user1.save()
 
 role_administrator = Role.objects.get(name="Administrator")
-user_admin = User.objects.get(username="admin")
-profile = Profile.objects.first()
+# user_admin = User.objects.get(username="admin")
+# profile = Profile.objects.first()
 
-print(profile.role)
+# print(profile.role)
 
 # profile = Profile()
 # profile.role = role_administrator
@@ -66,3 +66,17 @@ print(profile.role)
 #   "\nlast_name_admin: ", last_name_admin,
 #   # "\nrole_admin: ", role_admin,
 #   )
+
+# user = User.objects.create_user(
+#   username='john',
+#   email='jlennon@beatles.com',
+#   password='glass onion')
+
+profile = Profile.objects.create(
+  user = User.objects.get(username="john"),
+  role = role_administrator,
+  first_name = "John",
+  last_name = "Lennon",
+)
+
+# profile = Profile.objects.create(user=User.objects.get(username="john"), first_name='John', last_name='Doe')

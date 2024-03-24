@@ -6,8 +6,8 @@ from core.models import Profile
 class Role(models.Model):
   name=models.CharField(max_length=20)
 
-def __str__(self) -> str:
-  return self.name
+  def __str__(self) -> str:
+    return self.name
 
 class Profile(Profile):
-  role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
+  role = models.OneToOneField(Role, on_delete=models.SET_NULL, null=True)

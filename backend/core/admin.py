@@ -4,9 +4,8 @@ from django.contrib import admin
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.models import User
-
-# from .models import Customer
+# from django.contrib.auth.models import User
+from .models import User
 
 
 # # Define an inline admin descriptor for Customer model
@@ -25,3 +24,5 @@ from django.contrib.auth.models import User
 # # Re-register UserAdmin
 # admin.site.unregister(User)
 # admin.site.register(User, UserAdmin)
+
+admin.site.register(User)
