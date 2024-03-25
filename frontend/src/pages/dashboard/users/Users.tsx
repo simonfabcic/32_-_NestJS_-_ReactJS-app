@@ -24,23 +24,26 @@ const Users = () => {
     rows: Row[];
   }
   
-  // VARIABLES -------------------------------------------------------------
+  // VARIABLES ----------------------------------------------------------------
   // --------------------------------------------------------------------------
   
   let api = useAxios()
-
   const [tableData, setTableData] = useState<ApiResponseProfiles>({headers:[], rows:[]})
+  const [sortingColumn, setSortingColumn] = useState("full_name")
+  const [sortOrder, setSortOrder] = useState("ASC")
+  const [paginationOffset, setPaginationOffset] = useState(0)
+  const [paginationLimit, setPaginationLimit] = useState(20)
 
   // API REQUESTS -------------------------------------------------------------
   // --------------------------------------------------------------------------
   
-  // Get all profiles
+  // Get all profiles ---------------------------
   useEffect(() => {
     getProfiles()
   }, [])
   let getProfiles = async () => {
     try {
-      let response = await api.get('http://127.0.0.1:8000/shop-api-v1/profiles/')
+      let response = await api.get((`http://127.0.0.1:8000/shop-api-v1/profiles?offset=${paginationOffset}&per_page=${paginationLimit}&sort_by=${sortOrder}&sort_order=${sortingColumn}`))
       console.log(response)
       if (response.status === 200) {
         setTableData(response.data)
@@ -63,12 +66,21 @@ const Users = () => {
       
       
       
-      <table>
+      <table className="w-full text-center">
         <thead>
           <tr>
             <th>No.</th>
             {tableData.headers && tableData.headers.map((header, index) => (
-              <th key={index}>{header.label}</th>
+              <th
+                key={index}
+              >
+                {header.label}
+                {/* TODO: Add sorting functionality here */}
+                {/* {header.label + String.fromCharCode(160)}
+                {sortingColumn === header.key && sortOrder === "ASC" && <span> ▽</span>}
+                {sortingColumn === header.key && sortOrder === "DSC" && <span> △</span>}
+                {sortingColumn !== header.key && <span> △▽</span>} */}
+              </th>
               ))}
             <th>Actions</th>
           </tr>

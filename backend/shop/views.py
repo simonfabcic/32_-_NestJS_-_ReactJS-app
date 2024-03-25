@@ -13,7 +13,7 @@ def getProfiles(request):
         {
             "key": "email",
             "label": "Email",
-            "sorting": True
+            "sorting": False
         },
         {
             "key": "full_name",
@@ -25,6 +25,19 @@ def getProfiles(request):
             "label": "Role",
             "sorting": True
         },
+    ]
+    
+    pagination = [ # TODO
+        {
+            "key": "maintenance_date",
+            "label": "Datum vzdrževanja",
+            "prev_page": "/api/posts?offset=0&limit=10", # /* or "prev_page": 1 */
+            "next_page": "/api/posts?offset=30&limit=10", # /* or "next_page": 3 */
+            "current_page": 2,
+            "page_size": 10,
+            "total_records": 100,
+            "total_pages": 10
+        }
     ]
 
     profiles = Profile.objects.all()

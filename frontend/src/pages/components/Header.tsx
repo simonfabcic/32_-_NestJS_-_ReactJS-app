@@ -1,6 +1,7 @@
 import { Link, NavLink, useNavigate, useLocation } from "react-router-dom"
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import AuthContext from "../context/AuthContext"
+import Navbar from "../dashboard/Navbar"
 
 const Header = () => {
 
@@ -8,20 +9,31 @@ const Header = () => {
 
   const location =  useLocation()
   const navigate = useNavigate()
-
+  const [showNavbar, setSetShowNavbar] = useState(true)
 
   const styleLink = " "
 
   return (
-    <div className="h-20 bg-gray-200 flex flex-col justify-end rounded-b-2xl">
+    <div className="h-20 bg-gray-200 flex flex-col justify-end rounded-b-2xl overflow-hidden">
+      {true && 
+        <Navbar setShowNavbar={setSetShowNavbar} showNavbar= {showNavbar} />
+      }
       <div className="flex justify-between h-11 content-evenly w-full overflow-hidden"> 
-        <Link to="/">
-          <img
-            src="../images/logo.png"
-            alt="skillup mentor logo"
-            className="h-full py-2 pl-3 ${}"
-          />
-        </Link>
+        <div className="flex">
+          <div
+            className="text-2xl pl-3 my-auto cursor-pointer"
+            onClick={() => setSetShowNavbar(true)}
+          >
+            {location.pathname.startsWith("/dashboard") && <>&#9776;</>}
+          </div>
+          <Link to="/" className="ml-3">
+            <img
+              src="../images/logo.png"
+              alt="skillup mentor logo"
+              className="h-full py-2"
+            />
+          </Link>
+        </div>
         <div className="my-auto flex gap-4 pr-8">
           <NavLink
             to="/"

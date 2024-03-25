@@ -30,7 +30,7 @@ export const AuthProvider = ({children}: {children: ReactNode}) => { // TODO whi
           'Content-Type':'application/json'
         },
         body:JSON.stringify({
-          'username': event.currentTarget.username.value,
+          // 'username': event.currentTarget.username.value,
           'password': event.currentTarget.password.value,
           'email': event.currentTarget.email.value
         })

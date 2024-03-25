@@ -39,12 +39,11 @@ for i in range(100):
   try:
     user = User.objects.create(
       username = username,
-      email = selected_first_name.lower() + "." + selected_last_name + "@email.com"
+      email = selected_first_name.lower() + "." + selected_last_name.lower() + "@email.com",
+      password = "asdfggfdsa"
     )
-
   except:
     pass
-
   else:
     Profile.objects.create(
       user = user,

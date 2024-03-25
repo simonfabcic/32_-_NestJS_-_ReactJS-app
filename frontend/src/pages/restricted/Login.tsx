@@ -14,9 +14,8 @@ const Login = () => {
         className="flex flex-col"
         onSubmit={loginUser}
       >
-        {/* TODO change login credentials from username to email */}
-        <label htmlFor="username">Username:</label>
-        <input type="text" id="username" name="username" autoComplete="current-username" className={styleInputText} placeholder="John Doe" />
+        {/* <label htmlFor="username">Username:</label>
+        <input type="text" id="username" name="username" autoComplete="current-username" className={styleInputText} placeholder="John Doe" /> */}
 
         <label htmlFor="email">Email:</label>
         <input type="email" id="email" name="email" className={styleInputText} placeholder="email@example.com"/> 
