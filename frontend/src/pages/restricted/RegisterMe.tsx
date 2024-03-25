@@ -1,7 +1,37 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link, useLocation } from "react-router-dom"
+import useAxios from "../utils/useAxios"
 
 const Register = () => {
+
+  // INTERFACES ---------------------------------------------------------------
+  // --------------------------------------------------------------------------
+
+  // VARIABLES ----------------------------------------------------------------
+  // --------------------------------------------------------------------------
+
+  let api = useAxios()
+
+  // API REQUESTS -------------------------------------------------------------
+  // --------------------------------------------------------------------------
+  
+  // Get all profile, if parameter present ------
+  // CONTINUE
+  useEffect(() => {
+    getProfile()
+  }, [])
+  let getProfile = async () => {
+    try {
+      let response = await api.get((`http://127.0.0.1:8000/shop-api-v1/profile`))
+      console.log(response)
+      if (response.status === 200) {
+        // setTableData(response.data)
+      }
+
+    } catch (err: any) {
+      console.error("During getting 'Profiles', err occurred: ", err.message);
+    }
+  }
 
   const location =  useLocation()
 
@@ -10,6 +40,9 @@ const Register = () => {
   const handleSubmit  = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault()
   }
+
+  // RETURN -------------------------------------------------------------------
+  // --------------------------------------------------------------------------
 
   return (
     <div className="max-w-sm mx-auto">
