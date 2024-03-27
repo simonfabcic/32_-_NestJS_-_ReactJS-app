@@ -36,8 +36,8 @@ export const AuthProvider = ({children}: {children: ReactNode}) => { // TODO whi
         })
       })
       let data = await response.json()
-      console.log('data: ', data)
-      console.log('response: ', response)
+      // console.log('data: ', data)
+      // console.log('response: ', response)
       if (response.status === 200) {
         setAuthTokens(data)
         setUserAccessToken(jwtDecode(data.access))
@@ -50,7 +50,7 @@ export const AuthProvider = ({children}: {children: ReactNode}) => { // TODO whi
       }
     }
     catch (error) {
-      console.log("error!!")
+      // console.log("error!!")
       alert("During getting 'access' and 'refresh' token, error occur.\n" + "Error data:\n" + error);
     }
   }

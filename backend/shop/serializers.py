@@ -12,6 +12,7 @@ class ProfileSerializer(ModelSerializer):
   email = EmailField(source='user.email')
   full_name = SerializerMethodField()
   role = CharField(source='role.name')
+  username = CharField(source='user.username')
   # actions = "Actions - hard coded" # TODO
   class Meta:
     model = Profile
@@ -20,6 +21,7 @@ class ProfileSerializer(ModelSerializer):
       'email',
       'full_name',
       'role',
+      'username',
       # 'actions',
     ]
 

@@ -9,7 +9,7 @@ const Header = () => {
 
   const location =  useLocation()
   const navigate = useNavigate()
-  const [showNavbar, setSetShowNavbar] = useState(true)
+  const [showNavbar, setSetShowNavbar] = useState(false)
 
   const styleLink = " "
 

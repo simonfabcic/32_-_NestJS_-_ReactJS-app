@@ -9,7 +9,9 @@ interface AuthTokens {
   refresh: string;
 }
 
-const baseURL = "http://127.0.0.1:8000"
+const baseURL = "http://127.0.0.1:8456"
+// const baseURL = process.env.REACT_APP_API_ENDPOINT
+// const baseURL = import.meta.env.VITE_REACT_APP_API_ENDPOINT || 'default_value_if_not_defined';
 
 const useAxios = () => {
   const {authTokens, setUserAccessToken, setAuthTokens, logoutUser} = useContext(AuthContext)
@@ -31,21 +33,21 @@ const useAxios = () => {
         const userRefreshToken = jwtDecode(authTokens.refresh)
         const isRefreshTokenExpired = userRefreshToken.exp && dayjs.unix(userRefreshToken.exp).diff(dayjs(), 'second') < 10;
         if (isRefreshTokenExpired){
-          console.log("Refreshing token expired!")
+          // console.log("Refreshing token expired!")
           logoutUser()
           return Promise.reject(new Error('Both tokens expired. User needs to log in again.'));
         } else {
           const response = await axios.post(`${baseURL}/core-api-v1/token/refresh/`, {
             refresh: authTokens?.refresh
           })
-          console.log("response.status: ", response)
+          // console.log("response.status: ", response)
           if (response.status === 200) {
             localStorage.setItem("authTokens", JSON.stringify(response.data))
             setAuthTokens(response.data)
             setUserAccessToken(jwtDecode(response.data.access))
             req.headers.Authorization = `Bearer ${response.data?.access}`
-            console.log(response.data)
-            console.log("tokens are equal: ", authTokens === response.data)
+            // console.log(response.data)
+            // console.log("tokens are equal: ", authTokens === response.data)
           }
         }
       } else {

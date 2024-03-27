@@ -21,7 +21,7 @@ const Navbar: React.FC<NavbarProps> = ({setShowNavbar, showNavbar}) => {
     `}
     >
 
-      <div className="h-20 flex flex-col justify-end rounded-bl-2xl overflow-hidden bg-gray-300">
+      <div className="h-20 flex flex-col justify-end rounded-bl-2xl bg-gray-300">
         <div className="flex h-11">
           <div className="text-2xl pl-3 my-auto">
           <span
@@ -57,6 +57,7 @@ const Navbar: React.FC<NavbarProps> = ({setShowNavbar, showNavbar}) => {
             {url: "/dashboard/orders", content: "Orders"},
           ].map(navbarItem => (
             <NavLink
+            key={navbarItem.content}
             to={navbarItem.url}
             className={
               styleLink +

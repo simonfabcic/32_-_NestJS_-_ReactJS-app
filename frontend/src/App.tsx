@@ -33,11 +33,12 @@ export default function App() {
                     <Route path="dashboard">
                       <Route index element={<Dashboard />} />
                       <Route path="users" element={<Users />} />
+                      <Route path="users/add-new" element={<RegisterMe />} />
+                      <Route path="users/:username?" element={<RegisterMe />} />
                       <Route path="roles" element={<Roles />} />
                       <Route path="products" element={<Products />} />
                       <Route path="orders" element={<Orders />} />
                     </Route>
-                    <Route path="user/add-edit/:user_id?" element={<RegisterMe />} />
                     <Route path="me" element={<RegisterMe />} />
                   </Route>
                   <Route path="*" element={<h1>Page not found</h1>} />

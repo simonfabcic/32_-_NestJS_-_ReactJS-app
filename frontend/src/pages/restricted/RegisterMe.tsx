@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useParams } from "react-router-dom"
 import useAxios from "../utils/useAxios"
 
 const Register = () => {
@@ -12,18 +12,19 @@ const Register = () => {
 
   let api = useAxios()
 
+  const paramUsername = useParams().username
+
   // API REQUESTS -------------------------------------------------------------
   // --------------------------------------------------------------------------
   
-  // Get all profile, if parameter present ------
-  // CONTINUE
+  // Get user profile, if parameter present -----
   useEffect(() => {
     getProfile()
   }, [])
   let getProfile = async () => {
     try {
-      let response = await api.get((`http://127.0.0.1:8000/shop-api-v1/profile`))
-      console.log(response)
+      let response = await api.get((`/shop-api-v1/profile/${paramUsername}`))
+      // console.log(response)
       if (response.status === 200) {
         // setTableData(response.data)
       }
