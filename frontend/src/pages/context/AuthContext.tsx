@@ -24,7 +24,7 @@ export const AuthProvider = ({children}: {children: ReactNode}) => { // TODO whi
   let loginUser = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     try {
-      let response = await fetch('http://127.0.0.1:8000/core-api-v1/token/', {
+      let response = await fetch('http://127.0.0.1:8456/core-api-v1/token/', {
         method:'POST',
         headers:{
           'Content-Type':'application/json'
@@ -51,7 +51,9 @@ export const AuthProvider = ({children}: {children: ReactNode}) => { // TODO whi
     }
     catch (error) {
       // console.log("error!!")
-      alert("During getting 'access' and 'refresh' token, error occur.\n" + "Error data:\n" + error);
+      alert("During getting 'access' and 'refresh' token, error occur.\n" + 
+      "Possibility of backend server unavailability\n" +
+      "Error data:\n" + error);
     }
   }
 

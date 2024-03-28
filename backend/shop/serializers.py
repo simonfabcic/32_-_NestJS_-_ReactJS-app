@@ -20,10 +20,11 @@ class ProfileSerializer(ModelSerializer):
       'id',
       'email',
       'full_name',
+      'first_name',
+      'last_name',
       'role',
       'username',
       # 'actions',
     ]
-
   def get_full_name(self, obj):
       return f"{obj.first_name} {obj.last_name}"

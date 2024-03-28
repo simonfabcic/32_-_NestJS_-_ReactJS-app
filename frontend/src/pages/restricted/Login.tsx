@@ -18,10 +18,10 @@ const Login = () => {
         <input type="text" id="username" name="username" autoComplete="current-username" className={styleInputText} placeholder="John Doe" /> */}
 
         <label htmlFor="email">Email:</label>
-        <input type="email" id="email" name="email" className={styleInputText} placeholder="email@example.com"/> 
+        <input type="email" id="email" name="email" className={styleInputText} placeholder="email@example.com" autoComplete="email" required /> 
 
         <label htmlFor="password">Password:</label>
-        <input type="password" id="password" name="password" className={styleInputText} autoComplete="current-password" required placeholder="********" />
+        <input type="password" id="password" name="password" className={styleInputText}  placeholder="********" autoComplete="current-password" required />
 
 
         <div
