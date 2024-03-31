@@ -47,11 +47,16 @@ const Register = () => {
 
   const styleInputText = "border rounded-md"
 
-  const handleSubmit  = (event: React.SyntheticEvent<HTMLFormElement>) => {
+  // const handleSubmit  = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement>  = (event) => {
     event.preventDefault()
     console.log("form submitted")
     // TODO handle form submission
   }
+
+  // function handleSubmit2 (event: React.FormEvent<HTMLFormElement>) {
+  //   console.log(event)
+  // }
 
   // RETURN -------------------------------------------------------------------
   // --------------------------------------------------------------------------
@@ -65,6 +70,7 @@ const Register = () => {
         action="submit"
         className="flex flex-col"
         onSubmit={handleSubmit}
+        // onSubmit={handleSubmit2}
       >
         <label htmlFor="avatar">Avatar:</label>
         <input type="file" />
