@@ -2,8 +2,13 @@ import { ReactNode, createContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import { JwtPayload, jwtDecode } from "jwt-decode";
 
+interface MyJwtPayload extends JwtPayload {
+  user_id: string;
+  email: string;
+}
+
 interface AuthContextType {
-  userAccessToken: JwtPayload | null;
+  userAccessToken: MyJwtPayload | null;
   loading: boolean,
   authTokens: { access: string, refresh: string } | null;
   setUserAccessToken: (value: JwtPayload | null) => void,
@@ -15,7 +20,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({} as AuthContextType)
 export default AuthContext
 
-export const AuthProvider = ({children}: {children: ReactNode}) => { // TODO which type should be here
+export const AuthProvider = ({children}: {children: ReactNode}) => {
 
   const navigate = useNavigate()
   let [userAccessToken, setUserAccessToken] = useState(() => localStorage.getItem('authTokens') ? jwtDecode(localStorage.getItem('authTokens') as string) : null)
@@ -23,6 +28,8 @@ export const AuthProvider = ({children}: {children: ReactNode}) => { // TODO whi
 
   let loginUser = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    console.log("event: ", event)
+    console.log("event.currentTarget: ", event.currentTarget)
     try {
       let response = await fetch('http://127.0.0.1:8456/core-api-v1/token/', {
         method:'POST',
@@ -77,8 +84,8 @@ export const AuthProvider = ({children}: {children: ReactNode}) => { // TODO whi
     setLoading(false)
   }, [authTokens, loading])
 
-  let contextData = {
-    userAccessToken: userAccessToken,
+  let contextData: AuthContextType = {
+    userAccessToken: userAccessToken as MyJwtPayload,
     loading:loading,
     authTokens:authTokens,
     setUserAccessToken: setUserAccessToken,

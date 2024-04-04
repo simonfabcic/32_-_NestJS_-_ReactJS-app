@@ -28,7 +28,7 @@ const Header = () => {
           </div>
           <Link to="/" className="ml-3">
             <img
-              src="../images/logo.png"
+              src="/images/logo.png"
               alt="skillup mentor logo"
               className="h-full py-2"
             />

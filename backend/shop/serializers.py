@@ -11,9 +11,11 @@ class RoleSerializer(ModelSerializer):
 class ProfileSerializer(ModelSerializer):
   email = EmailField(source='user.email')
   full_name = SerializerMethodField()
-  role = CharField(source='role.name')
+  # role = CharField(source='role.name') # error if attribute not present
+  role = SerializerMethodField()
   username = CharField(source='user.username')
   # actions = "Actions - hard coded" # TODO
+
   class Meta:
     model = Profile
     fields = [
@@ -26,5 +28,9 @@ class ProfileSerializer(ModelSerializer):
       'username',
       # 'actions',
     ]
+
+  def get_role(self, obj):
+    return obj.role.name if obj.role else None
+  
   def get_full_name(self, obj):
-      return f"{obj.first_name} {obj.last_name}"
+    return f"{obj.first_name} {obj.last_name}"

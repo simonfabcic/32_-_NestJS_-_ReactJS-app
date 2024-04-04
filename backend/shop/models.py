@@ -13,4 +13,5 @@ class Profile(Profile):
   role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
 
   def __str__(self) -> str:
-    return self.first_name + " " + self.last_name
+    parent_string = super().__str__()
+    return (parent_string + ", prof. pk: " + str(self.pk))

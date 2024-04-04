@@ -28,22 +28,22 @@ LAST_NAMES = [
 ]
 
 selected_first_name = random.choice(FIRST_NAMES)
-selected_last_name = random.choice(FIRST_NAMES)
+selected_last_name = random.choice(LAST_NAMES)
 username = (selected_first_name + "_" + selected_last_name).lower()
 
 for i in range(100):
   selected_first_name = random.choice(FIRST_NAMES)
-  selected_last_name = random.choice(FIRST_NAMES)
+  selected_last_name = random.choice(LAST_NAMES)
   username = (selected_first_name + "_" + selected_last_name).lower()
 
   try:
-    user = User.objects.create(
+    user = User.objects.create_user(
       username = username,
       email = selected_first_name.lower() + "." + selected_last_name.lower() + "@email.com",
       password = "asdfggfdsa"
     )
   except:
-    pass
+    print(i, ". user skipped. Profile wasn't created.")
   else:
     Profile.objects.create(
       user = user,
@@ -51,3 +51,4 @@ for i in range(100):
       first_name = selected_first_name,
       last_name = selected_last_name,
     )
+    print(i, ". user created with profile.")

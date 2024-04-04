@@ -10,16 +10,15 @@ const Navbar: React.FC<NavbarProps> = ({setShowNavbar, showNavbar}) => {
 
   const styleLink = " "
   return (
-    // QUESTION : Is there a way to make the navbar disappear when it is '-translate-x-full'
-    // <div className={`
-    //   fixed top-0 w-1/4 h-full rounded-r-2xl 
-    //   ${showNavbar ? 'translate-x-0 duration-300' : '-translate-x-full duration-300'}
-    // `}>
     <div className={`
+      fixed top-0 w-1/4 h-full rounded-r-2xl 
+      ${showNavbar ? 'translate-x-0 opacity-100 duration-500 ' : '-translate-x-full opacity-0 duration-500 '}
+    `}>
+    {/* <div className={`
       fixed top-0 w-1/4 h-full rounded-r-2xl
       ${showNavbar ? 'duration-300 ' : 'scale-0 duration-300 origin-top-left'}
     `}
-    >
+    > */}
 
       <div className="h-20 flex flex-col justify-end rounded-bl-2xl bg-gray-300">
         <div className="flex h-11">
@@ -33,7 +32,7 @@ const Navbar: React.FC<NavbarProps> = ({setShowNavbar, showNavbar}) => {
           </div>
           <Link to="/">
             <img
-              src="../images/logo.png"
+              src="/images/logo.png"
               alt="skillup mentor logo"
               className="h-full py-2 pl-3 ${}"
             />

@@ -18,7 +18,7 @@ const Users = () => {
     email: string;
     full_name: string;
     role: string;
-    username: string;
+    // username: string;
   }
   
   interface ApiResponseProfiles {
@@ -37,6 +37,7 @@ const Users = () => {
   const [sortOrder, setSortOrder] = useState("ASC")
   const [paginationOffset, setPaginationOffset] = useState(0)
   const [paginationLimit, setPaginationLimit] = useState(20)
+  const [loadingState, setLoadingState] = useState("Loading...")
 
   const [deleteButtonPressed, setDeleteButtonPressed] = useState(false)
   const [deleteButtonPressedOnUserId, setDeleteButtonPressedOnUserId] = useState(-1)
@@ -51,20 +52,21 @@ const Users = () => {
   let getProfiles = async () => {
     try {
       let response = await api.get((`/shop-api-v1/profiles?offset=${paginationOffset}&per_page=${paginationLimit}&sort_by=${sortOrder}&sort_order=${sortingColumn}`))
-      // console.log(response)
+      console.log(response)
       if (response.status === 200) {
         setTableData(response.data)
         // console.log(response.data)
       }
     } catch (err: any) {
       console.error("During getting 'Profiles', err occurred: ", err.message);
+      setLoadingState("Can't get profiles data. Contact admin...")
     }
   }
 
   // Delete profile -----------------------------
-  let deleteProfile = async (username: string, id: number) => {
+  let deleteProfile = async (id: number) => {
     try {
-      let response = await api.delete((`/shop-api-v1/profile/${username}`))
+      let response = await api.delete((`/shop-api-v1/profile/${id}`))
       //console.log(response)
       if (response.status === 204) {
         setTableData(prevTableState => ({
@@ -91,78 +93,80 @@ const Users = () => {
       >
         Add User
       </button>
-      <table className="w-full text-center">
-        <thead>
-          <tr>
-            <th>No.</th>
-            {tableData.headers && tableData.headers.map((header, index) => (
-              <th
-                key={index}
-              >
-                {header.label}
-                {/* TODO: Add sorting functionality here */}
-                {/* {header.label + String.fromCharCode(160)}
-                {sortingColumn === header.key && sortOrder === "ASC" && <span> ▽</span>}
-                {sortingColumn === header.key && sortOrder === "DSC" && <span> △</span>}
-                {sortingColumn !== header.key && <span> △▽</span>} */}
-              </th>
-              ))}
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tableData.rows && tableData.rows.map((row, index) => (
-            <tr
-              key={row.username}
-              className={`
-                
-                h-14
-                ${deleteButtonPressed && deleteButtonPressedOnUserId==row.id ? "bg-red-200" : "even:bg-gray-400"}
-              `}
-            >
-              <td>{index+1}</td>
-              {tableData.headers.map((header, index) => (
-                <td key={index}>
-                  {/* {(row as Row)[header.key as keyof Row]} */}
-                  {row.hasOwnProperty(header.key) ? row[header.key as keyof Row] : 'N/A'}
-                </td>
-              ))}
-              <td
-                className="space-x-2"
-              >
-                <button
-                  className="px-3 py-1 bg-yellow-300 rounded"
-                  onClick={() => navigate(row.username)}
+      {(tableData.headers.length > 0 && tableData.rows.length > 0) ? 
+        <table className="w-full text-center">
+          <thead>
+            <tr>
+              <th>No.</th>
+              {tableData.headers && tableData.headers.map((header) => (
+                <th
+                  key={header.label}
                 >
-                  Edit
-                </button>
-                <button
-                  className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded"
-                  onClick={() => {
-                    deleteProfile(row.username, row.id)
-                    setDeleteButtonPressedOnUserId(row.id)
-                  }}
-                  onMouseDown={() => {
-                    setDeleteButtonPressed(true)
-                    setDeleteButtonPressedOnUserId(row.id)
-                  }}
-                  onMouseUp={() => {
-                    setDeleteButtonPressed(false)
-                    setDeleteButtonPressedOnUserId(-1)
-                  }}
-                  onMouseLeave={() => setDeleteButtonPressed(false)}
-                >
-                  Delete
-                </button>
-              </td>{/* TODO */}
+                  {header.label}
+                  {/* TODO: Add sorting functionality here */}
+                  {/* {header.label + String.fromCharCode(160)}
+                  {sortingColumn === header.key && sortOrder === "ASC" && <span> ▽</span>}
+                  {sortingColumn === header.key && sortOrder === "DSC" && <span> △</span>}
+                  {sortingColumn !== header.key && <span> △▽</span>} */}
+                </th>
+                ))}
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {tableData.rows && tableData.rows.map((row, index) => (
+              <tr
+                key={row.id}
+                className={`
+                  h-14
+                  ${deleteButtonPressed && deleteButtonPressedOnUserId==row.id ? "bg-red-200" : "even:bg-gray-400"}
+                `}
+              >
+                <td>{index+1}</td>
+                {tableData.headers.map((header) => (
+                  <td key={header.key}>
+                    {/* {(row as Row)[header.key as keyof Row]} */}
+                    {row.hasOwnProperty(header.key) ? row[header.key as keyof Row] : 'N/A'}
+                  </td>
+                ))}
+                <td
+                  className="space-x-2"
+                >
+                  {/* <p>{row.id}</p> */}
+                  <button
+                    className="px-3 py-1 bg-yellow-300 rounded"
+                    onClick={() => navigate(`${row.id}`)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded"
+                    onClick={() => {
+                      deleteProfile(row.id)
+                      setDeleteButtonPressedOnUserId(row.id)
+                    }}
+                    onMouseDown={() => {
+                      setDeleteButtonPressed(true)
+                      setDeleteButtonPressedOnUserId(row.id)
+                    }}
+                    onMouseUp={() => {
+                      setDeleteButtonPressed(false)
+                      setDeleteButtonPressedOnUserId(-1)
+                    }}
+                    onMouseLeave={() => setDeleteButtonPressed(false)}
+                  >
+                    Delete
+                  </button>
+                </td>{/* TODO */}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        :
+        <p className="font-bold">{loadingState}</p>
+      }
       
       {/* TODO: page n of m */}
-      {deleteButtonPressed}
-      {deleteButtonPressedOnUserId}
     </>
   )
 }

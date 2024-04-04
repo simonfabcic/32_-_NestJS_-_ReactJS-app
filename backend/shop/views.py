@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from django.core.exceptions import ObjectDoesNotExist
 
 from .serializers import ProfileSerializer
 
@@ -47,13 +48,13 @@ def getProfiles(request):
   profiles = Profile.objects.all()
   serializer = ProfileSerializer(profiles, many=True)
   serialized_data = serializer.data
-
   return Response({"headers": headers, "rows": serialized_data})
 
 @api_view(['POST', 'PUT', 'GET', 'DELETE'])
 @permission_classes([IsAuthenticated])
-def profile(request, username):
+def profile(request, profile_id):
   match request.method:
+
     case 'POST':
       user = User.objects.create_user(
         username='john',
@@ -61,18 +62,58 @@ def profile(request, username):
         password='glass onion')
       profile = Profile()
       profile.user
+
     case 'PUT':
-      pass
+      # profile = Profile.objects.get(user__pk=int(user_id))
+      firstName = request.data.get("firstName")
+      lastName = request.data.get("lastName")
+      email = request.data.get("email")
+      password = request.data.get("password")
+      userID = request.data.get("userID")
+      try:
+        profile = Profile.objects.get(user__id=profile_id)
+        if firstName is not None: profile.first_name = firstName
+        if lastName is not None: profile.last_name = lastName
+        if email is not None: profile.user.email = email
+        if password is not None: profile.user.password = password
+        profile.save()
+        return Response({"message":"Success. Profile for user ID: " + str(profile_id) + " updated."}, status=status.HTTP_204_NO_CONTENT)
+      except ObjectDoesNotExist:
+        # in case if we manually create a new user, without creating profile
+        # QUESTION why this does not word for admin (with pk = 1)
+        if firstName is not None and lastName is not None:
+          print("not none")
+          user = User.objects.get(pk=int(userID))
+          print(user)
+          Profile.objects.create(
+            user = user,
+            first_name = firstName,
+            last_name = lastName,
+          )
+        return Response({"message":"Success. Profile for user ID: " + str(profile_id) + " created."}, status=status.HTTP_201_CREATED)
+      except Exception as e:
+        return Response({"message":str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
     case 'GET':
-      profile = Profile.objects.get(user__username=username)
-      serializer = ProfileSerializer(profile, many=False)
-      serialized_data = serializer.data
-      return Response(serialized_data)
+      print("gettint")
+      try: 
+        print("gettint")
+        profile = Profile.objects.get(id=profile_id)
+        print(profile)
+        serializer = ProfileSerializer(profile, many=False)
+        serialized_data = serializer.data
+        return Response(serialized_data)
+      except Exception as e:
+        return Response({"message":str(e)}, status=status.HTTP_404_NOT_FOUND)
+
     case 'DELETE':
       # profile = Profile.objects.delete(user__username=username)
       try:
-        profile = Profile.objects.get(user__username=username)
+        user = User.objects.get(id=profile_id)
+        # profile = Profile.objects.get(user__id=user_id)
+        profile = Profile.objects.get(user=user)
+        user.delete()
         profile.delete()
-        return Response({"message":"Success. User " + str(username) + " deleted."}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message":"Success. User " + str(profile_id) + " deleted."}, status=status.HTTP_204_NO_CONTENT)
       except Exception as e:
         return Response({"message":str(e)}, status=status.HTTP_404_NOT_FOUND)

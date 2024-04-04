@@ -18,7 +18,6 @@ export default function App() {
     <div className="max-w-screen-lg mx-auto">
       <BrowserRouter>
         <AuthProvider>
-
           <div className="flex flex-col min-h-screen justify-between">
             <div>
               <Header />
@@ -34,7 +33,7 @@ export default function App() {
                       <Route index element={<Dashboard />} />
                       <Route path="users" element={<Users />} />
                       <Route path="users/add-new" element={<RegisterMe />} />
-                      <Route path="users/:username?" element={<RegisterMe />} />
+                      <Route path="users/:profile_id?" element={<RegisterMe />} />
                       <Route path="roles" element={<Roles />} />
                       <Route path="products" element={<Products />} />
                       <Route path="orders" element={<Orders />} />

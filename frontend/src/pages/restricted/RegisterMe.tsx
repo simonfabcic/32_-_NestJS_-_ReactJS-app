@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Link, useLocation, useParams } from "react-router-dom"
 import useAxios from "../utils/useAxios"
+import AuthContext from "../context/AuthContext"
 
 const Register = () => {
 
@@ -11,14 +12,17 @@ const Register = () => {
   // --------------------------------------------------------------------------
 
   let api = useAxios()
+  let { userAccessToken: loggedInUser } = useContext(AuthContext)
 
-  const paramUsername = useParams().username
-
+  const paramProfileId = useParams().profile_id || (loggedInUser?.user_id) // TODO instead of user_id should be profile_id
+  const location =  useLocation()
   const [formFirstName, setFormFirstName] = useState("")
   const [formLastName, setFormLastName] = useState("")
   const [formEmail, setFormEmail] = useState("")
   const [formPassword, setFormPassword] = useState("")
   const [formConfirmPassword, setFormConfirmPassword] = useState("")
+
+  const styleInputText = "border rounded-md"
 
   // API REQUESTS -------------------------------------------------------------
   // --------------------------------------------------------------------------
@@ -28,30 +32,71 @@ const Register = () => {
     getProfile()
   }, [])
   let getProfile = async () => {
-    try {
-      let response = await api.get((`/shop-api-v1/profile/${paramUsername}`))
-      console.log(response)
-      if (response.status === 200) {
-        // setTableData(response.data)
-        setFormFirstName(response.data.first_name)
-        setFormLastName(response.data.last_name)
-        setFormEmail(response.data.email)
+    if (paramProfileId) {
+      try {
+        let response = await api.get((`/shop-api-v1/profile/${paramProfileId}`))
+        // console.log(response)
+        if (response.status === 200) {
+          // setTableData(response.data)
+          setFormFirstName(response.data.first_name)
+          setFormLastName(response.data.last_name)
+          setFormEmail(response.data.email)
+        }
+      } catch (err: any) {
+        console.error("During getting 'Profiles', err occurred: ", err.message);
       }
-
-    } catch (err: any) {
-      console.error("During getting 'Profiles', err occurred: ", err.message);
     }
   }
 
-  const location =  useLocation()
 
-  const styleInputText = "border rounded-md"
-
+  // Create or update profile -------------------
   // const handleSubmit  = (event: React.FormEvent<HTMLFormElement>) => {
-  const handleSubmit: React.FormEventHandler<HTMLFormElement>  = (event) => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement>  = async (event) => {
     event.preventDefault()
-    console.log("form submitted")
-    // TODO handle form submission
+    console.log("firstName: ", event.currentTarget.firstName.value)
+    // POST -------
+    if (location.pathname === "/register") {
+      try {
+        let response = await api.post(`/shop-api-v1/profile/`)
+        if (response.status === 200) {
+          // TODO handle profile created (redirect)
+        }
+        // TODO handle username already taken
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error("During creating 'Profile', err occurred: ", err.message);
+        }
+      }
+    }
+    // PUT --------
+    // Edit user or my profile --
+    else if (location.pathname.startsWith("/dashboard/users") || location.pathname  === "/me") {
+      console.log("paramUserId: ", paramProfileId)
+      try {
+        let response = await api.put(`/shop-api-v1/profile/${paramProfileId}/`, {
+          "firstName": event.currentTarget.firstName.value,
+          "lastName": event.currentTarget.lastName.value,
+          "email": event.currentTarget.email.value,
+          "password": event.currentTarget.password.value,
+          "userID": paramProfileId
+        })
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error("During creating 'Profile', err occurred: ", err.message);
+        }
+      }
+    }
+    // Edit my profile
+    // else if (location.pathname  === "/me") {
+    //   try {
+    //     let response = await api.put(`/shop-api-v1/profile/${paramUserId}`)
+    //   } catch (err) {
+    //     if (err instanceof Error) {
+    //       console.error("During creating 'Profile', err occurred: ", err.message);
+    //     }
+    //   }
+    // }
+
   }
 
   // function handleSubmit2 (event: React.FormEvent<HTMLFormElement>) {
@@ -84,6 +129,7 @@ const Register = () => {
           autoComplete="given-name"
           value={formFirstName}
           onChange={(e) => setFormFirstName(e.target.value)}
+          required
         />
 
         <label htmlFor="lastName">Last name:</label>
@@ -95,6 +141,7 @@ const Register = () => {
           autoComplete="family-name"
           value={formLastName}
           onChange={(e) => setFormLastName(e.target.value)}
+          required
         />
 
         <label htmlFor="email">Email address:</label>
@@ -105,7 +152,7 @@ const Register = () => {
           className={styleInputText}
           required
           autoComplete="email"
-          value={formEmail}
+          value={formEmail || loggedInUser?.email}
           onChange={(e) => setFormEmail(e.target.value)}
         />
 
@@ -118,6 +165,7 @@ const Register = () => {
           autoComplete="new-password"
           value={formPassword}
           onChange={(e) => setFormPassword(e.target.value)}
+          required={location.pathname === "/register" ? true : false}
         />
 
         <label htmlFor="confirmPassword">Confirm password:</label>
@@ -130,7 +178,12 @@ const Register = () => {
           value={formConfirmPassword}
           onChange={(e) => setFormConfirmPassword(e.target.value)}
         />
-        { formConfirmPassword !== "" && formPassword !== formConfirmPassword && <p className="text-red-500">Passwords are not the same...</p>}
+        {
+          (formPassword !== "" ||
+          formConfirmPassword !== "") &&
+          formPassword !== formConfirmPassword &&
+            <p className="text-red-500">Passwords are not the same...</p>
+        }
 
         {location.pathname === "/register" && 
           <div
@@ -148,10 +201,26 @@ const Register = () => {
 
       <button
         type="submit"
+        disabled={
+          ((formPassword !== "" ||
+          formConfirmPassword !== "") &&
+          formPassword !== formConfirmPassword) ?
+          true
+          :
+          false
+        }
+        className={
+          ((formPassword !== "" ||
+          formConfirmPassword !== "") &&
+          formPassword !== formConfirmPassword) ?
+          "cursor-not-allowed"
+          :
+          ""
+        }
       >
-        
         {location.pathname === "/register" && "Create an account"}
-        {location.pathname  === "/me" || location.pathname.startsWith("/dashboard/users") && "Edit account"}
+        {(location.pathname  === "/me" || location.pathname.startsWith("/dashboard/users")) && "Edit account"}
+        
       </button>
       </form>
     </div>

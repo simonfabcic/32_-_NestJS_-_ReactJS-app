@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="flex justify-between h-11 items-center px-3">
         <Link to="/">
           <img
-            src="../images/logo.png"
+            src="/images/logo.png"
             alt="skillup mentor logo"
             className="h-11 py-2"
           />
