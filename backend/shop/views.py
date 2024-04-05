@@ -51,39 +51,37 @@ def getProfiles(request):
   serialized_data = serializer.data
   return Response({"headers": headers, "rows": serialized_data})
 
-@api_view(['POST', 'PUT', 'GET', 'DELETE'])
-@permission_classes([IsAuthenticated])
-def profile(request, profile_id=None):
-  match request.method:
-    case 'POST':
-      # CONTINUE parameters are not present
-      # testing with logged in user in URL: http://localhost:5173/dashboard/users/add-new
-      firstName = request.data.get("firstName")
-      lastName = request.data.get("lastName")
-      email = request.data.get("email")
-      password = request.data.get("password")
-      userID = request.data.get("userID")
-      print (request.query_params)
-      print (firstName, lastName, email, password)
-      if not (firstName and lastName and email and password):
-        return Response({"message":"Fail. Profile not created."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)  
-      try:
-        user = User.objects.create_user(
-        username='user',
-        email=email,
-        password=password)
-        profile = Profile.objects.create(
-          user = user,
-          first_name = firstName,
-          last_name = lastName,
-          # role = Role.objects.get(name=random.choice(ROLES)) # TODO add role
-        )
-        return Response({"message":"Success. Profile created."}, status=status.HTTP_201_CREATED)  
-      except IntegrityError:
-        return Response({"error": "Email already taken."}, status=status.HTTP_409_CONFLICT)
-      except:
-        return Response({"error":"Error creating new user."}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['POST'])
+def profileNew(request):
+  firstName = request.data.get("firstName")
+  lastName = request.data.get("lastName")
+  email = request.data.get("email")
+  password = request.data.get("password")
+  if not (firstName and lastName and email and password):
+    return Response({"message":"Fail. Profile not created."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+  try:
+    user = User.objects.create_user(
+    username='user',
+    email=email,
+    password=password)
+    profile = Profile.objects.create(
+      user = user,
+      first_name = firstName,
+      last_name = lastName,
+      # role = Role.objects.get(name=random.choice(ROLES)) # TODO add role
+    )
+    return Response({"message":"Success. Profile created."}, status=status.HTTP_201_CREATED)  
+  except IntegrityError:
+    return Response({"error": "Email already taken."}, status=status.HTTP_409_CONFLICT)
+  except:
+    return Response({"error":"Error creating new user."}, status=status.HTTP_400_BAD_REQUEST)
 
+
+
+@api_view(['PUT', 'GET', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def profile(request, profile_id):
+  match request.method:
     case 'PUT':
       firstName = request.data.get("firstName")
       lastName = request.data.get("lastName")

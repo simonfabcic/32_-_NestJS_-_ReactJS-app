@@ -65,7 +65,19 @@ const Register = () => {
     // POST -------
     if (location.pathname === "/register" || location.pathname.endsWith("/add-new")) {
       try {
-        let response = await api.post(`/shop-api-v1/profile/`)
+        let response = await fetch('http://127.0.0.1:8456/shop-api-v1/profile/new', {
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json'
+          },
+          body:JSON.stringify({
+            "firstName": event.currentTarget.firstName.value,
+            "lastName": event.currentTarget.lastName.value,
+            "email": event.currentTarget.email.value,
+            "password": event.currentTarget.password.value,
+            "userID": paramProfileId
+          })
+        })
         if (response.statusText === "OK") {
           navigate("/users")
         }
