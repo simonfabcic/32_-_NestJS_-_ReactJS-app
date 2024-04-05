@@ -34,7 +34,10 @@ const Register = () => {
   useEffect(() => {
     if (location.pathname.endsWith("/add-new"))
       return
-    getProfile()
+    if (paramProfileId)
+      getProfile()
+    if (loggedInUser)
+      setFormEmail(loggedInUser?.email)
   }, [])
   let getProfile = async () => {
     if (paramProfileId) {
@@ -145,7 +148,8 @@ const Register = () => {
           className={styleInputText}
           required
           autoComplete="email"
-          value={location.pathname.endsWith("/add-new") ? "" : formEmail || loggedInUser?.email}
+          value={formEmail}
+
           onChange={(e) => setFormEmail(e.target.value)}
         />
         {emailAlreadyTaken &&

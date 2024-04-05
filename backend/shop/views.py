@@ -52,15 +52,19 @@ def getProfiles(request):
   return Response({"headers": headers, "rows": serialized_data})
 
 @api_view(['POST', 'PUT', 'GET', 'DELETE'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def profile(request, profile_id=None):
   match request.method:
     case 'POST':
+      # CONTINUE parameters are not present
+      # testing with logged in user in URL: http://localhost:5173/dashboard/users/add-new
       firstName = request.data.get("firstName")
       lastName = request.data.get("lastName")
       email = request.data.get("email")
       password = request.data.get("password")
       userID = request.data.get("userID")
+      print (request.query_params)
+      print (firstName, lastName, email, password)
       if not (firstName and lastName and email and password):
         return Response({"message":"Fail. Profile not created."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)  
       try:
