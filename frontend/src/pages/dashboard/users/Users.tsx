@@ -157,7 +157,7 @@ const Users = () => {
                   >
                     Delete
                   </button>
-                </td>{/* TODO */}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -167,6 +167,7 @@ const Users = () => {
       }
       
       {/* TODO: page n of m */}
+      {/* CONTINUE add pagination */}
     </>
   )
 }

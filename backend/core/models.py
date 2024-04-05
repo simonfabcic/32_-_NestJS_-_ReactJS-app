@@ -28,7 +28,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    # avatar = models.ImageField(upload_to='images/') # https://codinggear.org/how-to-upload-images-in-django/ # TODO
+    # avatar = models.ImageField(upload_to='images/') # https://codinggear.org/how-to-upload-images-in-django/ # TODO add avatar
     # verifiedEmail = models.BooleanField(default=False)
 
     def __str__(self) -> str:

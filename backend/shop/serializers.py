@@ -14,7 +14,6 @@ class ProfileSerializer(ModelSerializer):
   # role = CharField(source='role.name') # error if attribute not present
   role = SerializerMethodField()
   username = CharField(source='user.username')
-  # actions = "Actions - hard coded" # TODO
 
   class Meta:
     model = Profile

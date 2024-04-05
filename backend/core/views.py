@@ -5,16 +5,20 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from shop.models import Profile
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-
         # Add custom claims
+        try:
+          profile = Profile.objects.get(user=user)
+          token['profile_id'] = profile.pk
+        except:
+          token['profile_id'] = None
         token['username'] = user.username
         token['email'] = user.email
-        # ...
 
         return token
 

@@ -5,6 +5,7 @@ import { JwtPayload, jwtDecode } from "jwt-decode";
 interface MyJwtPayload extends JwtPayload {
   user_id: string;
   email: string;
+  profile_id: string;
 }
 
 interface AuthContextType {
@@ -21,6 +22,7 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType)
 export default AuthContext
 
 export const AuthProvider = ({children}: {children: ReactNode}) => {
+// export const AuthProvider2 = (children: ReactNode) => {
 
   const navigate = useNavigate()
   let [userAccessToken, setUserAccessToken] = useState(() => localStorage.getItem('authTokens') ? jwtDecode(localStorage.getItem('authTokens') as string) : null)

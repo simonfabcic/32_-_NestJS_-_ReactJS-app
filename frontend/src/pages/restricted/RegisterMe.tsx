@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Link, useLocation, useParams } from "react-router-dom"
+import { Link, Navigate, useLocation, useParams } from "react-router-dom"
 import useAxios from "../utils/useAxios"
 import AuthContext from "../context/AuthContext"
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
 
@@ -13,14 +14,16 @@ const Register = () => {
 
   let api = useAxios()
   let { userAccessToken: loggedInUser } = useContext(AuthContext)
+  const navigate = useNavigate()
 
-  const paramProfileId = useParams().profile_id || (loggedInUser?.user_id) // TODO instead of user_id should be profile_id
+  const paramProfileId = useParams().profile_id || (loggedInUser?.profile_id)
   const location =  useLocation()
   const [formFirstName, setFormFirstName] = useState("")
   const [formLastName, setFormLastName] = useState("")
   const [formEmail, setFormEmail] = useState("")
   const [formPassword, setFormPassword] = useState("")
   const [formConfirmPassword, setFormConfirmPassword] = useState("")
+  const [emailAlreadyTaken, setEmailAlreadyTaken] = useState(false)
 
   const styleInputText = "border rounded-md"
 
@@ -29,6 +32,8 @@ const Register = () => {
 
   // Get user profile, if parameter present -----
   useEffect(() => {
+    if (location.pathname.endsWith("/add-new"))
+      return
     getProfile()
   }, [])
   let getProfile = async () => {
@@ -55,13 +60,14 @@ const Register = () => {
     event.preventDefault()
     console.log("firstName: ", event.currentTarget.firstName.value)
     // POST -------
-    if (location.pathname === "/register") {
+    if (location.pathname === "/register" || location.pathname.endsWith("/add-new")) {
       try {
         let response = await api.post(`/shop-api-v1/profile/`)
-        if (response.status === 200) {
-          // TODO handle profile created (redirect)
+        if (response.statusText === "OK") {
+          navigate("/users")
         }
-        // TODO handle username already taken
+        if (response.status === 409)
+          setEmailAlreadyTaken(true)
       } catch (err) {
         if (err instanceof Error) {
           console.error("During creating 'Profile', err occurred: ", err.message);
@@ -80,28 +86,16 @@ const Register = () => {
           "password": event.currentTarget.password.value,
           "userID": paramProfileId
         })
+        if (response.statusText === "OK") {
+          navigate("/users")
+        }
       } catch (err) {
         if (err instanceof Error) {
           console.error("During creating 'Profile', err occurred: ", err.message);
         }
       }
     }
-    // Edit my profile
-    // else if (location.pathname  === "/me") {
-    //   try {
-    //     let response = await api.put(`/shop-api-v1/profile/${paramUserId}`)
-    //   } catch (err) {
-    //     if (err instanceof Error) {
-    //       console.error("During creating 'Profile', err occurred: ", err.message);
-    //     }
-    //   }
-    // }
-
   }
-
-  // function handleSubmit2 (event: React.FormEvent<HTMLFormElement>) {
-  //   console.log(event)
-  // }
 
   // RETURN -------------------------------------------------------------------
   // --------------------------------------------------------------------------
@@ -115,7 +109,6 @@ const Register = () => {
         action="submit"
         className="flex flex-col"
         onSubmit={handleSubmit}
-        // onSubmit={handleSubmit2}
       >
         <label htmlFor="avatar">Avatar:</label>
         <input type="file" />
@@ -152,9 +145,12 @@ const Register = () => {
           className={styleInputText}
           required
           autoComplete="email"
-          value={formEmail || loggedInUser?.email}
+          value={location.pathname.endsWith("/add-new") ? "" : formEmail || loggedInUser?.email}
           onChange={(e) => setFormEmail(e.target.value)}
         />
+        {emailAlreadyTaken &&
+          <p className="text-red-500">Email already taken...</p>
+        }
 
         <label htmlFor="password">Password:</label>
         <input
@@ -218,9 +214,11 @@ const Register = () => {
           ""
         }
       >
-        {location.pathname === "/register" && "Create an account"}
-        {(location.pathname  === "/me" || location.pathname.startsWith("/dashboard/users")) && "Edit account"}
-        
+        {
+          ((location.pathname === "/register" || location.pathname.endsWith("/add-new") ) && "Create an account")
+        ||
+          ((location.pathname  === "/me" || location.pathname.startsWith("/dashboard/users")) && "Edit account")
+        }
       </button>
       </form>
     </div>
