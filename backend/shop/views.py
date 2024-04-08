@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
+from math import ceil
 
 from .serializers import ProfileSerializer
 
@@ -14,6 +15,7 @@ from core.models import User
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+# URL: /profiles?offset=[int]&page_size=[int]&sort_by=[options]&sort_order=[asc|desc]
 def getProfiles(request):
   headers = [
     {
@@ -33,23 +35,63 @@ def getProfiles(request):
     },
   ]
 
-  pagination = [ # TODO
+  for header in headers:
+    if header["sorting"]:
+      default_sort_by = header["key"]
+      break
+  
+  offset = request.GET.get("offset", 5)
+  page_size = request.GET.get("page_size", 15)
+  sort_by = request.GET.get("sort_by", default_sort_by)
+  sort_order = request.GET.get("sort_order", "ASCss")
+
+  # print (
+  # "offset: " + offset,
+  # "page_size: " + page_size,
+  # "sort_by: " + sort_by,
+  # "sort_order: " + sort_order,
+  # )
+
+  headers = [
     {
-      "key": "maintenance_date",
-      "label": "Datum vzdrževanja",
-      "prev_page": "/api/posts?offset=0&limit=10", # /* or "prev_page": 1 */
-      "next_page": "/api/posts?offset=30&limit=10", # /* or "next_page": 3 */
-      "current_page": 2,
-      "page_size": 10,
-      "total_records": 100,
-      "total_pages": 10
-    }
+      "key": "email",
+      "label": "Email",
+      "sorting": False
+    },
+    {
+      "key": "full_name",
+      "label": "Full name",
+      "sorting": True
+    },
+    {
+      "key": "role",
+      "label": "Role",
+      "sorting": True
+    },
   ]
+
+  # TODO check if order by parameter is correct, and other parameters
+  # TODO set right type to variables
+  # CONTINUE
 
   profiles = Profile.objects.all()
   serializer = ProfileSerializer(profiles, many=True)
   serialized_data = serializer.data
-  return Response({"headers": headers, "rows": serialized_data})
+
+  pagination = [ # TODO
+    # {
+    #   "sort_order": sort_order,
+    #   # "label": "Datum vzdrževanja",
+    #   "prev_page": "/api/posts?offset=0&limit=10", # /* or "prev_page": 1 */
+    #   "next_page": "/api/posts?offset=30&limit=10", # /* or "next_page": 3 */
+    #   "current_page": int(int(offset) / int(page_size)) + 1,
+    #   "page_size": page_size,
+    #   "total_records": profiles.count(),
+    #   "total_pages": ceil(profiles.count() / page_size) # round up with 'ceil'
+    # }
+  ]
+
+  return Response({"headers": headers, "rows": serialized_data, "pagination": pagination})
 
 @api_view(['POST'])
 def profileNew(request):

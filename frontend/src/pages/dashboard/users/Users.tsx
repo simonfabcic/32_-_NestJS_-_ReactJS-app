@@ -35,12 +35,15 @@ const Users = () => {
   const [tableData, setTableData] = useState<ApiResponseProfiles>({headers:[], rows:[]})
   const [sortingColumn, setSortingColumn] = useState("full_name")
   const [sortOrder, setSortOrder] = useState("ASC")
-  const [paginationOffset, setPaginationOffset] = useState(0)
-  const [paginationLimit, setPaginationLimit] = useState(20)
+  // const [paginationOffset, setPaginationOffset] = useState(0)
+  // const [paginationLimit, setPaginationLimit] = useState(20)
   const [loadingState, setLoadingState] = useState("Loading...")
 
   const [deleteButtonPressed, setDeleteButtonPressed] = useState(false)
   const [deleteButtonPressedOnUserId, setDeleteButtonPressedOnUserId] = useState(-1)
+
+  let paginationOffset = 0
+  let paginationPageSize = 20
 
   // API REQUESTS -------------------------------------------------------------
   // --------------------------------------------------------------------------
@@ -51,7 +54,7 @@ const Users = () => {
   }, [])
   let getProfiles = async () => {
     try {
-      let response = await api.get((`/shop-api-v1/profiles?offset=${paginationOffset}&per_page=${paginationLimit}&sort_by=${sortOrder}&sort_order=${sortingColumn}`))
+      let response = await api.get((`/shop-api-v1/profiles?offset=${paginationOffset}&page_size=${paginationPageSize}&sort_by=${sortingColumn}&sort_order=${sortOrder}`))
       console.log(response)
       if (response.status === 200) {
         setTableData(response.data)
@@ -106,7 +109,7 @@ const Users = () => {
                   {/* TODO: Add sorting functionality here */}
                   {/* {header.label + String.fromCharCode(160)}
                   {sortingColumn === header.key && sortOrder === "ASC" && <span> ▽</span>}
-                  {sortingColumn === header.key && sortOrder === "DSC" && <span> △</span>}
+                  {sortingColumn === header.key && sortOrder === "DESC" && <span> △</span>}
                   {sortingColumn !== header.key && <span> △▽</span>} */}
                 </th>
                 ))}
