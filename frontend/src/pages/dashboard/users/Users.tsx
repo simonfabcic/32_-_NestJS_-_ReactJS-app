@@ -33,8 +33,8 @@ const Users = () => {
   const navigate = useNavigate()
 
   const [tableData, setTableData] = useState<ApiResponseProfiles>({headers:[], rows:[]})
-  const [sortingColumn, setSortingColumn] = useState("full_name")
-  const [sortOrder, setSortOrder] = useState("ASC")
+  const [sortingColumn, setSortingColumn] = useState("email")
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("ASC")
   // const [paginationOffset, setPaginationOffset] = useState(0)
   // const [paginationLimit, setPaginationLimit] = useState(20)
   const [loadingState, setLoadingState] = useState("Loading...")
@@ -55,7 +55,7 @@ const Users = () => {
   let getProfiles = async () => {
     try {
       let response = await api.get((`/shop-api-v1/profiles?offset=${paginationOffset}&page_size=${paginationPageSize}&sort_by=${sortingColumn}&sort_order=${sortOrder}`))
-      console.log(response)
+      // QUESTION how to handle http 400 response message - 'response' value is not accessible in 'catch'
       if (response.status === 200) {
         setTableData(response.data)
         // console.log(response.data)
@@ -84,6 +84,10 @@ const Users = () => {
   }
 
 
+  // FUNCTIONS ----------------------------------------------------------------
+  // --------------------------------------------------------------------------
+
+
   // RETURN -------------------------------------------------------------------
   // --------------------------------------------------------------------------
 
@@ -105,12 +109,26 @@ const Users = () => {
                 <th
                   key={header.label}
                 >
-                  {header.label}
-                  {/* TODO: Add sorting functionality here */}
-                  {/* {header.label + String.fromCharCode(160)}
-                  {sortingColumn === header.key && sortOrder === "ASC" && <span> ▽</span>}
-                  {sortingColumn === header.key && sortOrder === "DESC" && <span> △</span>}
-                  {sortingColumn !== header.key && <span> △▽</span>} */}
+                  <span
+                    onClick={() => {
+                      if (header.sorting) {
+                        if (sortingColumn === header.key) {
+                          sortOrder === "ASC" ? setSortOrder("DESC") : setSortOrder("ASC");
+                        } else {
+                          setSortOrder("ASC");
+                        }
+                        setSortingColumn(header.key)
+                      } else {}
+                    }}
+                    className={`${header.sorting ? "cursor-pointer" : ""}`}
+                  >
+                    {header.label + String.fromCharCode(160)}
+                    {header.sorting && (
+                      (sortingColumn === header.key && sortOrder === "ASC" && <span> ▽</span>) ||
+                      (sortingColumn === header.key && sortOrder === "DESC" && <span> △</span>) ||
+                      (sortingColumn !== header.key && <span> △▽</span>))
+                    }
+                  </span>
                 </th>
                 ))}
               <th>Actions</th>

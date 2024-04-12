@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from math import ceil
+from django.core.paginator import Paginator
+from django.db import connection
 
 from .serializers import ProfileSerializer
 
@@ -21,12 +23,12 @@ def getProfiles(request):
     {
       "key": "email",
       "label": "Email",
-      "sorting": False
+      "sorting": True
     },
     {
       "key": "full_name",
       "label": "Full name",
-      "sorting": True
+      "sorting": False
     },
     {
       "key": "role",
@@ -40,8 +42,8 @@ def getProfiles(request):
       default_sort_by = header["key"]
       break
   
-  offset = request.GET.get("offset", 5)
-  page_size = request.GET.get("page_size", 15)
+  offset = request.GET.get("offset", "5")
+  page_size = request.GET.get("page_size", "15")
   sort_by = request.GET.get("sort_by", default_sort_by)
   sort_order = request.GET.get("sort_order", "ASCss")
 
@@ -52,46 +54,56 @@ def getProfiles(request):
   # "sort_order: " + sort_order,
   # )
 
-  headers = [
-    {
-      "key": "email",
-      "label": "Email",
-      "sorting": False
-    },
-    {
-      "key": "full_name",
-      "label": "Full name",
-      "sorting": True
-    },
-    {
-      "key": "role",
-      "label": "Role",
-      "sorting": True
-    },
-  ]
-
-  # TODO check if order by parameter is correct, and other parameters
-  # TODO set right type to variables
-  # CONTINUE
+  # checking if URL parameters are OK
+  if not (
+      offset.isdigit() and
+      page_size.isdigit() and
+      any(header["key"] == sort_by for header in headers) and
+      sort_order in ["ASC", "DESC"]):
+    sortingOptions = ""
+    for header in headers:
+      if len(sortingOptions) > 0:
+        sortingOptions += "|"
+      sortingOptions =  sortingOptions + header["key"]
+    options = "/profiles?offset=[int]&page_size=[int]&sort_by=[" + sortingOptions + "]&sort_order=[asc|desc]"
+    return Response({"error":"Error in parameters.", "options":options}, status=status.HTTP_400_BAD_REQUEST)
+  
+  offset = int(offset)
+  page_size = int(page_size)
 
   profiles = Profile.objects.all()
-  serializer = ProfileSerializer(profiles, many=True)
+
+  # total_records = profiles.count()
+  # total_pages = ceil(total_records / page_size) # round up with 'ceil'
+  current_page = (offset / page_size) + 1
+  # prev_page = current_page - 1 if current_page > 1 else None
+  # next_page = current_page + 1 if current_page < total_pages else None
+
+  # https://docs.djangoproject.com/en/5.0/topics/pagination/
+  p = Paginator(profiles, page_size)
+  try:
+    page = p.page(current_page)
+  except:
+    return Response({"error":"Parameters 'offset' and 'page_size' not compatible"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+  serializer = ProfileSerializer(page.object_list, many=True)
   serialized_data = serializer.data
 
-  pagination = [ # TODO
-    # {
-    #   "sort_order": sort_order,
-    #   # "label": "Datum vzdrževanja",
-    #   "prev_page": "/api/posts?offset=0&limit=10", # /* or "prev_page": 1 */
-    #   "next_page": "/api/posts?offset=30&limit=10", # /* or "next_page": 3 */
-    #   "current_page": int(int(offset) / int(page_size)) + 1,
-    #   "page_size": page_size,
-    #   "total_records": profiles.count(),
-    #   "total_pages": ceil(profiles.count() / page_size) # round up with 'ceil'
-    # }
+  pagination_description = [
+    {
+      "sort_order": sort_order,
+      "sort_by": sort_by,
+      "total_records": p.count,
+      "total_pages": p.num_pages,
+      "current_page": current_page,
+      "prev_page": page.previous_page_number() if page.has_previous() else None,
+      "next_page": page.next_page_number() if page.has_next() else None,
+      "page_size": page_size,
+    }
   ]
-
-  return Response({"headers": headers, "rows": serialized_data, "pagination": pagination})
+  return Response({"headers": headers, "rows": serialized_data, "pagination_description": pagination_description}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def profileNew(request):
