@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'shop.apps.ShopConfig'
 ]
 
-AUTH_USER_MODEL = 'core.User'
+AUTH_USER_MODEL = 'core.CoreUser'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer, EmailField, CharField, SerializerMethodField
-from shop.models import Profile, Role
+from shop.models import ShopProfile, Role
 
 class RoleSerializer(ModelSerializer):
   class Meta:
@@ -8,7 +8,7 @@ class RoleSerializer(ModelSerializer):
       'name'
     ]
 
-class ProfileSerializer(ModelSerializer):
+class ShopProfileSerializer(ModelSerializer):
   email = EmailField(source='user.email')
   full_name = SerializerMethodField()
   # role = CharField(source='role.name') # error if attribute not present
@@ -16,7 +16,7 @@ class ProfileSerializer(ModelSerializer):
   username = CharField(source='user.username')
 
   class Meta:
-    model = Profile
+    model = ShopProfile
     fields = [
       'id',
       'email',

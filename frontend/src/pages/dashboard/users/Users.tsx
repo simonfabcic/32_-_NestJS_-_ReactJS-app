@@ -51,7 +51,7 @@ const Users = () => {
   // Get all profiles ---------------------------
   useEffect(() => {
     getProfiles()
-  }, [])
+  }, [sortingColumn, sortOrder])
   let getProfiles = async () => {
     try {
       let response = await api.get((`/shop-api-v1/profiles?offset=${paginationOffset}&page_size=${paginationPageSize}&sort_by=${sortingColumn}&sort_order=${sortOrder}`))

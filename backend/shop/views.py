@@ -9,10 +9,10 @@ from math import ceil
 from django.core.paginator import Paginator
 from django.db import connection
 
-from .serializers import ProfileSerializer
+from .serializers import ShopProfileSerializer
 
-from shop.models import Profile
-from core.models import User
+from shop.models import ShopProfile
+from core.models import CoreUser
 
 
 @api_view(['GET'])
@@ -71,7 +71,7 @@ def getProfiles(request):
   offset = int(offset)
   page_size = int(page_size)
 
-  profiles = Profile.objects.all()
+  profiles = ShopProfile.objects.all()
 
   # total_records = profiles.count()
   # total_pages = ceil(total_records / page_size) # round up with 'ceil'
@@ -114,11 +114,11 @@ def profileNew(request):
   if not (firstName and lastName and email and password):
     return Response({"message":"Fail. Profile not created."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
   try:
-    user = User.objects.create_user(
-    username='user',
+    user = CoreUser.objects.create_user(
+    username=email,
     email=email,
     password=password)
-    profile = Profile.objects.create(
+    profile = ShopProfile.objects.create(
       user = user,
       first_name = firstName,
       last_name = lastName,
@@ -143,7 +143,7 @@ def profile(request, profile_id):
       password = request.data.get("password")
       userID = request.data.get("userID")
       try:
-        profile = Profile.objects.get(id=profile_id)
+        profile = ShopProfile.objects.get(id=profile_id)
         if firstName is not None: profile.first_name = firstName
         if lastName is not None: profile.last_name = lastName
         if email is not None: profile.user.email = email
@@ -154,8 +154,8 @@ def profile(request, profile_id):
         # in case if we manually create a new user, without creating profile
         # QUESTION why this does not work for admin (with pk = 1)
         if firstName is not None and lastName is not None:
-          user = User.objects.get(pk=int(userID))
-          Profile.objects.create(
+          user = CoreUser.objects.get(pk=int(userID))
+          ShopProfile.objects.create(
             user = user,
             first_name = firstName,
             last_name = lastName,
@@ -166,7 +166,7 @@ def profile(request, profile_id):
 
     case 'GET':
       try: 
-        profile = Profile.objects.get(id=profile_id)
+        profile = ShopProfile.objects.get(id=profile_id)
         serializer = ProfileSerializer(profile, many=False)
         serialized_data = serializer.data
         return Response(serialized_data)
@@ -176,9 +176,9 @@ def profile(request, profile_id):
     case 'DELETE':
       # profile = Profile.objects.delete(user__username=username)
       try:
-        user = User.objects.get(id=profile_id)
+        user = CoreUser.objects.get(id=profile_id)
         # profile = Profile.objects.get(user__id=user_id)
-        profile = Profile.objects.get(user=user)
+        profile = ShopProfile.objects.get(user=user)
         user.delete()
         profile.delete()
         return Response({"message":"Success. User " + str(profile_id) + " deleted."}, status=status.HTTP_204_NO_CONTENT)

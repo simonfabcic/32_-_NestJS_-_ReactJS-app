@@ -1,5 +1,5 @@
 from django.db import models
-from core.models import Profile
+from core.models import CoreProfile
 
 # Create your models here.
 
@@ -9,7 +9,7 @@ class Role(models.Model):
   def __str__(self) -> str:
     return self.name
 
-class Profile(Profile):
+class ShopProfile(CoreProfile):
   role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
 
   def __str__(self) -> str:
