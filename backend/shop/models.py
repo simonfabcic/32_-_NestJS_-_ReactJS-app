@@ -8,6 +8,9 @@ class Role(models.Model):
 
   def __str__(self) -> str:
     return self.name
+  
+  class Meta:
+    ordering = ['name']
 
 class ShopProfile(CoreProfile):
   role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)

@@ -8,6 +8,7 @@ from django.db import IntegrityError
 from math import ceil
 from django.core.paginator import Paginator
 from django.db import connection
+# from django.db.models import F
 
 from .serializers import ShopProfileSerializer
 
@@ -17,18 +18,18 @@ from core.models import CoreUser
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-# URL: /profiles?offset=[int]&page_size=[int]&sort_by=[options]&sort_order=[asc|desc]
+# URL: /profiles?page=[int]&page_size=[int]&sort_by=[options]&sort_order=[asc|desc]
 def getProfiles(request):
   headers = [
     {
       "key": "email",
       "label": "Email",
-      "sorting": True
+      "sorting": False
     },
     {
       "key": "full_name",
       "label": "Full name",
-      "sorting": False
+      "sorting": True
     },
     {
       "key": "role",
@@ -42,67 +43,60 @@ def getProfiles(request):
       default_sort_by = header["key"]
       break
   
-  offset = request.GET.get("offset", "5")
+  current_page = request.GET.get("page", "1")
   page_size = request.GET.get("page_size", "15")
   sort_by = request.GET.get("sort_by", default_sort_by)
-  sort_order = request.GET.get("sort_order", "ASCss")
-
-  # print (
-  # "offset: " + offset,
-  # "page_size: " + page_size,
-  # "sort_by: " + sort_by,
-  # "sort_order: " + sort_order,
-  # )
+  sort_order = request.GET.get("sort_order", "ASC")
 
   # checking if URL parameters are OK
   if not (
-      offset.isdigit() and
+      current_page.isdigit() and
       page_size.isdigit() and
       any(header["key"] == sort_by for header in headers) and
       sort_order in ["ASC", "DESC"]):
+    # prepare data to return in case of error
     sortingOptions = ""
     for header in headers:
       if len(sortingOptions) > 0:
         sortingOptions += "|"
       sortingOptions =  sortingOptions + header["key"]
-    options = "/profiles?offset=[int]&page_size=[int]&sort_by=[" + sortingOptions + "]&sort_order=[asc|desc]"
+    options = "/profiles?page=[int]&page_size=[int]&sort_by=[" + sortingOptions + "]&sort_order=[asc|desc]"
     return Response({"error":"Error in parameters.", "options":options}, status=status.HTTP_400_BAD_REQUEST)
   
-  offset = int(offset)
+  current_page = int(current_page)
   page_size = int(page_size)
 
-  profiles = ShopProfile.objects.all()
+  # profiles = ShopProfile.objects.all().order_by(F(sort_by).desc())
 
-  # total_records = profiles.count()
-  # total_pages = ceil(total_records / page_size) # round up with 'ceil'
-  current_page = (offset / page_size) + 1
-  # prev_page = current_page - 1 if current_page > 1 else None
-  # next_page = current_page + 1 if current_page < total_pages else None
+  if sort_by == "full_name":
+    profiles = ShopProfile.objects.all().order_by('first_name', 'last_name')
+  else: 
+    profiles = ShopProfile.objects.all().order_by(sort_by)
+
+  if sort_order == "DESC":
+    profiles = profiles.reverse()
 
   # https://docs.djangoproject.com/en/5.0/topics/pagination/
   p = Paginator(profiles, page_size)
   try:
     page = p.page(current_page)
   except:
-    return Response({"error":"Parameters 'offset' and 'page_size' not compatible"}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({"error":"Parameters 'page' and 'page_size' not compatible"}, status=status.HTTP_400_BAD_REQUEST)
 
-
-
-  serializer = ProfileSerializer(page.object_list, many=True)
+  serializer = ShopProfileSerializer(page.object_list, many=True)
   serialized_data = serializer.data
 
-  pagination_description = [
-    {
+  pagination_description = {
       "sort_order": sort_order,
       "sort_by": sort_by,
       "total_records": p.count,
       "total_pages": p.num_pages,
-      "current_page": current_page,
+      "page": current_page,
       "prev_page": page.previous_page_number() if page.has_previous() else None,
       "next_page": page.next_page_number() if page.has_next() else None,
       "page_size": page_size,
     }
-  ]
+  
   return Response({"headers": headers, "rows": serialized_data, "pagination_description": pagination_description}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
@@ -167,7 +161,7 @@ def profile(request, profile_id):
     case 'GET':
       try: 
         profile = ShopProfile.objects.get(id=profile_id)
-        serializer = ProfileSerializer(profile, many=False)
+        serializer = ShopProfileSerializer(profile, many=False)
         serialized_data = serializer.data
         return Response(serialized_data)
       except Exception as e:
