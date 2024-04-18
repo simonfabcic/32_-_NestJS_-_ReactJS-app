@@ -18,7 +18,6 @@ const Users = () => {
     email: string;
     full_name: string;
     role: string;
-    // username: string;
   }
   
   interface ApiResponseProfiles {
@@ -58,8 +57,6 @@ const Users = () => {
   })
   const [sortingColumn, setSortingColumn] = useState("role")
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("ASC")
-  // const [paginationPage, setPaginationPage] = useState(0)
-  // const [paginationLimit, setPaginationLimit] = useState(20)
   const [loadingState, setLoadingState] = useState("Loading...")
 
   const [deleteButtonPressed, setDeleteButtonPressed] = useState(false)
@@ -67,7 +64,7 @@ const Users = () => {
   const [paginationWantedPage, setPaginationWantedPage] = useState(1)
   const [paginationPageNumbers, setPaginationPageNumbers] = useState<number[]>([])
 
-  const paginationPageSize = 5
+  const paginationPageSize = 100
 
   // API REQUESTS -------------------------------------------------------------
   // --------------------------------------------------------------------------
@@ -79,7 +76,6 @@ const Users = () => {
   let getProfiles = async () => {
     try {
       let response = await api.get((`/shop-api-v1/profiles?offset="0"&page=${paginationWantedPage}&page_size=${paginationPageSize}&sort_by=${sortingColumn}&sort_order=${sortOrder}`))
-      // QUESTION how to handle http 400 response message - 'response' value is not accessible in 'catch'
       if (response.status === 200) {
         setTableData(() => response.data)
         if (response.data.rows.length < 1)
@@ -93,7 +89,6 @@ const Users = () => {
         setPaginationPageNumbers(newNumbers)
       }
     } catch (err: any) {
-      // con-sole.log("Response: ", err.response)
       console.error("During getting 'Profiles', err occurred: ", err.message, "\nMessage from server:", err.response.data);
       setLoadingState("Can't get profiles data. Contact admin...")
     }
@@ -179,14 +174,12 @@ const Users = () => {
                 <td>{index+1+(paginationWantedPage-1)*paginationPageSize}</td>
                 {tableData.headers.map((header) => (
                   <td key={header.key}>
-                    {/* {(row as Row)[header.key as keyof Row]} */}
                     {row.hasOwnProperty(header.key) ? row[header.key as keyof Row] : 'N/A'}
                   </td>
                 ))}
                 <td
                   className="space-x-2"
                 >
-                  {/* <p>{row.id}</p> */}
                   <button
                     className="w-10 h-8 bg-yellow-300 rounded"
                     onClick={() => navigate(`${row.id}`)}
@@ -220,14 +213,10 @@ const Users = () => {
         <p className="font-bold">{loadingState}</p>
       }
 
-      <div
-        data-info="numbers-for-pages"
-        className="flex justify-center items-center"
-      >
-
-
+      {tableData.rows.length > 0 && 
         <div
-          className="flex gap-1 mt-3"
+          data-info="numbers-for-pages"
+          className="flex justify-center items-center gap-1 mt-3 mb-3"
         >
           {!paginationPageNumbers.includes(1) &&
           (
@@ -251,21 +240,19 @@ const Users = () => {
             </button>
           ))}
           {!paginationPageNumbers.includes(tableData.pagination_description.total_pages) &&
-          (
-            <>
-              <button
-                onClick={() => setPaginationWantedPage(tableData.pagination_description.total_pages)}
-                className="w-10 h-8 bg-gray-400 rounded-md ml-2"
-              >
-                {"..." + tableData.pagination_description.total_pages}
-              </button>
-            </>
-          )
+            (
+              <>
+                <button
+                  onClick={() => setPaginationWantedPage(tableData.pagination_description.total_pages)}
+                  className="w-10 h-8 bg-gray-400 rounded-md ml-2"
+                >
+                  {"..." + tableData.pagination_description.total_pages}
+                </button>
+              </>
+            )
           }
         </div>
-        {/* TODO: page n of m */}
-        {/* CONTINUE add pagination */}
-      </div>
+      }
     </>
   )
 }
