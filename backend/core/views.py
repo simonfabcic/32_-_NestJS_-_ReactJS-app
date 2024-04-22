@@ -24,26 +24,3 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def getTest(request):
-    testData = [
-      {
-        "key": "key1",
-        "label": "label1"
-      },
-      {
-        "key": "key2",
-        "label": "label2"
-      },
-      {
-        "key": "key3",
-        "label": "label3"
-      },
-      {
-        "key": "key4",
-        "label": "label4"
-      }
-    ]
-    return Response({"data":testData})
