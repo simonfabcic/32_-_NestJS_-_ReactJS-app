@@ -40,8 +40,8 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
         },
         body:JSON.stringify({
           // 'username': event.currentTarget.username.value,
-          'email': event.currentTarget.email.value,
-          'password': event.currentTarget.password.value
+          'password': event.currentTarget.password.value,
+          'email': event.currentTarget.email.value
         })
       })
       let data = await response.json()
