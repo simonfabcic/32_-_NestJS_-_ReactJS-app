@@ -3,3 +3,4 @@ backend/config.py
 backend/data/db/*
 **/__pycache__/**
 tutorial/**
+backend/db.sqlite3

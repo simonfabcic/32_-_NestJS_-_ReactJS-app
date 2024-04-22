@@ -91,7 +91,7 @@ def getProfiles(request):
       "sort_by": sort_by,
       "total_records": p.count,
       "total_pages": p.num_pages,
-      "page": current_page,
+      "current_page": current_page,
       "prev_page": page.previous_page_number() if page.has_previous() else None,
       "next_page": page.next_page_number() if page.has_next() else None,
       "page_size": page_size,
