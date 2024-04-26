@@ -7,20 +7,22 @@ from rest_framework.response import Response
 
 from shop.models import ShopProfile
 
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
         # Add custom claims
         try:
-          profile = ShopProfile.objects.get(user=user)
-          token['profile_id'] = profile.pk
+            profile = ShopProfile.objects.get(user=user)
+            token["profile_id"] = profile.pk
         except:
-          token['profile_id'] = None
-        token['username'] = user.username
-        token['email'] = user.email
+            token["profile_id"] = None
+        token["username"] = user.username
+        token["email"] = user.email
 
         return token
+
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer

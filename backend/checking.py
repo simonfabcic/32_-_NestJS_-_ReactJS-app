@@ -1,7 +1,7 @@
 import os
 import django
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
 django.setup()
 
 print("start testing")
@@ -9,7 +9,7 @@ print("start testing")
 from core.models import User
 from shop.models import Profile, Role
 
-#profile_first = Profile.objects.first()
+# profile_first = Profile.objects.first()
 
 # users = User.objects.all()
 # print(users)
