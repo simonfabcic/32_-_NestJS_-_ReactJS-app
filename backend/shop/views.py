@@ -160,7 +160,7 @@ def profile(request, profile_id):
                 if email is not None:
                     profile.user.email = email
                     profile.user.username = email
-                if password is not "":
+                if password != "":
                     profile.user.set_password(password)
                 profile.save()
                 profile.user.save()
