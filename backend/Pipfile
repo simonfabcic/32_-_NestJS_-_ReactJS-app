@@ -17,6 +17,8 @@ tzdata = "==2024.1"
 
 [dev-packages]
 factory-boy = "==3.3.0"
+pre-commit = "==3.7.0"
+isort = "==5.13.2"
 
 [requires]
 python_version = "3.12"

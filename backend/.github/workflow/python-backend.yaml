@@ -1,4 +1,4 @@
-name:  shop
+name: shop
 
 on:
   push:
@@ -57,3 +57,4 @@ jobs:
         run: |
           ./manage.py test core shop
         working-directory: ./backend
+        
