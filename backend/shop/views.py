@@ -152,6 +152,8 @@ def profile(request, profile_id):
             password = request.data.get("password")
             userID = request.data.get("userID")
             try:
+                if profile_id == "null":
+                    raise ObjectDoesNotExist("URL parameter profileID is 'null'.")
                 profile = ShopProfile.objects.get(id=profile_id)
                 if firstName is not None:
                     profile.first_name = firstName
@@ -175,9 +177,8 @@ def profile(request, profile_id):
                 )
             except ObjectDoesNotExist:
                 # in case if we manually create a new user, without creating profile
-                # QUESTION why this does not work for admin (with pk = 1)
                 if firstName is not None and lastName is not None:
-                    user = CoreUser.objects.get(pk=int(userID))
+                    user = CoreUser.objects.get(email=email)
                     ShopProfile.objects.create(
                         user=user,
                         first_name=firstName,
