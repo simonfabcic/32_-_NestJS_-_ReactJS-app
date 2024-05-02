@@ -56,19 +56,17 @@ class TestViews(TestCase):
         self.assertEqual(ShopProfile.objects.all().count(), 0)
 
     def test_get_profile_success(self):
-        for _ in range(1, 4):
-            ShopProfileFactory()
-        self.assertEqual(ShopProfile.objects.all().count(), 3)
+        shop_profile = ShopProfileFactory()
+        self.assertEqual(ShopProfile.objects.all().count(), 1)
 
-        for profile_id in range(1, 4):
-            url = reverse("profile", kwargs={"profile_id": profile_id})
-            response = self.client_with_access_token.get(url)
+        url = reverse("profile", kwargs={"profile_id": shop_profile.id})
+        response = self.client_with_access_token.get(url)
 
-            self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
-            email_response = response.json()["email"]
-            email_db = ShopProfile.objects.get(pk=profile_id).user.email
-            self.assertEqual(email_response, email_db)
+        email_response = response.json()["email"]
+        email_db = ShopProfile.objects.get(pk=shop_profile.id).user.email
+        self.assertEqual(email_response, email_db)
 
     def test_get_profile_failure_access_denied_unauthorized(self):
         url = reverse("profile", kwargs={"profile_id": 2})
