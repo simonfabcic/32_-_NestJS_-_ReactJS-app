@@ -34,6 +34,15 @@
             "markers": "python_version >= '3.10'",
             "version": "==5.0.2"
         },
+        "django-configurations": {
+            "hashes": [
+                "sha256:6e5083757e2bbdf9bb7850567536b96a93515f6b17503d74928ff628db2e0e94",
+                "sha256:ceb84858da2dac846b15e715c2fd936cfc4c7917c074aff8d31700564093955e"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.8' and python_version < '4.0'",
+            "version": "==2.5.1"
+        },
         "django-cors-headers": {
             "hashes": [
                 "sha256:0b1fd19297e37417fc9f835d39e45c8c642938ddba1acce0c1753d3edef04f36",
