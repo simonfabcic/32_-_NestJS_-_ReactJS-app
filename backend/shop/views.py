@@ -11,9 +11,9 @@ from django.db import connection
 
 # from django.db.models import F
 
-from .serializers import ShopProfileSerializer
+from .serializers import ShopProfileSerializer, RoleSerializer
 
-from shop.models import ShopProfile
+from shop.models import ShopProfile, Role
 from core.models import CoreUser
 
 
@@ -217,3 +217,12 @@ def profile(request, profile_id):
                 )
             except Exception as e:
                 return Response({"message": str(e)}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(["PUT", "GET", "DELETE"])
+@permission_classes([IsAuthenticated])
+def getRoles(request):
+    roles = Role.objects.all()
+    serializer = RoleSerializer(roles, many=True)
+    # return Response({})
+    return Response(serializer.data)

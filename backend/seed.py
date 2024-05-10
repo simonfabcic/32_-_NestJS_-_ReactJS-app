@@ -1,9 +1,15 @@
 import os
 import django
 import random
+from configurations import importer
 
+os.environ.setdefault("DJANGO_CONFIGURATION", "Dev")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
+
+importer.install()
+
 django.setup()
+
 
 print("Start seeding...")
 
