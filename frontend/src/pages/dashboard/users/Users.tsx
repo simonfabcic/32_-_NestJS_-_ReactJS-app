@@ -89,7 +89,7 @@ const Users = () => {
         setPaginationPageNumbers(newNumbers)
       }
     } catch (err: any) {
-      console.error("During getting 'Profiles', err occurred: ", err.message, "\nMessage from server:", err.response.data);
+      console.error("During getting 'Profiles', err occurred: ", err.message, "\nMessage from server:", err?.response?.data);
       setLoadingState("Can't get profiles data. Contact admin...")
     }
   }
