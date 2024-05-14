@@ -9,10 +9,7 @@ from math import ceil
 from django.core.paginator import Paginator
 from django.db import connection
 
-# from django.db.models import F
-
 from .serializers import ShopProfileSerializer, RoleSerializer
-
 from shop.models import ShopProfile, Role
 from core.models import CoreUser
 
@@ -20,7 +17,7 @@ from core.models import CoreUser
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 # URL: /profiles?page=[int]&page_size=[int]&sort_by=[options]&sort_order=[asc|desc]
-def getProfiles(request):
+def get_profiles(request):
     headers = [
         {"key": "email", "label": "Email", "sorting": False},
         {"key": "full_name", "label": "Full name", "sorting": True},
@@ -63,8 +60,6 @@ def getProfiles(request):
     current_page = int(current_page)
     page_size = int(page_size)
 
-    # profiles = ShopProfile.objects.all().order_by(F(sort_by).desc())
-
     if sort_by == "full_name":
         profiles = ShopProfile.objects.all().order_by("first_name", "last_name")
     else:
@@ -73,7 +68,6 @@ def getProfiles(request):
     if sort_order == "DESC":
         profiles = profiles.reverse()
 
-    # https://docs.djangoproject.com/en/5.0/topics/pagination/
     p = Paginator(profiles, page_size)
     try:
         page = p.page(current_page)
@@ -108,7 +102,7 @@ def getProfiles(request):
 
 
 @api_view(["POST"])
-def profileNew(request):
+def profile_new(request):
     firstName = request.data.get("firstName")
     lastName = request.data.get("lastName")
     email = request.data.get("email")
@@ -175,7 +169,6 @@ def profile(request, profile_id):
                 )
             except ObjectDoesNotExist:
                 # in case if we manually create a new user, without creating profile
-                # QUESTION why this does not work for admin (with pk = 1)
                 if firstName is not None and lastName is not None:
                     user = CoreUser.objects.get(pk=int(userID))
                     ShopProfile.objects.create(
@@ -204,10 +197,8 @@ def profile(request, profile_id):
                 return Response({"message": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
         case "DELETE":
-            # profile = Profile.objects.delete(user__username=username)
             try:
                 user = CoreUser.objects.get(id=profile_id)
-                # profile = Profile.objects.get(user__id=user_id)
                 profile = ShopProfile.objects.get(user=user)
                 user.delete()
                 profile.delete()
@@ -221,8 +212,7 @@ def profile(request, profile_id):
 
 @api_view(["PUT", "GET", "DELETE"])
 @permission_classes([IsAuthenticated])
-def getRoles(request):
+def get_roles(request):
     roles = Role.objects.all()
     serializer = RoleSerializer(roles, many=True)
-    # return Response({})
     return Response(serializer.data)
