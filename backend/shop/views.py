@@ -102,7 +102,7 @@ def get_profiles(request):
 
 
 @api_view(["POST"])
-def profile_new(request):
+def profile_create(request):
     firstName = request.data.get("firstName")
     lastName = request.data.get("lastName")
     email = request.data.get("email")
