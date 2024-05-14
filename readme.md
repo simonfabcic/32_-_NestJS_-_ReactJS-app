@@ -8,7 +8,7 @@ Tis is a learning app for shop.
 - Frontend
     - React TypeScript
     - TailwindCSS 
-    - [Venv](https://vitejs.dev/)
+    - [Vite](https://vitejs.dev/)
 
 ## Installation
 1. Clone the repository: `git clone https://github.com/simonfabcic/32_-_NestJS_-_ReactJS-app`

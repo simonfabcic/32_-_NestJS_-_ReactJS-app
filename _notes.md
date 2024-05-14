@@ -4,6 +4,7 @@ TODO:
 
 TODO:
 I don't see any linters or github workflows
+https://docs.github.com/en/actions/using-workflows/about-workflows
 
 TODO:
 https://docs.djangoproject.com/en/5.0/howto/custom-management-commands/
