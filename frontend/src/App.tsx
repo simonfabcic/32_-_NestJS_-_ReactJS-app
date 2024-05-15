@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import HomePage from './pages/HomePage'
-import Header from './pages/components/Header'
-import Login from './pages/restricted/Login';
-import RegisterMe from './pages/restricted/RegisterMe';
-import PrivateRoute from './pages/utils/PrivateRoute';
+import HomePage from "./pages/HomePage";
+import Header from "./pages/components/Header";
+import Login from "./pages/restricted/Login";
+import RegisterMe from "./pages/restricted/RegisterMe";
+import PrivateRoute from "./pages/utils/PrivateRoute";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Orders from "./pages/Orders";
 import Users from "./pages/dashboard/users/Users";
@@ -23,8 +23,8 @@ export default function App() {
               <Header />
               <div className="px-3">
                 <Routes>
-                  <Route path='/'  element={<HomePage />} />
-                  <Route element={<RestrictedRoute />} >
+                  <Route path="/" element={<HomePage />} />
+                  <Route element={<RestrictedRoute />}>
                     <Route path="login" element={<Login />} />
                     <Route path="register" element={<RegisterMe />} />
                   </Route>
@@ -33,7 +33,10 @@ export default function App() {
                       <Route index element={<Dashboard />} />
                       <Route path="users" element={<Users />} />
                       <Route path="users/add-new" element={<RegisterMe />} />
-                      <Route path="users/:profile_id?" element={<RegisterMe />} />
+                      <Route
+                        path="users/:profile_id?"
+                        element={<RegisterMe />}
+                      />
                       <Route path="roles" element={<Roles />} />
                       <Route path="products" element={<Products />} />
                       <Route path="orders" element={<Orders />} />
@@ -49,5 +52,5 @@ export default function App() {
         </AuthProvider>
       </BrowserRouter>
     </div>
-  )
+  );
 }

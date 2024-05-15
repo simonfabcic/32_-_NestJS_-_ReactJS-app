@@ -1,13 +1,12 @@
-import React from 'react'
+import React from "react";
 
 const Dashboard = () => {
   return (
     <>
-    <div>Dashboard</div>
-    {/* TODO: daily sales chart */}
-
+      <div>Dashboard</div>
+      {/* TODO: daily sales chart */}
     </>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

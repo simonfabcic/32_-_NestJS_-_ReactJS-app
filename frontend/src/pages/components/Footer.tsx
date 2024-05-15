@@ -1,5 +1,5 @@
-import React from 'react'
-import { Link } from "react-router-dom"
+import React from "react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -12,12 +12,10 @@ const Footer = () => {
             className="h-11 py-2"
           />
         </Link>
-        <p>
-        &copy; 2023
-        </p>
+        <p>&copy; 2023</p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

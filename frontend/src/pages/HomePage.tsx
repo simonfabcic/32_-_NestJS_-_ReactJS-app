@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const HomePage = () => {
   return (
@@ -20,7 +20,7 @@ const HomePage = () => {
         <li>deploy NestJS to AWS ECS (Elastic Container Service)</li>
       </ol>
     </>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;

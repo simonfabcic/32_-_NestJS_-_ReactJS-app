@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const UserAddEdit = () => {
   return (
@@ -6,7 +6,7 @@ const UserAddEdit = () => {
       <div>UserAddEdit</div>
       {/* TODO: ad or changed avatar */}
     </>
-  )
-}
+  );
+};
 
-export default UserAddEdit
+export default UserAddEdit;

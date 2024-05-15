@@ -1,24 +1,23 @@
-import { Link, NavLink, useNavigate, useLocation } from "react-router-dom"
-import { useContext, useState } from "react"
-import AuthContext from "../context/AuthContext"
-import Navbar from "../dashboard/Navbar"
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { useContext, useState } from "react";
+import AuthContext from "../context/AuthContext";
+import Navbar from "../dashboard/Navbar";
 
 const Header = () => {
+  let { userAccessToken: loggedInUser, logoutUser } = useContext(AuthContext);
 
-  let { userAccessToken: loggedInUser, logoutUser } = useContext(AuthContext)
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [showNavbar, setSetShowNavbar] = useState(false);
 
-  const location =  useLocation()
-  const navigate = useNavigate()
-  const [showNavbar, setSetShowNavbar] = useState(false)
-
-  const styleLink = " "
+  const styleLink = " ";
 
   return (
     <div className="h-20 bg-gray-200 flex flex-col justify-end rounded-b-2xl overflow-hidden">
-      {true && 
-        <Navbar setShowNavbar={setSetShowNavbar} showNavbar= {showNavbar} />
-      }
-      <div className="flex justify-between h-11 content-evenly w-full overflow-hidden"> 
+      {true && (
+        <Navbar setShowNavbar={setSetShowNavbar} showNavbar={showNavbar} />
+      )}
+      <div className="flex justify-between h-11 content-evenly w-full overflow-hidden">
         <div className="flex">
           <div
             className="text-2xl pl-3 my-auto cursor-pointer"
@@ -38,9 +37,7 @@ const Header = () => {
           <NavLink
             to="/"
             className={
-              styleLink +
-              (location.pathname === "/" ? "font-bold " : " ") + 
-              ""
+              styleLink + (location.pathname === "/" ? "font-bold " : " ") + ""
             }
           >
             Home
@@ -49,7 +46,7 @@ const Header = () => {
             to="dashboard"
             className={
               styleLink +
-              (location.pathname === "/dashboard" ? "font-bold " : " ") + 
+              (location.pathname === "/dashboard" ? "font-bold " : " ") +
               ""
             }
           >
@@ -57,10 +54,7 @@ const Header = () => {
           </NavLink>
           {loggedInUser ? (
             <>
-              <button
-                type="button"
-                onClick={logoutUser}
-              >
+              <button type="button" onClick={logoutUser}>
                 Logout
               </button>
               {/* TODO if users image present, show image */}
@@ -73,7 +67,11 @@ const Header = () => {
                 className="w-6 h-6 cursor-pointer"
                 onClick={() => navigate("/me")}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                />
               </svg>
             </>
           ) : (
@@ -82,7 +80,7 @@ const Header = () => {
                 to="login"
                 className={
                   styleLink +
-                  (location.pathname === "/login" ? "font-bold " : " ") + 
+                  (location.pathname === "/login" ? "font-bold " : " ") +
                   ""
                 }
               >
@@ -92,7 +90,7 @@ const Header = () => {
                 to="register"
                 className={
                   styleLink +
-                  (location.pathname === "/register" ? "font-bold " : " ") + 
+                  (location.pathname === "/register" ? "font-bold " : " ") +
                   ""
                 }
               >
@@ -103,7 +101,7 @@ const Header = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

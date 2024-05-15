@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const Orders = () => {
   return (
@@ -7,7 +7,7 @@ const Orders = () => {
       {/* TODO: table of orders */}
       {/* TODO: export to csv */}
     </>
-  )
-}
+  );
+};
 
-export default Orders
+export default Orders;
