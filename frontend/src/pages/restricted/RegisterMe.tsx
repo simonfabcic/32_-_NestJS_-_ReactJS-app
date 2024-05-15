@@ -23,8 +23,11 @@ const Register = () => {
     // Get user profile, if parameter present -----
     useEffect(() => {
         if (location.pathname.endsWith("/add-new")) return;
-        if (paramProfileId) getProfile();
-        if (loggedInUser) setFormEmail(loggedInUser?.email);
+        if (paramProfileId) {
+            getProfile();
+        } else if (loggedInUser) {
+            setFormEmail(loggedInUser?.email);
+        }
     }, []);
     let getProfile = async () => {
         if (paramProfileId) {
@@ -73,7 +76,7 @@ const Register = () => {
                             lastName: event.currentTarget.lastName.value,
                             email: event.currentTarget.email.value,
                             password: event.currentTarget.password.value,
-                            userID: paramProfileId,
+                            profileID: loggedInUser?.user_id,
                         }),
                     }
                 );
@@ -105,7 +108,7 @@ const Register = () => {
                         lastName: event.currentTarget.lastName.value,
                         email: event.currentTarget.email.value,
                         password: event.currentTarget.password.value,
-                        userID: paramProfileId,
+                        userID: loggedInUser?.user_id,
                     }
                 );
                 if (response.statusText === "OK") {

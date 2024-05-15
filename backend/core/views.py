@@ -13,11 +13,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
         # Add custom claims
-        try:
-            profile = ShopProfile.objects.get(user=user)
-            token["profile_id"] = profile.pk
-        except:
-            token["profile_id"] = None
+        token["user_id"] = user.pk
         token["username"] = user.username
         token["email"] = user.email
 

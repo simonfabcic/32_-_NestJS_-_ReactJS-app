@@ -11,45 +11,77 @@ Tis is a learning app for shop.
     - [Vite](https://vitejs.dev/)
 
 ## Installation
-1. Clone the repository: `git clone https://github.com/simonfabcic/32_-_NestJS_-_ReactJS-app`
+1. Clone the repository:  
+    ```
+    git clone https://github.com/simonfabcic/32_-_NestJS_-_ReactJS-app
+    ```
 
 ### Backend
-1. Go into backend directory:
-    `cd .\32_-_NestJS_-_ReactJS-app\backend\`
+1. Go into backend directory:  
+    ```
+    cd .\32_-_NestJS_-_ReactJS-app\backend\
+    ```
 1. Prepare virtual environment (Python 3.12 required):
-    - Install `pipenv`:
-        `pip install pipenv`
-    - Create virtual environment and install dependencies:
-        `pipenv install -d` - will install dependencies from `Pipfile.lock`
-    - To activate this project's virtualenv, run:
-        `pipenv shell`
+    - Install `pipenv`:  
+        ```
+        pip install pipenv
+        ```
+    - Create virtual environment and install dependencies from `Pipfile.lock`:  
+        ```
+        pipenv install -d
+        ```
+    - To activate this project's virtualenv, run:  
+        ```
+        pipenv shell
+        ```
 1. Applies migrations to your database:
-    `python manage.py migrate`
+    ```
+    python manage.py migrate
+    ```
 1. [Optional]
     - To create super user run command and follow the prompts:
-        `python manage.py createsuperuser`
+        ```
+        python manage.py createsuperuser
+        ```
     - seed data to DB:
-        `python seed.py`
+        ```
+        python seed.py
+        ```
 1. Run server in development mode on port 8456
-    `python manage.py runserver 8456`
-
+    ```
+    python manage.py runserver 8456
+    ```
 ### Frontend
 1. Go into frontend directory:
-    `cd .\32_-_NestJS_-_ReactJS-app\frontend\`
+    ```
+    cd .\32_-_NestJS_-_ReactJS-app\frontend\
+    ```
 1. Install packages with npm:
-    `npm install`
+    ```
+    npm install
+    ```
 1. Run dev environment:
-    `npm run dev`
+    ```
+    npm run dev
+    ```
 
 ## Tests
 ### Backend
 1. Go into backend directory:
-    `cd .\32_-_NestJS_-_ReactJS-app\backend\`
+    ```
+    cd .\32_-_NestJS_-_ReactJS-app\backend\
+    ```
 1. And run:
-    `python manage.py test`
+    ```
+    python manage.py test
+    ```
 
 ### Frontend
 1. Go into frontend directory:
-    `cd .\32_-_NestJS_-_ReactJS-app\frontend\`
+    ```
+    cd .\32_-_NestJS_-_ReactJS-app\frontend\
+    ```
 1. And run:
-    `npm run test`
+    ```
+    npm run test
+    ```
