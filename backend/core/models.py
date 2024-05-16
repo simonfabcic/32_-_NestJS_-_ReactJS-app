@@ -36,8 +36,10 @@ class CoreProfile(models.Model):
     user = models.OneToOneField(CoreUser, on_delete=models.CASCADE, null=False)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    # avatar = models.ImageField(upload_to='images/') # https://codinggear.org/how-to-upload-images-in-django/ # TODO add avatar
-    # verifiedEmail = models.BooleanField(default=False)
+    avatar = models.ImageField(
+        max_length=None, default="", upload_to="images/avatars"
+    )  # TODO check if are 'max_length' and 'default' needed?
+    # verifiedEmail = models.BooleanField(default=False) # TODO
 
     class Meta:
         abstract = True  # does not make the table, but you can inherit this model
