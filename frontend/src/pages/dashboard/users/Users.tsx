@@ -31,6 +31,7 @@ const Users = () => {
     };
   }
 
+  const baseURL = "http://127.0.0.1:8456";
   let api = useAxios();
   const navigate = useNavigate();
 
@@ -182,9 +183,18 @@ const Users = () => {
                       (paginationWantedPage - 1) * paginationPageSize}
                   </td>
                   {tableData.headers.map((header) => (
-                    <td key={header.key}>
+                    <td
+                      key={header.key} 
+                      className={header.key === "avatar" ? "h-full" : ""}
+                    >
                       {row.hasOwnProperty(header.key)
-                        ? row[header.key as keyof Row]
+                        ? (
+                          header.key === "avatar"
+                          ? 
+                              <img src={`${baseURL+row[header.key as keyof Row]}`} className="h-8 rounded-lg block mx-auto"/>
+                            
+                          : row[header.key as keyof Row]
+                        )
                         : "N/A"}
                     </td>
                   ))}

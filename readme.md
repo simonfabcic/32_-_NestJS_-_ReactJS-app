@@ -30,7 +30,7 @@ Tis is a learning app for shop.
         ```
         pipenv install -d
         ```
-    - To activate this project's virtualenv, run:  
+    - To activate this project's virtual env, run:  
         ```
         pipenv shell
         ```
