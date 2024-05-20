@@ -9,7 +9,7 @@ interface AuthTokens {
   refresh: string;
 }
 
-const baseURL = "http://127.0.0.1:8456";
+const baseURL = import.meta.env.VITE_BACKEND_BASE_URL;
 // const baseURL = process.env.REACT_APP_API_ENDPOINT
 // const baseURL = import.meta.env.VITE_REACT_APP_API_ENDPOINT || 'default_value_if_not_defined';
 

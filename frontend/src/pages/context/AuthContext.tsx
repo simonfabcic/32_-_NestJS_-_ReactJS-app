@@ -18,6 +18,8 @@ interface AuthContextType {
   logoutUser: () => void;
 }
 
+const baseURL = import.meta.env.VITE_BACKEND_BASE_URL;
+
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 export default AuthContext;
 
@@ -41,7 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     console.log("event: ", event);
     console.log("event.currentTarget: ", event.currentTarget);
     try {
-      let response = await fetch("http://127.0.0.1:8456/core-api-v1/token/", {
+      let response = await fetch(baseURL + "/core-api-v1/token/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

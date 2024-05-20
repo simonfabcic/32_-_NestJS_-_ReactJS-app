@@ -14,8 +14,8 @@ pyjwt = "==2.8.0"
 sqlparse = "==0.4.4"
 typing-extensions = "==4.10.0"
 tzdata = "==2024.1"
-django-configurations = "==2.5.1"
-pillow = "==10.3.0"
+django-configurations = "*"
+pillow = "*"
 
 [dev-packages]
 factory-boy = "==3.3.0"

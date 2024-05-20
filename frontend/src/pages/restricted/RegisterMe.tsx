@@ -8,6 +8,8 @@ const Register = () => {
   let api = useAxios();
   let { userAccessToken: loggedInUser } = useContext(AuthContext);
   const navigate = useNavigate();
+  const baseURL = import.meta.env.VITE_BACKEND_BASE_URL;
+
 
   const paramProfileId = useParams().profile_id || loggedInUser?.profile_id;
   const location = useLocation();
@@ -60,7 +62,7 @@ const Register = () => {
     ) {
       try {
         let response = await fetch(
-          "http://127.0.0.1:8456/shop-api-v1/profile/new",
+          baseURL + "/shop-api-v1/profile/new",
           {
             method: "POST",
             headers: {
