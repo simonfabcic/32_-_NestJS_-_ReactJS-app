@@ -31,9 +31,10 @@ const Users = () => {
     };
   }
 
-  const baseURL = "http://127.0.0.1:8456";
+  const baseURL = import.meta.env.VITE_BACKEND_BASE_URL;
   let api = useAxios();
   const navigate = useNavigate();
+  const paginationPageSize = 100;
 
   const [tableData, setTableData] = useState<ApiResponseProfiles>({
     headers: [],
@@ -52,16 +53,56 @@ const Users = () => {
   const [sortingColumn, setSortingColumn] = useState("role");
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("ASC");
   const [loadingState, setLoadingState] = useState("Loading...");
-
   const [deleteButtonPressed, setDeleteButtonPressed] = useState(false);
-  const [deleteButtonPressedOnUserId, setDeleteButtonPressedOnUserId] =
-    useState(-1);
+  const [deleteButtonPressedOnUserId, setDeleteButtonPressedOnUserId] = useState(-1);
   const [paginationWantedPage, setPaginationWantedPage] = useState(1);
-  const [paginationPageNumbers, setPaginationPageNumbers] = useState<number[]>(
-    [],
-  );
+  const [paginationPageNumbers, setPaginationPageNumbers] = useState<number[]>([]);
 
-  const paginationPageSize = 100;
+  interface GeneratedCellProps {
+    row: Row;
+    header: Header;
+  }
+  const GeneratedCell: React.FC<GeneratedCellProps> = ({row, header}) => {
+    return (
+      <td
+        key={header.key} 
+        className={header.key === "avatar" ? "h-full" : ""}
+      >
+      {row.hasOwnProperty(header.key)
+        ? (
+          header.key === "avatar"
+          ? 
+              <img src={`${baseURL+row[header.key as keyof Row]}`} className="h-8 rounded-lg block mx-auto" alt="avatar"/>
+          : row[header.key as keyof Row]
+        )
+        : "N/A"}
+      </td>
+    )
+  }
+
+  interface GeneratedCellsProps {
+    row: Row;
+  }
+  const GeneratedCells: React.FC<GeneratedCellsProps> = ({row}) => {
+    let data = (
+      tableData.headers.map((header) => (
+        <td
+          key={header.key} 
+          className={header.key === "avatar" ? "h-full" : ""}
+        >
+        {row.hasOwnProperty(header.key)
+          ? (
+            header.key === "avatar"
+            ? <img src={`${baseURL+row[header.key as keyof Row]}`} className="h-8 rounded-lg block mx-auto" alt="avatar"/>
+            : row[header.key as keyof Row]
+          )
+          : "N/A"}
+        </td>
+      ))
+    )
+    return data
+  }
+
 
   // Get all profiles
   useEffect(() => {
@@ -182,22 +223,24 @@ const Users = () => {
                       1 +
                       (paginationWantedPage - 1) * paginationPageSize}
                   </td>
-                  {tableData.headers.map((header) => (
+                  {/* {tableData.headers.map((header) => (
                     <td
                       key={header.key} 
                       className={header.key === "avatar" ? "h-full" : ""}
                     >
-                      {row.hasOwnProperty(header.key)
-                        ? (
-                          header.key === "avatar"
-                          ? 
-                              <img src={`${baseURL+row[header.key as keyof Row]}`} className="h-8 rounded-lg block mx-auto"/>
-                            
-                          : row[header.key as keyof Row]
-                        )
-                        : "N/A"}
+                    {row.hasOwnProperty(header.key)
+                      ? (
+                        header.key === "avatar"
+                        ? <img src={`${baseURL+row[header.key as keyof Row]}`} className="h-8 rounded-lg block mx-auto"/>
+                        : row[header.key as keyof Row]
+                      )
+                      : "N/A"}
                     </td>
-                  ))}
+                  ))} */}
+                  {/* {tableData.headers.map((header) => (
+                    <GeneratedCell key={header.key} row={row} header={header} />
+                  ))} */}
+                  <GeneratedCells row={row}/>
                   <td className="space-x-2">
                     <button
                       className="w-10 h-8 bg-yellow-300 rounded"
