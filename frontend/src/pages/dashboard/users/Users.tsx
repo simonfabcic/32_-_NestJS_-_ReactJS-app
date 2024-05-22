@@ -10,6 +10,7 @@ const Users = () => {
   }
 
   interface Row {
+    avatar: string;
     id: number;
     email: string;
     full_name: string;
@@ -58,51 +59,22 @@ const Users = () => {
   const [paginationWantedPage, setPaginationWantedPage] = useState(1);
   const [paginationPageNumbers, setPaginationPageNumbers] = useState<number[]>([]);
 
-  interface GeneratedCellProps {
-    row: Row;
-    header: Header;
-  }
-  const GeneratedCell: React.FC<GeneratedCellProps> = ({row, header}) => {
+  const GenerateCellImg: React.FC<{data:string}> = ({data}) => {
     return (
-      <td
-        key={header.key} 
-        className={header.key === "avatar" ? "h-full" : ""}
-      >
-      {row.hasOwnProperty(header.key)
-        ? (
-          header.key === "avatar"
-          ? 
-              <img src={`${baseURL+row[header.key as keyof Row]}`} className="h-8 rounded-lg block mx-auto" alt="avatar"/>
-          : row[header.key as keyof Row]
-        )
-        : "N/A"}
+      <td className="h-full">
+        {data === null
+        ? "/"
+        : <img src={baseURL+data} className="h-8 rounded-lg block mx-auto" alt="avatar" />}
+      </td>
+    )
+  }  
+  const GenerateCellText: React.FC<{data:string | number}> = ({data}) => {
+    return (
+      <td>
+        {data}
       </td>
     )
   }
-
-  interface GeneratedCellsProps {
-    row: Row;
-  }
-  const GeneratedCells: React.FC<GeneratedCellsProps> = ({row}) => {
-    let data = (
-      tableData.headers.map((header) => (
-        <td
-          key={header.key} 
-          className={header.key === "avatar" ? "h-full" : ""}
-        >
-        {row.hasOwnProperty(header.key)
-          ? (
-            header.key === "avatar"
-            ? <img src={`${baseURL+row[header.key as keyof Row]}`} className="h-8 rounded-lg block mx-auto" alt="avatar"/>
-            : row[header.key as keyof Row]
-          )
-          : "N/A"}
-        </td>
-      ))
-    )
-    return data
-  }
-
 
   // Get all profiles
   useEffect(() => {
@@ -223,24 +195,11 @@ const Users = () => {
                       1 +
                       (paginationWantedPage - 1) * paginationPageSize}
                   </td>
-                  {/* {tableData.headers.map((header) => (
-                    <td
-                      key={header.key} 
-                      className={header.key === "avatar" ? "h-full" : ""}
-                    >
-                    {row.hasOwnProperty(header.key)
-                      ? (
-                        header.key === "avatar"
-                        ? <img src={`${baseURL+row[header.key as keyof Row]}`} className="h-8 rounded-lg block mx-auto"/>
-                        : row[header.key as keyof Row]
-                      )
-                      : "N/A"}
-                    </td>
-                  ))} */}
-                  {/* {tableData.headers.map((header) => (
-                    <GeneratedCell key={header.key} row={row} header={header} />
-                  ))} */}
-                  <GeneratedCells row={row}/>
+                  {tableData.headers.map((header) => (
+                    header.key === "avatar"
+                    ? <GenerateCellImg key={header.key} data={row[header.key]} />
+                    : <GenerateCellText key={header.key} data={row[header.key as keyof Row]} />
+                  ))}
                   <td className="space-x-2">
                     <button
                       className="w-10 h-8 bg-yellow-300 rounded"
