@@ -59,19 +59,19 @@ const Users = () => {
   const [paginationWantedPage, setPaginationWantedPage] = useState(1);
   const [paginationPageNumbers, setPaginationPageNumbers] = useState<number[]>([]);
 
-  const GenerateCellImg: React.FC<{data:string}> = ({data}) => {
+  const AvatarCell: React.FC<{avatar_image_src_url:string}> = ({avatar_image_src_url}) => {
     return (
       <td className="h-full">
-        {data === null
+        {avatar_image_src_url === null
         ? "/"
-        : <img src={baseURL+data} className="h-8 rounded-lg block mx-auto" alt="avatar" />}
+        : <img src={baseURL+avatar_image_src_url} className="h-8 rounded-lg block mx-auto" alt="avatar" />}
       </td>
     )
   }  
-  const GenerateCellText: React.FC<{data:string | number}> = ({data}) => {
+  const TextCell: React.FC<{text:string | number}> = ({text}) => {
     return (
       <td>
-        {data}
+        {text}
       </td>
     )
   }
@@ -197,8 +197,8 @@ const Users = () => {
                   </td>
                   {tableData.headers.map((header) => (
                     header.key === "avatar"
-                    ? <GenerateCellImg key={header.key} data={row[header.key]} />
-                    : <GenerateCellText key={header.key} data={row[header.key as keyof Row]} />
+                    ? <AvatarCell key={header.key} avatar_image_src_url={row[header.key]} />
+                    : <TextCell key={header.key} text={row[header.key as keyof Row]} />
                   ))}
                   <td className="space-x-2">
                     <button
