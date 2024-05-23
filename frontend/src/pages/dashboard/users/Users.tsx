@@ -83,7 +83,7 @@ const Users = () => {
   let getProfiles = async () => {
     try {
       let response = await api.get(
-        `/shop-api-v1/profiles?offset="0"&page=${paginationWantedPage}&page_size=${paginationPageSize}&sort_by=${sortingColumn}&sort_order=${sortOrder}`,
+        `/shop-api-v1/profiles?offset=0&page=${paginationWantedPage}&page_size=${paginationPageSize}&sort_by=${sortingColumn}&sort_order=${sortOrder}`,
       );
       if (response.status === 200) {
         setTableData(() => response.data);
