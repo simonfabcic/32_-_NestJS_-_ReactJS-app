@@ -1,36 +1,40 @@
 # Shop app
+
 Tis is a learning app for shop.
 
 ## Technologies
-- Backend
-    - Django
-    - Django REST framework
-- Frontend
-    - React TypeScript
-    - TailwindCSS 
-    - [Vite](https://vitejs.dev/)
+
+-   Backend
+    -   Django
+    -   Django REST framework
+-   Frontend
+    -   React TypeScript
+    -   TailwindCSS
+    -   [Vite](https://vitejs.dev/)
 
 ## Installation
-1. Clone the repository:  
+
+1. Clone the repository:
     ```
     git clone https://github.com/simonfabcic/32_-_NestJS_-_ReactJS-app
     ```
 
 ### Backend
-1. Go into backend directory:  
+
+1. Go into backend directory:
     ```
     cd .\32_-_NestJS_-_ReactJS-app\backend\
     ```
 1. Prepare virtual environment (Python 3.12 required):
-    - Install `pipenv`:  
+    - Install `pipenv`:
         ```
         pip install pipenv
         ```
-    - Create virtual environment and install dependencies from `Pipfile.lock`:  
+    - Create virtual environment and install dependencies from `Pipfile.lock`:
         ```
         pipenv install -d
         ```
-    - To activate this project's virtualenv, run:  
+    - To activate this project's virtualenv, run:
         ```
         pipenv shell
         ```
@@ -51,7 +55,9 @@ Tis is a learning app for shop.
     ```
     python manage.py runserver 8456
     ```
+
 ### Frontend
+
 1. Go into frontend directory:
     ```
     cd .\32_-_NestJS_-_ReactJS-app\frontend\
@@ -66,7 +72,9 @@ Tis is a learning app for shop.
     ```
 
 ## Tests
+
 ### Backend
+
 1. Go into backend directory:
     ```
     cd .\32_-_NestJS_-_ReactJS-app\backend\
@@ -77,6 +85,7 @@ Tis is a learning app for shop.
     ```
 
 ### Frontend
+
 1. Go into frontend directory:
     ```
     cd .\32_-_NestJS_-_ReactJS-app\frontend\

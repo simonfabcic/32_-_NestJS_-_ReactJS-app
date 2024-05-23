@@ -1,25 +1,26 @@
-version: '3' # version
+version: "3" # version
 services:
-  db: # server name
-    image: postgres 
-    container_name: mycontainername # I don't konw if this works
-    restart: always
-    volumes:
-      - ./data/db:/var/lib/postgresql/data
-      # ./data/db - location on physical machine
-      # /var/lib/postgresql/data <- location in PostgreSQL container
-    ports:
-      - 5432:5432 # port forwarding
+    db: # server name
+        image: postgres
+        container_name: mycontainername # I don't konw if this works
+        restart: always
+        volumes:
+            - ./data/db:/var/lib/postgresql/data
+            # ./data/db - location on physical machine
+            # /var/lib/postgresql/data <- location in PostgreSQL container
+        ports:
+            - 5432:5432 # port forwarding
 
-    environment:
-      - POSTGRES_DB=testDB # database
-      - POSTGRES_USER=postgres # username
-      - POSTGRES_PASSWORD=postgres # password
+        environment:
+            - POSTGRES_DB=testDB # database
+            - POSTGRES_USER=postgres # username
+            - POSTGRES_PASSWORD=postgres # password
 
-  # adminer is graphical interface for managing databases
-  # if you want to create this service, uncomment next lines (when container running, adminer is accessable at `localhost:8080`):
-  # adminer:
-  #  image: adminer
-  #  restart: always
-  #  ports:
-  #    - 8080:8080
+
+    # adminer is graphical interface for managing databases
+    # if you want to create this service, uncomment next lines (when container running, adminer is accessable at `localhost:8080`):
+    # adminer:
+    #  image: adminer
+    #  restart: always
+    #  ports:
+    #    - 8080:8080
