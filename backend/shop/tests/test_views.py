@@ -17,6 +17,7 @@ class TestViews(TestCase):
             "lastName": "Doe",
             "email": "existing@example.com",
             "password": "secure_password",
+            "avatar": "/dummy_image.com/259x267",
         }
         self.user = CoreUserFactory()
 
@@ -160,3 +161,24 @@ class TestViews(TestCase):
             url,
         )
         self.assertEqual(response.status_code, 401)
+
+    def test_shop_profile_get_img_url(self):
+        shop_profile = ShopProfileFactory()
+
+        url = reverse("profile", kwargs={"profile_id": shop_profile.id})
+        response = self.client_with_access_token.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        avatar_response = response.json()["avatar"]
+        avatar_db = ShopProfile.objects.get(pk=shop_profile.id).avatar
+        self.assertEqual(avatar_response, avatar_db.url)
+
+    def test_shop_profile_no_img_url(self):
+        shop_profile = ShopProfileFactory(avatar=None)
+
+        url = reverse("profile", kwargs={"profile_id": shop_profile.id})
+        response = self.client_with_access_token.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        avatar_response = response.json()["avatar"]
+        self.assertEqual(avatar_response, None)

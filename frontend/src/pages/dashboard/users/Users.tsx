@@ -10,6 +10,7 @@ const Users = () => {
   }
 
   interface Row {
+    avatar: string;
     id: number;
     email: string;
     full_name: string;
@@ -31,8 +32,10 @@ const Users = () => {
     };
   }
 
+  const baseURL = import.meta.env.VITE_BACKEND_BASE_URL;
   let api = useAxios();
   const navigate = useNavigate();
+  const paginationPageSize = 100;
 
   const [tableData, setTableData] = useState<ApiResponseProfiles>({
     headers: [],
@@ -51,16 +54,27 @@ const Users = () => {
   const [sortingColumn, setSortingColumn] = useState("role");
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("ASC");
   const [loadingState, setLoadingState] = useState("Loading...");
-
   const [deleteButtonPressed, setDeleteButtonPressed] = useState(false);
-  const [deleteButtonPressedOnUserId, setDeleteButtonPressedOnUserId] =
-    useState(-1);
+  const [deleteButtonPressedOnUserId, setDeleteButtonPressedOnUserId] = useState(-1);
   const [paginationWantedPage, setPaginationWantedPage] = useState(1);
-  const [paginationPageNumbers, setPaginationPageNumbers] = useState<number[]>(
-    [],
-  );
+  const [paginationPageNumbers, setPaginationPageNumbers] = useState<number[]>([]);
 
-  const paginationPageSize = 100;
+  const AvatarCell: React.FC<{avatar_image_src_url:string}> = ({avatar_image_src_url}) => {
+    return (
+      <td className="h-full">
+        {avatar_image_src_url === null
+        ? "/"
+        : <img src={baseURL+avatar_image_src_url} className="h-8 rounded-lg block mx-auto" alt="avatar" />}
+      </td>
+    )
+  }  
+  const TextCell: React.FC<{text:string | number}> = ({text}) => {
+    return (
+      <td>
+        {text}
+      </td>
+    )
+  }
 
   // Get all profiles
   useEffect(() => {
@@ -69,7 +83,7 @@ const Users = () => {
   let getProfiles = async () => {
     try {
       let response = await api.get(
-        `/shop-api-v1/profiles?offset="0"&page=${paginationWantedPage}&page_size=${paginationPageSize}&sort_by=${sortingColumn}&sort_order=${sortOrder}`,
+        `/shop-api-v1/profiles?offset=0&page=${paginationWantedPage}&page_size=${paginationPageSize}&sort_by=${sortingColumn}&sort_order=${sortOrder}`,
       );
       if (response.status === 200) {
         setTableData(() => response.data);
@@ -182,11 +196,9 @@ const Users = () => {
                       (paginationWantedPage - 1) * paginationPageSize}
                   </td>
                   {tableData.headers.map((header) => (
-                    <td key={header.key}>
-                      {row.hasOwnProperty(header.key)
-                        ? row[header.key as keyof Row]
-                        : "N/A"}
-                    </td>
+                    header.key === "avatar"
+                    ? <AvatarCell key={header.key} avatar_image_src_url={row[header.key]} />
+                    : <TextCell key={header.key} text={row[header.key as keyof Row]} />
                   ))}
                   <td className="space-x-2">
                     <button

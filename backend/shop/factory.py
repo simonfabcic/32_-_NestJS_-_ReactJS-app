@@ -11,3 +11,4 @@ class ShopProfileFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(CoreUserFactory)
     first_name = factory.Faker("name")
     last_name = factory.Faker("last_name")
+    avatar = factory.Faker("image_url")

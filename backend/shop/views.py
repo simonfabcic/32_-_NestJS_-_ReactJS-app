@@ -19,6 +19,7 @@ from core.models import CoreUser
 # URL: /profiles?page=[int]&page_size=[int]&sort_by=[options]&sort_order=[asc|desc]
 def get_profiles(request):
     headers = [
+        {"key": "avatar", "label": "Avatar", "sorting": False},
         {"key": "email", "label": "Email", "sorting": False},
         {"key": "full_name", "label": "Full name", "sorting": True},
         {"key": "role", "label": "Role", "sorting": True},

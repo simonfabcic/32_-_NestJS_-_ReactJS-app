@@ -30,6 +30,7 @@ class ShopProfileSerializer(ModelSerializer):
             "last_name",
             "role",
             "username",
+            "avatar",
             # 'actions',
         ]
 
