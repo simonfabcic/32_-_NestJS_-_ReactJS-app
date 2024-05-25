@@ -6,3 +6,4 @@ tutorial/**
 backend/db.sqlite3
 frontend/coverage/**
 backend/media/**
+skillupmentor-tutorial-frontend/**
