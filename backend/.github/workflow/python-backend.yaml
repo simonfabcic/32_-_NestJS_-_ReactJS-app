@@ -1,60 +1,58 @@
 name: shop
 
 on:
-  push:
-    branches:
-      - '*'
-  pull_request:
-    branches:
+    push:
+        branches:
+            - "*"
+    pull_request:
+        branches:
 
 jobs:
-  build:
+    build:
+        runs-on: ubuntu-latest
 
-    runs-on: ubuntu-latest
+        services:
+            postgres:
+                image: postgres:11
+                env:
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: postgres
+                    POSTGRES_DB: github_actions
+                ports:
+                    - 5432:5432
+                # needed because the postgres container does not provide a healthcheck
+                options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
-    services:
-      postgres:
-        image: postgres:11
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: github_actions
-        ports:
-          - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python 3.10.14
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.10.14
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pipenv
-          if [ -f Pipfile ]; then pipenv install -d; fi
-          cp backend/backend/testsettings.py backend/config.py
-      - name: Isort
-        uses: isort/isort-action@master
-        with:
-          requirementsFiles: "requirements.txt"
-      - name: Lint with flake8
-        run: |
-          # stop the build if there are Python syntax errors or undefined names
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
-      - name: Black
-        uses: psf/black@stable
-        with:
-          options: "--check --verbose"
-          src: "./src"
-      - name: Run migrations
-        run: python src/manage.py migrate
-      - name: Test
-        run: |
-          ./manage.py test core shop
-        working-directory: ./backend
-        
+        steps:
+            - uses: actions/checkout@v3
+            - name: Set up Python 3.10.14
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.10.14
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install pipenv
+                  if [ -f Pipfile ]; then pipenv install -d; fi
+                  cp backend/backend/testsettings.py backend/config.py
+            - name: Isort
+              uses: isort/isort-action@master
+              with:
+                  requirementsFiles: "requirements.txt"
+            - name: Lint with flake8
+              run: |
+                  # stop the build if there are Python syntax errors or undefined names
+                  flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+                  # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+                  flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
+            - name: Black
+              uses: psf/black@stable
+              with:
+                  options: "--check --verbose"
+                  src: "./src"
+            - name: Run migrations
+              run: python src/manage.py migrate
+            - name: Test
+              run: |
+                  ./manage.py test core shop
+              working-directory: ./backend

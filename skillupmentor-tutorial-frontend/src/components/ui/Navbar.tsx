@@ -32,7 +32,7 @@ const Navbar: FC = () => {
       <header>
         <nav className="navbar navbar-expand-lg bg-light">
           <div className="container-xxl p-4 pb-0">
-            <Link className='navbar-brand' to={routes.HOME}>
+            <Link className="navbar-brand" to={routes.HOME}>
               <img src="/images/logo.png" alt="SkillUp Mentor" width={123} />
             </Link>
             <button
@@ -48,7 +48,8 @@ const Navbar: FC = () => {
             </button>
             <div
               className="collapse navbar-collapse justify-content-end align-items-center"
-              id="navbarTogglerDemo02">
+              id="navbarTogglerDemo02"
+            >
               <ul className="navbar-nav mb-2 mb-lg-0">
                 <li className="nav-item pe-4">
                   <NavLink className="nav-link" to={routes.HOME}>
@@ -62,10 +63,10 @@ const Navbar: FC = () => {
                 </li>
                 {authStore.user ? (
                   <li className="nav-item pe-4">
-                  <Button className="btn btn-dark" onClick={signout}>
-                    Signout
-                  </Button>
-                </li>
+                    <Button className="btn btn-dark" onClick={signout}>
+                      Signout
+                    </Button>
+                  </li>
                 ) : (
                   <>
                     <li className="nav-item pe-4">
@@ -86,14 +87,12 @@ const Navbar: FC = () => {
         </nav>
       </header>
       {showError && (
-        <ToastContainer className='p-3' position='top-end'>
+        <ToastContainer className="p-3" position="top-end">
           <Toast onClose={() => setShowError(false)} show={showError}>
             <Toast.Header>
-              <strong className='me-suto text-danger'>Error</strong>
+              <strong className="me-suto text-danger">Error</strong>
             </Toast.Header>
-            <Toast.Body className='text-danger gb-light'>
-              {apiError}
-            </Toast.Body>
+            <Toast.Body className="text-danger gb-light">{apiError}</Toast.Body>
           </Toast>
         </ToastContainer>
       )}

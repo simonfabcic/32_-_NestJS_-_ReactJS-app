@@ -1,9 +1,9 @@
 {
     "headers": [
-        {"key": "avatar", "label": "Avatar", "sorting": false},
-        {"key": "email", "label": "Email", "sorting": false},
-        {"key": "full_name", "label": "Full name", "sorting": true},
-        {"key": "role", "label": "Role", "sorting": true}
+        { "key": "avatar", "label": "Avatar", "sorting": false },
+        { "key": "email", "label": "Email", "sorting": false },
+        { "key": "full_name", "label": "Full name", "sorting": true },
+        { "key": "role", "label": "Role", "sorting": true }
     ],
     "pagination_description": {
         "current_page": 1,
