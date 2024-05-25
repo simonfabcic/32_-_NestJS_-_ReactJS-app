@@ -1,6 +1,6 @@
 # Shop app
 
-Tis is a learning app for shop.
+This is a learning app for shop.
 
 ## Technologies
 
