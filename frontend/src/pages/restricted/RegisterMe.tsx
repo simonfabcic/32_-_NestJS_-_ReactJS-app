@@ -18,6 +18,7 @@ const Register = () => {
     const [formPassword, setFormPassword] = useState("");
     const [formConfirmPassword, setFormConfirmPassword] = useState("");
     const [emailAlreadyTaken, setEmailAlreadyTaken] = useState(false);
+    const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
     const styleInputText = "border rounded-md";
 
@@ -135,7 +136,15 @@ const Register = () => {
                 onSubmit={handleSubmit}
             >
                 <label htmlFor="avatar">Avatar:</label>
-                <input type="file" />
+                <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                        if (e.target.files && e.target.files.length > 0) {
+                            setAvatarFile(e.target.files[0]);
+                        }
+                    }}
+                />
 
                 <label htmlFor="firstName">First name:</label>
                 <input
