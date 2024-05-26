@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, Navigate, useLocation, useParams } from "react-router-dom";
+import axios from "axios";
 import useAxios from "../utils/useAxios";
 import AuthContext from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +23,7 @@ const Register = () => {
 
     const styleInputText = "border rounded-md";
 
-    // Get user profile, if parameter present -----
+    // Get user profile, if parameter present
     useEffect(() => {
         if (location.pathname.endsWith("/add-new")) return;
         if (paramProfileId) {
@@ -51,63 +52,42 @@ const Register = () => {
         }
     };
 
-    // Create or update profile -------------------
-    // const handleSubmit  = (event: React.FormEvent<HTMLFormElement>) => {
     const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (
         event,
     ) => {
         event.preventDefault();
-        // POST -------
-        if (
-            location.pathname === "/register" ||
-            location.pathname.endsWith("/add-new")
-        ) {
-            try {
-                let response = await fetch(
-                    baseURL + "/shop-api-v1/profile/new",
+        const formData = new FormData();
+        formData.append("firstName", event.currentTarget.firstName.value);
+        formData.append("lastName", event.currentTarget.lastName.value);
+        formData.append("email", event.currentTarget.email.value);
+        avatarFile && formData.append("avatar", avatarFile);
+        event.currentTarget.password.value &&
+            formData.append("password", event.currentTarget.password.value);
+        loggedInUser && formData.append("profileID", loggedInUser.user_id);
+        try {
+            // POST -------
+            if (
+                location.pathname === "/register" ||
+                location.pathname.endsWith("/add-new")
+            ) {
+                let response = await axios.post(
+                    `${baseURL}/shop-api-v1/profile/new`,
+                    formData,
                     {
-                        method: "POST",
                         headers: {
-                            "Content-Type": "application/json",
+                            "Content-Type": "multipart/form-data",
                         },
-                        body: JSON.stringify({
-                            firstName: event.currentTarget.firstName.value,
-                            lastName: event.currentTarget.lastName.value,
-                            email: event.currentTarget.email.value,
-                            password: event.currentTarget.password.value,
-                            profileID: loggedInUser?.user_id,
-                        }),
                     },
                 );
                 if (response.statusText === "OK") {
                     navigate("/users");
                 }
-                if (response.status === 409) setEmailAlreadyTaken(true);
-            } catch (err) {
-                if (err instanceof Error) {
-                    console.error(
-                        "During creating 'Profile', err occurred: ",
-                        err.message,
-                    );
-                }
             }
-        }
-        // PUT --------
-        // Edit user or my profile --
-        else if (
-            location.pathname.startsWith("/dashboard/users") ||
-            location.pathname === "/me"
-        ) {
-            const formData = new FormData();
-            formData.append("firstName", event.currentTarget.firstName.value);
-            formData.append("lastName", event.currentTarget.lastName.value);
-            formData.append("email", event.currentTarget.email.value);
-            avatarFile && formData.append("avatar", avatarFile);
-            event.currentTarget.password.value &&
-                formData.append("password", event.currentTarget.password.value);
-            loggedInUser && formData.append("profileID", loggedInUser.user_id);
-
-            try {
+            // PUT --------
+            else if (
+                location.pathname.startsWith("/dashboard/users") ||
+                location.pathname === "/me"
+            ) {
                 let response = await api.put(
                     `/shop-api-v1/profile/${paramProfileId}/`,
                     formData,
@@ -120,13 +100,13 @@ const Register = () => {
                 if (response.statusText === "OK") {
                     navigate("/users");
                 }
-            } catch (err) {
-                if (err instanceof Error) {
-                    console.error(
-                        "During creating 'Profile', err occurred: ",
-                        err.message,
-                    );
-                }
+            }
+        } catch (err) {
+            if (err instanceof Error) {
+                console.error(
+                    "During creating/editing 'Profile', err occurred: ",
+                    err.message,
+                );
             }
         }
     };
