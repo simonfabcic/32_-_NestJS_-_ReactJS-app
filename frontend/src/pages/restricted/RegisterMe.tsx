@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, Navigate, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import useAxios from "../utils/useAxios";
 import AuthContext from "../context/AuthContext";
@@ -64,13 +64,14 @@ const Register = () => {
         event.currentTarget.password.value &&
             formData.append("password", event.currentTarget.password.value);
         loggedInUser && formData.append("profileID", loggedInUser.user_id);
+        let response;
         try {
             // POST -------
             if (
                 location.pathname === "/register" ||
                 location.pathname.endsWith("/add-new")
             ) {
-                let response = await axios.post(
+                response = await axios.post(
                     `${baseURL}/shop-api-v1/profile/new`,
                     formData,
                     {
@@ -79,16 +80,13 @@ const Register = () => {
                         },
                     },
                 );
-                if (response.statusText === "OK") {
-                    navigate("/users");
-                }
             }
             // PUT --------
             else if (
                 location.pathname.startsWith("/dashboard/users") ||
                 location.pathname === "/me"
             ) {
-                let response = await api.put(
+                response = await api.put(
                     `/shop-api-v1/profile/${paramProfileId}/`,
                     formData,
                     {
@@ -97,9 +95,12 @@ const Register = () => {
                         },
                     },
                 );
-                if (response.statusText === "OK") {
-                    navigate("/users");
-                }
+            }
+            if ((response && response.status === 201) || 204) {
+                navigate("/dashboard/users");
+            }
+            if (response && response.status === 409) {
+                setEmailAlreadyTaken(true);
             }
         } catch (err) {
             if (err instanceof Error) {

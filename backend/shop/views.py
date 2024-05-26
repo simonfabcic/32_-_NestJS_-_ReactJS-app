@@ -192,6 +192,16 @@ def profile(request, profile_id):
                     },
                     status=status.HTTP_201_CREATED,
                 )
+            except IntegrityError as e:
+                if "unique constraint" in str(e).lower():
+                    return Response(
+                        {"error": "Email is already taken."},
+                        status=status.HTTP_409_CONFLICT,
+                    )
+                return Response(
+                    {"error": "Database error occurred."},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
             except Exception as e:
                 return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
