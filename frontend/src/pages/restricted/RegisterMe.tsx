@@ -57,7 +57,6 @@ const Register = () => {
         event,
     ) => {
         event.preventDefault();
-        console.log("firstName: ", event.currentTarget.firstName.value);
         // POST -------
         if (
             location.pathname === "/register" ||
@@ -99,16 +98,23 @@ const Register = () => {
             location.pathname.startsWith("/dashboard/users") ||
             location.pathname === "/me"
         ) {
-            console.log("paramUserId: ", paramProfileId);
+            const formData = new FormData();
+            formData.append("firstName", event.currentTarget.firstName.value);
+            formData.append("lastName", event.currentTarget.lastName.value);
+            formData.append("email", event.currentTarget.email.value);
+            avatarFile && formData.append("avatar", avatarFile);
+            event.currentTarget.password.value &&
+                formData.append("password", event.currentTarget.password.value);
+            loggedInUser && formData.append("profileID", loggedInUser.user_id);
+
             try {
                 let response = await api.put(
                     `/shop-api-v1/profile/${paramProfileId}/`,
+                    formData,
                     {
-                        firstName: event.currentTarget.firstName.value,
-                        lastName: event.currentTarget.lastName.value,
-                        email: event.currentTarget.email.value,
-                        password: event.currentTarget.password.value,
-                        userID: loggedInUser?.user_id,
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        },
                     },
                 );
                 if (response.statusText === "OK") {

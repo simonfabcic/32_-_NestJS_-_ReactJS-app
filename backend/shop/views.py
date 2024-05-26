@@ -108,6 +108,7 @@ def profile_create(request):
     lastName = request.data.get("lastName")
     email = request.data.get("email")
     password = request.data.get("password")
+    avatar = request.data.get("avatar")
     if not (firstName and lastName and email and password):
         return Response(
             {"message": "Fail. Profile not created."},
@@ -121,6 +122,7 @@ def profile_create(request):
             user=user,
             first_name=firstName,
             last_name=lastName,
+            avatar=avatar,
             # role = Role.objects.get(name=random.choice(ROLES)) # TODO add role
         )
         return Response(
@@ -146,6 +148,7 @@ def profile(request, profile_id):
             email = request.data.get("email")
             password = request.data.get("password")
             userID = request.data.get("userID")
+            avatar = request.data.get("avatar")
             try:
                 if profile_id == "null":
                     raise ObjectDoesNotExist("URL parameter profileID is 'null'.")
@@ -159,6 +162,8 @@ def profile(request, profile_id):
                     profile.user.username = email
                 if password:
                     profile.user.set_password(password)
+                if avatar:
+                    profile.avatar = avatar
                 profile.save()
                 profile.user.save()
 
