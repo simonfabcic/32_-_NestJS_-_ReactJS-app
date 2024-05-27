@@ -38,6 +38,8 @@ This is a learning app for shop.
         ```
         pipenv shell
         ```
+    - [optional]  
+      rename `.\32_-_NestJS_-_ReactJS-app\backend\config.example.py` to `config.py` and set your settings
 1. Applies migrations to your database:
     ```
     python manage.py migrate
@@ -66,6 +68,7 @@ This is a learning app for shop.
     ```
     npm install
     ```
+1. Rename `.\32_-_NestJS_-_ReactJS-app\frontend\.env.example` to `.env` and set your settings
 1. Run dev environment:
     ```
     npm run dev
