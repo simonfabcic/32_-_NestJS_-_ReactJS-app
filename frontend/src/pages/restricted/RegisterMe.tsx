@@ -116,6 +116,8 @@ const Register = () => {
         <div className="max-w-sm mx-auto">
             {location.pathname === "/register" && "Register"}
             {location.pathname === "/me" && "Edit profile"}
+            {location.pathname.endsWith("/add-new") && "Create profile"}
+            {location.pathname.startsWith("/dashboard/users") && "Edit profile"}
 
             <form
                 action="submit"
@@ -125,6 +127,7 @@ const Register = () => {
                 <label htmlFor="avatar">Avatar:</label>
                 <input
                     type="file"
+                    id="avatar"
                     accept="image/*"
                     onChange={(e) => {
                         if (e.target.files && e.target.files.length > 0) {

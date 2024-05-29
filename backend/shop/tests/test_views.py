@@ -182,3 +182,10 @@ class TestViews(TestCase):
 
         avatar_response = response.json()["avatar"]
         self.assertEqual(avatar_response, None)
+
+    def test_profile_contain_avatar_success(self):
+        response = self.client.post(reverse("profile_create"), data=self.user_data)
+        self.assertEqual(response.status_code, 201)
+
+        profile = ShopProfile.objects.get(user__email=self.user_data["email"])
+        self.assertEqual(profile.avatar, self.user_data["avatar"])
