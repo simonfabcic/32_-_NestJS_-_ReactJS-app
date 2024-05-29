@@ -1,15 +1,84 @@
 import { describe, test, expect, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import {
-    MemoryRouter,
-    Route,
-    Routes,
-} from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 
 import Register from "./RegisterMe";
 
+describe("<RegisterMe />", () => {
+    test("Loads right version of form - create new profile", () => {
+        const wrapper = render(
+            <MemoryRouter initialEntries={["/add-new"]}>
+                <Routes>
+                    {/* <Register /> */}
+                    <Route path="*" element={<Register />} />
+                </Routes>
+            </MemoryRouter>,
+        );
+        expect(wrapper).toBeTruthy();
+
+        const create_profile = screen.getByText(/Create profile/i);
+        expect(create_profile.textContent).toBeTruthy();
+
+        const create_account = screen.getByText(/Create an account/i);
+        expect(create_account.textContent).toBeTruthy();
+    });
+
+    test("Loads right version of form - register", () => {
+        const wrapper = render(
+            <MemoryRouter initialEntries={["/register"]}>
+                <Routes>
+                    {/* <Register /> */}
+                    <Route path="*" element={<Register />} />
+                </Routes>
+            </MemoryRouter>,
+        );
+        expect(wrapper).toBeTruthy();
+
+        const register = screen.getByText(/register/i);
+        expect(register.textContent).toBeTruthy();
+
+        const create_account = screen.getByText(/Create an account/i);
+        expect(create_account.textContent).toBeTruthy();
+    });
+
+    test("Loads right version of form - edit user", () => {
+        const wrapper = render(
+            <MemoryRouter initialEntries={["/dashboard/users"]}>
+                <Routes>
+                    {/* <Register /> */}
+                    <Route path="*" element={<Register />} />
+                </Routes>
+            </MemoryRouter>,
+        );
+        expect(wrapper).toBeTruthy();
+
+        const edit_profile = screen.getByText(/Edit profile/i);
+        expect(edit_profile.textContent).toBeTruthy();
+
+        const edit_account = screen.getByText(/Edit account/i);
+        expect(edit_account.textContent).toBeTruthy();
+    });
+
+    test("Loads right version of form - edit my profile", () => {
+        const wrapper = render(
+            <MemoryRouter initialEntries={["/me"]}>
+                <Routes>
+                    {/* <Register /> */}
+                    <Route path="*" element={<Register />} />
+                </Routes>
+            </MemoryRouter>,
+        );
+        expect(wrapper).toBeTruthy();
+
+        const edit_profile = screen.getByText(/Edit profile/i);
+        expect(edit_profile.textContent).toBeTruthy();
+
+        const create_account = screen.getByText(/Edit account/i);
+        expect(create_account.textContent).toBeTruthy();
+    });
+});
 
 describe("<Register />", () => {
     let mock: MockAdapter;
