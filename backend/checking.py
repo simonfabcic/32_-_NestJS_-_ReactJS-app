@@ -29,7 +29,7 @@ from shop.models import Profile, Role
 
 #### Creating 'User'
 # user1 = User()
-# user1.email = "user1@email.com"
+# user1.email = "user1@example.com"
 # user1.password = "UserPassword123"
 # user1.username = "johanna"
 # user1.save()

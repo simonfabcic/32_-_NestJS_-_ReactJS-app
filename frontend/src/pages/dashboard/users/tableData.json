@@ -24,63 +24,63 @@
         "rows": [
             {
                 "avatar": "/media/images/avatars/download_1.jpg",
-                "email": "emma.martin@email.com",
+                "email": "emma.martin@example.com",
                 "first_name": "Emma",
                 "full_name": "Emma Martin",
                 "id": 2,
                 "last_name": "Martin",
                 "role": "Administrator",
-                "username": "emma.martin@email.com"
+                "username": "emma.martin@example.com"
             },
             {
                 "avatar": null,
-                "email": "alexander.jackson@email.com",
+                "email": "alexander.jackson@example.com",
                 "first_name": "Alexander",
                 "full_name": "Alexander Jackson",
                 "id": 18,
                 "last_name": "Jackson",
                 "role": "Administrator",
-                "username": "alexander.jackson@email.com"
+                "username": "alexander.jackson@example.com"
             },
             {
                 "avatar": null,
-                "email": "jane.thompson@email.com",
+                "email": "jane.thompson@example.com",
                 "first_name": "Jane",
                 "full_name": "Jane Thompson",
                 "id": 22,
                 "last_name": "Thompson",
                 "role": "Administrator",
-                "username": "jane.thompson@email.com"
+                "username": "jane.thompson@example.com"
             },
             {
                 "avatar": null,
-                "email": "elijah.jones@email.com",
+                "email": "elijah.jones@example.com",
                 "first_name": "Elijah",
                 "full_name": "Elijah Jones",
                 "id": 25,
                 "last_name": "Jones",
                 "role": "Administrator",
-                "username": "elijah.jones@email.com"
+                "username": "elijah.jones@example.com"
             },
             {
                 "avatar": null,
-                "email": "abigail.white@email.com",
+                "email": "abigail.white@example.com",
                 "first_name": "Abigail",
                 "full_name": "Abigail White",
                 "id": 26,
                 "last_name": "White",
                 "role": "Administrator",
-                "username": "abigail.white@email.com"
+                "username": "abigail.white@example.com"
             },
             {
                 "avatar": null,
-                "email": "amelia.lewis@email.com",
+                "email": "amelia.lewis@example.com",
                 "first_name": "Amelia",
                 "full_name": "Amelia Lewis",
                 "id": 28,
                 "last_name": "Lewis",
                 "role": "Administrator",
-                "username": "amelia.lewis@email.com"
+                "username": "amelia.lewis@example.com"
             }
         ]
     }

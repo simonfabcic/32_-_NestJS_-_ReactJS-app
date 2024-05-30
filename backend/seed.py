@@ -100,7 +100,7 @@ for i in range(100):
     selected_first_name = random.choice(FIRST_NAMES)
     selected_last_name = random.choice(LAST_NAMES)
     email = (
-        selected_first_name.lower() + "." + selected_last_name.lower() + "@email.com"
+        selected_first_name.lower() + "." + selected_last_name.lower() + "@example.com"
     )
 
     try:
