@@ -8,8 +8,9 @@ from django.db import IntegrityError
 from math import ceil
 from django.core.paginator import Paginator
 from django.db import connection
+from django.contrib.auth.models import Permission
 
-from .serializers import ShopProfileSerializer, RoleSerializer
+from .serializers import ShopProfileSerializer, RoleSerializer, PermissionSerializer
 from shop.models import ShopProfile, Role
 from core.models import CoreUser
 
@@ -233,4 +234,18 @@ def profile(request, profile_id):
 def get_roles(request):
     roles = Role.objects.all()
     serializer = RoleSerializer(roles, many=True)
+    return Response(serializer.data)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_permission(request):
+    required_perms = [
+        "view_shopprofile",
+        "change_shopprofile",
+        "view_role",
+        "change_role",
+    ]
+    permissions = Permission.objects.filter(codename__in=required_perms)
+    serializer = PermissionSerializer(permissions, many=True)
     return Response(serializer.data)

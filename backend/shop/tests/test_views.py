@@ -189,3 +189,22 @@ class TestViews(TestCase):
 
         profile = ShopProfile.objects.get(user__email=self.user_data["email"])
         self.assertEqual(profile.avatar, self.user_data["avatar"])
+
+    def test_permissions_returned_success(self):
+        url = reverse("get_permission")
+        response = self.client_with_access_token.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        returned_codenames = {permission["codename"] for permission in response.data}
+        expected_codenames = {
+            "change_role",
+            "view_role",
+            "change_shopprofile",
+            "view_shopprofile",
+        }
+        self.assertTrue(expected_codenames.issubset(returned_codenames))
+
+    def test_permissions_returned_denied_unauthorized(self):
+        url = reverse("get_permission")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 401)
