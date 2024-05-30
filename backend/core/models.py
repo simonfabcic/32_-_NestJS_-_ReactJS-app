@@ -7,7 +7,7 @@ from django.db import models
 
 # QUESTION admin panel user creation - password not hashed, authentication does not work
 # If I'm creating a user from command line with:
-# User.objects.create_user(username='username', email='user5@email.com'  ,password='bar')
+# User.objects.create_user(username='username', email='user5@example.com'  ,password='bar')
 # The password in Django is encrypted, but if I'm adding a user from the Django admin panel,
 # the password is not encrypted and even the authentication for this user does not work...
 

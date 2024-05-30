@@ -1,4 +1,4 @@
-import { describe, test, expect } from "vitest";
+import { describe, test, expect, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { BrowserRouter as Router } from "react-router-dom";
 import MockAdapter from "axios-mock-adapter";
@@ -7,10 +7,22 @@ import tableData from "./tableData.json";
 
 import Users from "./Users";
 
-const mock = new MockAdapter(axios, { onNoMatch: "throwException" });
+let mock: MockAdapter;
+
+beforeEach(() => {
+    mock = new MockAdapter(axios, { onNoMatch: "throwException" });
+});
+
+afterEach(() => {
+    mock.reset();
+    mock.restore();
+});
 
 describe("<App />", () => {
-    test("App mounts properly", () => {
+    let data = tableData.no_profiles;
+    test("App mounts properly, shows no data", async () => {
+        mock.onGet().reply(200, data);
+
         const wrapper = render(
             <Router>
                 <Users />
@@ -23,11 +35,18 @@ describe("<App />", () => {
 
         const b1 = wrapper.container.querySelector("button");
         expect(b1?.textContent).toBe("Add User");
+
+        await waitFor(() => {
+            const no_profiles = screen.getByText(
+                /Didn't receive any profiles. Nothing to show./i,
+            );
+            expect(no_profiles.textContent).toBeTruthy;
+        });
     });
 
-    test("App mounts properly", async () => {
-        let url = `/shop-api-v1/profiles?offset=0&page=1&page_size=100&sort_by=role&sort_order=ASC`;
-        mock.onGet(url).reply(200, tableData);
+    test("User avatar load properly", async () => {
+        let data = tableData.six_profiles;
+        mock.onGet().reply(200, data);
 
         const wrapper = render(
             <Router>
@@ -37,7 +56,7 @@ describe("<App />", () => {
         expect(wrapper).toBeTruthy();
 
         await waitFor(() => {
-            tableData.rows.forEach((row) => {
+            data.rows.forEach((row) => {
                 if (row.avatar === null) {
                     const tdElements = screen.getAllByText("/");
                     expect(tdElements).toHaveLength(5);

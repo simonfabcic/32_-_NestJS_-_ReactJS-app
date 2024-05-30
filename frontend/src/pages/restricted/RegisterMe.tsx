@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, Navigate, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
+import axios from "axios";
 import useAxios from "../utils/useAxios";
 import AuthContext from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -18,10 +19,11 @@ const Register = () => {
     const [formPassword, setFormPassword] = useState("");
     const [formConfirmPassword, setFormConfirmPassword] = useState("");
     const [emailAlreadyTaken, setEmailAlreadyTaken] = useState(false);
+    const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
     const styleInputText = "border rounded-md";
 
-    // Get user profile, if parameter present -----
+    // Get user profile, if parameter present
     useEffect(() => {
         if (location.pathname.endsWith("/add-new")) return;
         if (paramProfileId) {
@@ -50,76 +52,62 @@ const Register = () => {
         }
     };
 
-    // Create or update profile -------------------
-    // const handleSubmit  = (event: React.FormEvent<HTMLFormElement>) => {
     const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (
         event,
     ) => {
         event.preventDefault();
-        console.log("firstName: ", event.currentTarget.firstName.value);
-        // POST -------
-        if (
-            location.pathname === "/register" ||
-            location.pathname.endsWith("/add-new")
-        ) {
-            try {
-                let response = await fetch(
-                    baseURL + "/shop-api-v1/profile/new",
+        const formData = new FormData();
+        formData.append("firstName", event.currentTarget.firstName.value);
+        formData.append("lastName", event.currentTarget.lastName.value);
+        formData.append("email", event.currentTarget.email.value);
+        avatarFile && formData.append("avatar", avatarFile);
+        event.currentTarget.password.value &&
+            formData.append("password", event.currentTarget.password.value);
+        loggedInUser && formData.append("profileID", loggedInUser.user_id);
+        let response;
+        try {
+            // POST -------
+            if (
+                location.pathname === "/register" ||
+                location.pathname.endsWith("/add-new")
+            ) {
+                response = await axios.post(
+                    `${baseURL}/shop-api-v1/profile/new`,
+                    formData,
                     {
-                        method: "POST",
                         headers: {
-                            "Content-Type": "application/json",
+                            "Content-Type": "multipart/form-data",
                         },
-                        body: JSON.stringify({
-                            firstName: event.currentTarget.firstName.value,
-                            lastName: event.currentTarget.lastName.value,
-                            email: event.currentTarget.email.value,
-                            password: event.currentTarget.password.value,
-                            profileID: loggedInUser?.user_id,
-                        }),
                     },
                 );
-                if (response.statusText === "OK") {
-                    navigate("/users");
-                }
-                if (response.status === 409) setEmailAlreadyTaken(true);
-            } catch (err) {
-                if (err instanceof Error) {
-                    console.error(
-                        "During creating 'Profile', err occurred: ",
-                        err.message,
-                    );
-                }
             }
-        }
-        // PUT --------
-        // Edit user or my profile --
-        else if (
-            location.pathname.startsWith("/dashboard/users") ||
-            location.pathname === "/me"
-        ) {
-            console.log("paramUserId: ", paramProfileId);
-            try {
-                let response = await api.put(
+            // PUT --------
+            else if (
+                location.pathname.startsWith("/dashboard/users") ||
+                location.pathname === "/me"
+            ) {
+                response = await api.put(
                     `/shop-api-v1/profile/${paramProfileId}/`,
+                    formData,
                     {
-                        firstName: event.currentTarget.firstName.value,
-                        lastName: event.currentTarget.lastName.value,
-                        email: event.currentTarget.email.value,
-                        password: event.currentTarget.password.value,
-                        userID: loggedInUser?.user_id,
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        },
                     },
                 );
-                if (response.statusText === "OK") {
-                    navigate("/users");
-                }
-            } catch (err) {
-                if (err instanceof Error) {
-                    console.error(
-                        "During creating 'Profile', err occurred: ",
-                        err.message,
-                    );
-                }
+            }
+            if ((response && response.status === 201) || 204) {
+                navigate("/dashboard/users");
+            }
+            if (response && response.status === 409) {
+                setEmailAlreadyTaken(true);
+            }
+        } catch (err) {
+            if (err instanceof Error) {
+                console.error(
+                    "During creating/editing 'Profile', err occurred: ",
+                    err.message,
+                );
             }
         }
     };
@@ -128,6 +116,8 @@ const Register = () => {
         <div className="max-w-sm mx-auto">
             {location.pathname === "/register" && "Register"}
             {location.pathname === "/me" && "Edit profile"}
+            {location.pathname.endsWith("/add-new") && "Create profile"}
+            {location.pathname.startsWith("/dashboard/users") && "Edit profile"}
 
             <form
                 action="submit"
@@ -135,7 +125,16 @@ const Register = () => {
                 onSubmit={handleSubmit}
             >
                 <label htmlFor="avatar">Avatar:</label>
-                <input type="file" />
+                <input
+                    type="file"
+                    id="avatar"
+                    accept="image/*"
+                    onChange={(e) => {
+                        if (e.target.files && e.target.files.length > 0) {
+                            setAvatarFile(e.target.files[0]);
+                        }
+                    }}
+                />
 
                 <label htmlFor="firstName">First name:</label>
                 <input
