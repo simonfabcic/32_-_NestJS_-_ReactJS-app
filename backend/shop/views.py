@@ -9,10 +9,15 @@ from math import ceil
 from django.core.paginator import Paginator
 from django.db import connection
 from django.contrib.auth.models import Permission
+from .serializers import (
+    ShopProfileSerializer,
+    RoleSerializer,
+    PermissionSerializer,
+)
 
-from .serializers import ShopProfileSerializer, RoleSerializer, PermissionSerializer
 from shop.models import ShopProfile, Role
 from core.models import CoreUser
+from .decorators import permission_required
 
 
 @api_view(["GET"])
@@ -124,7 +129,6 @@ def profile_create(request):
             first_name=firstName,
             last_name=lastName,
             avatar=avatar,
-            # role = Role.objects.get(name=random.choice(ROLES)) # TODO add role
         )
         return Response(
             {"message": "Success. Profile created."}, status=status.HTTP_201_CREATED
@@ -238,7 +242,7 @@ def get_roles(request):
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_required("change_role")
 def get_permission(request):
     required_perms = [
         "view_shopprofile",
@@ -248,4 +252,4 @@ def get_permission(request):
     ]
     permissions = Permission.objects.filter(codename__in=required_perms)
     serializer = PermissionSerializer(permissions, many=True)
-    return Response(serializer.data)
+    return Response(serializer.data, status=status.HTTP_200_OK)

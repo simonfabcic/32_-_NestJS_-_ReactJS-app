@@ -2,9 +2,9 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 import json
+from django.contrib.auth.models import Permission
 
 from shop.models import ShopProfile
-
 from shop.factory import ShopProfileFactory
 from core.factory import CoreUserFactory
 
@@ -190,11 +190,12 @@ class TestViews(TestCase):
         profile = ShopProfile.objects.get(user__email=self.user_data["email"])
         self.assertEqual(profile.avatar, self.user_data["avatar"])
 
-    def test_permissions_returned_success(self):
+    def test_returning_permissions_success(self):
         url = reverse("get_permission")
+        permission = Permission.objects.get(codename="change_role")
+        self.user.user_permissions.add(permission)
         response = self.client_with_access_token.get(url)
         self.assertEqual(response.status_code, 200)
-
         returned_codenames = {permission["codename"] for permission in response.data}
         expected_codenames = {
             "change_role",
@@ -204,7 +205,12 @@ class TestViews(TestCase):
         }
         self.assertTrue(expected_codenames.issubset(returned_codenames))
 
-    def test_permissions_returned_denied_unauthorized(self):
+    def test_returning_permissions_failure_not_logged_in(self):
         url = reverse("get_permission")
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
+
+    def test_returning_permissions_failure_logged_in_no_rights(self):
+        url = reverse("get_permission")
+        response = self.client_with_access_token.get(url)
+        self.assertEqual(response.status_code, 403)
