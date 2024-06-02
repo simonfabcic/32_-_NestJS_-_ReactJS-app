@@ -5,7 +5,7 @@ from rest_framework.serializers import (
     SerializerMethodField,
 )
 from shop.models import ShopProfile, Role
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, Group
 
 
 class RoleSerializer(ModelSerializer):
@@ -52,3 +52,9 @@ class PermissionSerializer(ModelSerializer):
     class Meta:
         model = Permission
         fields = ["id", "name", "codename"]
+
+
+class GroupSerializer(ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ["id", "name"]

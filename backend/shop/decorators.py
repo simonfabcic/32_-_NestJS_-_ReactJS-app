@@ -18,6 +18,12 @@ def permission_required(permission):
             if user.has_perm(f"{app_label}.{permission}"):
                 return view_func(request, *args, **kwargs)
 
+            # Check if the user's groups have the specific permission
+            user_groups = user.groups.all()
+            for group in user_groups:
+                if group.permissions.filter(codename=permission).exists():
+                    return view_func(request, *args, **kwargs)
+
             # If the user does not have the permission, raise PermissionDenied
             raise PermissionDenied
 
