@@ -8,11 +8,12 @@ from django.db import IntegrityError
 from math import ceil
 from django.core.paginator import Paginator
 from django.db import connection
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, Group
 from .serializers import (
     ShopProfileSerializer,
     RoleSerializer,
     PermissionSerializer,
+    GroupSerializer,
 )
 
 from shop.models import ShopProfile, Role
@@ -233,11 +234,11 @@ def profile(request, profile_id):
                 return Response({"message": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(["PUT", "GET", "DELETE"])
-@permission_classes([IsAuthenticated])
+@api_view(["GET"])
+@permission_required("change_role")
 def get_roles(request):
-    roles = Role.objects.all()
-    serializer = RoleSerializer(roles, many=True)
+    roles = Group.objects.all()
+    serializer = GroupSerializer(roles, many=True)
     return Response(serializer.data)
 
 
@@ -253,3 +254,14 @@ def get_permission(request):
     permissions = Permission.objects.filter(codename__in=required_perms)
     serializer = PermissionSerializer(permissions, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["PUT"])
+@permission_required("change_role")
+def role_create(request):
+    serializer = GroupSerializer(data=request.data)
+    print("till here ok")
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
