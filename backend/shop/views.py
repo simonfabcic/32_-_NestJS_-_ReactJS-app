@@ -236,15 +236,7 @@ def profile(request, profile_id):
 
 @api_view(["GET"])
 @permission_required("change_role")
-def get_roles(request):
-    roles = Group.objects.all()
-    serializer = GroupSerializer(roles, many=True)
-    return Response(serializer.data)
-
-
-@api_view(["GET"])
-@permission_required("change_role")
-def get_permission(request):
+def permission_get(request):
     required_perms = [
         "view_shopprofile",
         "change_shopprofile",
@@ -256,11 +248,18 @@ def get_permission(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@api_view(["GET"])
+@permission_required("change_role", "view_role")
+def role_get(request):
+    roles = Group.objects.all()
+    serializer = GroupSerializer(roles, many=True)
+    return Response(serializer.data)
+
+
 @api_view(["PUT"])
 @permission_required("change_role")
 def role_create(request):
     serializer = GroupSerializer(data=request.data)
-    print("till here ok")
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)

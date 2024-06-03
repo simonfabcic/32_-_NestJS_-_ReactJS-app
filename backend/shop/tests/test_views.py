@@ -2,14 +2,14 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 import json
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, Group
 
 from shop.models import ShopProfile
-from shop.factory import ShopProfileFactory
+from shop.factory import ShopProfileFactory, GroupFactory
 from core.factory import CoreUserFactory
 
 
-class TestViews(TestCase):
+class InitSetup(TestCase):
 
     def setUp(self):
         self.user_data = {
@@ -27,6 +27,13 @@ class TestViews(TestCase):
         self.client_with_access_token.defaults["HTTP_AUTHORIZATION"] = headers[
             "Authorization"
         ]
+
+        self.permission_change_role = Permission.objects.get(codename="change_role")
+        self.permission_view_role = Permission.objects.get(codename="view_role")
+        self.group = GroupFactory()
+
+
+class TestProfile(InitSetup):
 
     def test_adding_new_profile_success(self):
         no_of_shop_profiles_before = ShopProfile.objects.all().count()
@@ -162,6 +169,8 @@ class TestViews(TestCase):
         )
         self.assertEqual(response.status_code, 401)
 
+
+class TestAvatar(InitSetup):
     def test_shop_profile_get_img_url(self):
         shop_profile = ShopProfileFactory()
 
@@ -190,10 +199,12 @@ class TestViews(TestCase):
         profile = ShopProfile.objects.get(user__email=self.user_data["email"])
         self.assertEqual(profile.avatar, self.user_data["avatar"])
 
+
+class TestPermission(InitSetup):
+
     def test_returning_permissions_success(self):
-        url = reverse("get_permission")
-        permission = Permission.objects.get(codename="change_role")
-        self.user.user_permissions.add(permission)
+        url = reverse("permission_get")
+        self.user.user_permissions.add(self.permission_change_role)
         response = self.client_with_access_token.get(url)
         self.assertEqual(response.status_code, 200)
         returned_codenames = {permission["codename"] for permission in response.data}
@@ -206,11 +217,89 @@ class TestViews(TestCase):
         self.assertTrue(expected_codenames.issubset(returned_codenames))
 
     def test_returning_permissions_failure_not_logged_in(self):
-        url = reverse("get_permission")
+        url = reverse("permission_get")
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
     def test_returning_permissions_failure_logged_in_no_rights(self):
-        url = reverse("get_permission")
+        url = reverse("permission_get")
         response = self.client_with_access_token.get(url)
         self.assertEqual(response.status_code, 403)
+
+
+class TestGroup(InitSetup):
+
+    # GET role
+    def test_role_get_all_success_change_role_permission(self):
+        url = reverse("role_get")
+        self.user.user_permissions.add(self.permission_change_role)
+        response = self.client_with_access_token.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_role_get_all_success_view_role_permission(self):
+        url = reverse("role_get")
+        self.user.user_permissions.add(self.permission_view_role)
+        response = self.client_with_access_token.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_role_get_failure_not_logged_in(self):
+        url = reverse("role_get")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 401)
+
+    def test_role_get_failure_logged_in_no_permission(self):
+        url = reverse("role_get")
+        response = self.client_with_access_token.get(url)
+        self.assertEqual(response.status_code, 403)
+
+    # GET permission
+    def test_returning_permissions_success_permission_in_group(self):
+        url = reverse("permission_get")
+        self.group.permissions.add(self.permission_change_role)
+        self.user.groups.add(self.group)
+        response = self.client_with_access_token.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    # PUT role
+    def test_role_put_success(self):
+        no_of_groups_before = Group.objects.all().count()
+        url = reverse("role_create")
+        self.user.user_permissions.add(self.permission_change_role)
+        data = {"name": "role_name"}
+        response = self.client_with_access_token.put(
+            url,
+            data,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 201)
+
+        no_of_groups_after = Group.objects.all().count()
+        self.assertEqual(no_of_groups_before + 1, no_of_groups_after)
+
+    def test_role_put_failure_not_logged_in(self):
+        no_of_groups_before = Group.objects.all().count()
+        url = reverse("role_create")
+        data = {"name": "role_name"}
+        response = self.client.put(
+            url,
+            data,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 401)
+
+        no_of_groups_after = Group.objects.all().count()
+        self.assertEqual(no_of_groups_before, no_of_groups_after)
+
+    def test_role_put_failure_logged_in_no_permission(self):
+        no_of_groups_before = Group.objects.all().count()
+        url = reverse("role_create")
+        data = {"name": "role_name"}
+        response = self.client_with_access_token.put(
+            url,
+            data,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 403)
+
+        no_of_groups_after = Group.objects.all().count()
+        self.assertEqual(no_of_groups_before, no_of_groups_after)
