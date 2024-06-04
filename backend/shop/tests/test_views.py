@@ -5,11 +5,11 @@ import json
 from django.contrib.auth.models import Permission, Group
 
 from shop.models import ShopProfile
-from shop.factory import ShopProfileFactory, GroupFactory
+from shop.factory import ShopProfileFactory
 from core.factory import CoreUserFactory
 
 
-class InitSetup(TestCase):
+class TestProfile(TestCase):
 
     def setUp(self):
         self.user_data = {
@@ -27,13 +27,6 @@ class InitSetup(TestCase):
         self.client_with_access_token.defaults["HTTP_AUTHORIZATION"] = headers[
             "Authorization"
         ]
-
-        self.permission_change_role = Permission.objects.get(codename="change_role")
-        self.permission_view_role = Permission.objects.get(codename="view_role")
-        self.group = GroupFactory()
-
-
-class TestProfile(InitSetup):
 
     def test_adding_new_profile_success(self):
         no_of_shop_profiles_before = ShopProfile.objects.all().count()
@@ -78,10 +71,9 @@ class TestProfile(InitSetup):
         email_db = ShopProfile.objects.get(pk=shop_profile.id).user.email
         self.assertEqual(email_response, email_db)
 
-    def test_get_profile_failure_access_denied_unauthorized(self):
+    def test_get_profile_failure_access_denied_unauthenticated(self):
         url = reverse("profile", kwargs={"profile_id": 2})
         response = self.client.get(url)
-
         self.assertEqual(response.status_code, 401)
 
     def test_shop_profile_update_all_success(self):
@@ -170,7 +162,25 @@ class TestProfile(InitSetup):
         self.assertEqual(response.status_code, 401)
 
 
-class TestAvatar(InitSetup):
+class TestAvatar(TestCase):
+
+    def setUp(self):
+        self.user_data = {
+            "firstName": "Jane",
+            "lastName": "Doe",
+            "email": "existing@example.com",
+            "password": "secure_password",
+            "avatar": "/dummy_image.com/259x267",
+        }
+        self.user = CoreUserFactory()
+
+        self.client_with_access_token = Client()
+        refresh_token = RefreshToken.for_user(self.user)
+        headers = {"Authorization": f"Bearer {refresh_token.access_token}"}
+        self.client_with_access_token.defaults["HTTP_AUTHORIZATION"] = headers[
+            "Authorization"
+        ]
+
     def test_shop_profile_get_img_url(self):
         shop_profile = ShopProfileFactory()
 
@@ -200,9 +210,22 @@ class TestAvatar(InitSetup):
         self.assertEqual(profile.avatar, self.user_data["avatar"])
 
 
-class TestPermission(InitSetup):
+class TestPermission(TestCase):
 
-    def test_returning_permissions_success(self):
+    def setUp(self):
+        self.user = CoreUserFactory()
+
+        self.client_with_access_token = Client()
+        refresh_token = RefreshToken.for_user(self.user)
+        headers = {"Authorization": f"Bearer {refresh_token.access_token}"}
+        self.client_with_access_token.defaults["HTTP_AUTHORIZATION"] = headers[
+            "Authorization"
+        ]
+
+        self.permission_change_role = Permission.objects.get(codename="change_role")
+        self.permission_view_role = Permission.objects.get(codename="view_role")
+
+    def test_returning_permissions_success_permission_change_role(self):
         url = reverse("permission_get")
         self.user.user_permissions.add(self.permission_change_role)
         response = self.client_with_access_token.get(url)
@@ -226,15 +249,30 @@ class TestPermission(InitSetup):
         response = self.client_with_access_token.get(url)
         self.assertEqual(response.status_code, 403)
 
+    def test_returning_permissions_failure_wrong_permission(self):
+        url = reverse("permission_get")
+        self.user.user_permissions.add(self.permission_view_role)
+        response = self.client_with_access_token.get(url)
+        self.assertEqual(response.status_code, 403)
 
-class TestGroup(InitSetup):
+
+class TestGroup(TestCase):
+
+    def setUp(self):
+        self.user = CoreUserFactory()
+
+        self.client_with_access_token = Client()
+        refresh_token = RefreshToken.for_user(self.user)
+        headers = {"Authorization": f"Bearer {refresh_token.access_token}"}
+        self.client_with_access_token.defaults["HTTP_AUTHORIZATION"] = headers[
+            "Authorization"
+        ]
+
+        self.permission_change_role = Permission.objects.get(codename="change_role")
+        self.permission_view_role = Permission.objects.get(codename="view_role")
+        self.group = Group.objects.create(name="test_group")
 
     # GET role
-    def test_role_get_all_success_change_role_permission(self):
-        url = reverse("role_get")
-        self.user.user_permissions.add(self.permission_change_role)
-        response = self.client_with_access_token.get(url)
-        self.assertEqual(response.status_code, 200)
 
     def test_role_get_all_success_view_role_permission(self):
         url = reverse("role_get")
@@ -249,6 +287,12 @@ class TestGroup(InitSetup):
 
     def test_role_get_failure_logged_in_no_permission(self):
         url = reverse("role_get")
+        response = self.client_with_access_token.get(url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_role_get_failure_wrong_permission(self):
+        url = reverse("role_get")
+        self.user.user_permissions.add(self.permission_change_role)
         response = self.client_with_access_token.get(url)
         self.assertEqual(response.status_code, 403)
 

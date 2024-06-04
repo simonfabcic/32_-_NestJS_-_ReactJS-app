@@ -15,10 +15,10 @@ from .serializers import (
     PermissionSerializer,
     GroupSerializer,
 )
+from django.contrib.auth.decorators import permission_required, login_required
 
 from shop.models import ShopProfile, Role
 from core.models import CoreUser
-from .decorators import permission_required
 
 
 @api_view(["GET"])
@@ -235,7 +235,8 @@ def profile(request, profile_id):
 
 
 @api_view(["GET"])
-@permission_required("change_role")
+@permission_classes([IsAuthenticated])
+@permission_required("shop.change_role", raise_exception=True)
 def permission_get(request):
     required_perms = [
         "view_shopprofile",
@@ -249,7 +250,8 @@ def permission_get(request):
 
 
 @api_view(["GET"])
-@permission_required("change_role", "view_role")
+@permission_classes([IsAuthenticated])
+@permission_required("shop.view_role", raise_exception=True)
 def role_get(request):
     roles = Group.objects.all()
     serializer = GroupSerializer(roles, many=True)
@@ -257,7 +259,8 @@ def role_get(request):
 
 
 @api_view(["PUT"])
-@permission_required("change_role")
+@permission_classes([IsAuthenticated])
+@permission_required("shop.change_role", raise_exception=True)
 def role_create(request):
     serializer = GroupSerializer(data=request.data)
     if serializer.is_valid():
