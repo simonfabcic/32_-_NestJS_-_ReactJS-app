@@ -74,7 +74,7 @@ class TestProfile(TestCase):
     def test_get_profile_failure_access_denied_unauthenticated(self):
         url = reverse("profile", kwargs={"profile_id": 2})
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 302)
 
     def test_shop_profile_update_all_success(self):
         profile = ShopProfileFactory()
@@ -159,7 +159,7 @@ class TestProfile(TestCase):
         response = self.client.put(
             url,
         )
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 302)
 
 
 class TestAvatar(TestCase):
@@ -242,7 +242,7 @@ class TestPermission(TestCase):
     def test_returning_permissions_failure_not_logged_in(self):
         url = reverse("permission_get")
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 302)
 
     def test_returning_permissions_failure_logged_in_no_rights(self):
         url = reverse("permission_get")
@@ -283,7 +283,7 @@ class TestGroup(TestCase):
     def test_role_get_failure_not_logged_in(self):
         url = reverse("role_get")
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 302)
 
     def test_role_get_failure_logged_in_no_permission(self):
         url = reverse("role_get")
@@ -329,7 +329,7 @@ class TestGroup(TestCase):
             data,
             content_type="application/json",
         )
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 302)
 
         no_of_groups_after = Group.objects.all().count()
         self.assertEqual(no_of_groups_before, no_of_groups_after)

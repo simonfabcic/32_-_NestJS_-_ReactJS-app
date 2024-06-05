@@ -22,7 +22,7 @@ from core.models import CoreUser
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@login_required()
 # URL: /profiles?page=[int]&page_size=[int]&sort_by=[options]&sort_order=[asc|desc]
 def get_profiles(request):
     headers = [
@@ -145,7 +145,7 @@ def profile_create(request):
 
 
 @api_view(["PUT", "GET", "DELETE"])
-@permission_classes([IsAuthenticated])
+@login_required()
 def profile(request, profile_id):
     match request.method:
         case "PUT":
@@ -235,7 +235,7 @@ def profile(request, profile_id):
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@login_required()
 @permission_required("shop.change_role", raise_exception=True)
 def permission_get(request):
     required_perms = [
@@ -250,7 +250,7 @@ def permission_get(request):
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@login_required()
 @permission_required("shop.view_role", raise_exception=True)
 def role_get(request):
     roles = Group.objects.all()
@@ -259,7 +259,7 @@ def role_get(request):
 
 
 @api_view(["PUT"])
-@permission_classes([IsAuthenticated])
+@login_required()
 @permission_required("shop.change_role", raise_exception=True)
 def role_create(request):
     serializer = GroupSerializer(data=request.data)
