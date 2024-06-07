@@ -8,7 +8,7 @@ from core.factory import CoreUserFactory
 from shop.factory import ShopProfileFactory
 
 
-class TestProfile(APITestCase):
+class TestShopProfile(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
@@ -21,25 +21,25 @@ class TestProfile(APITestCase):
             "avatar": "/dummy_image.com/259x267",
         }
 
-    def test_adding_new_profile_success(self):
+    def test_shop_profile_add_success_adding_new_profile(self):
         no_of_shop_profiles_before = ShopProfile.objects.all().count()
         response = self.client.post(reverse("profile_create"), data=self.user_data)
         self.assertEqual(response.status_code, 201)
         no_of_shop_profiles_after = ShopProfile.objects.all().count()
         self.assertEqual(no_of_shop_profiles_before + 1, no_of_shop_profiles_after)
 
-    def test_adding_new_profile_failure_duplicated_email(self):
+    def test_shop_profile_add_failure_adding_new_profile_duplicated_email(self):
         CoreUserFactory(email=self.user_data["email"])
         response = self.client.post(reverse("profile_create"), data=self.user_data)
         self.assertEqual(response.status_code, 409)
         # self.assertEqual(ShopProfile.objects.all().count(), 0)
 
-    def test_adding_new_profile_failure_no_data(self):
+    def test_shop_profile_add_failure_adding_new_profile_no_data(self):
         response = self.client.post(reverse("profile_create"))
         self.assertEqual(response.status_code, 422)
         self.assertEqual(ShopProfile.objects.all().count(), 0)
 
-    def test_adding_new_profile_failure_missing_lastName(self):
+    def test_shop_profile_add_failure_adding_new_profile_no_lastName(self):
         data_without_lastName = self.user_data.copy()
         del data_without_lastName["lastName"]
         response = self.client.post(
@@ -48,7 +48,7 @@ class TestProfile(APITestCase):
         self.assertEqual(response.status_code, 422)
         self.assertEqual(ShopProfile.objects.all().count(), 0)
 
-    def test_get_profile_success(self):
+    def test_shop_profile_get_success(self):
         shop_profile = ShopProfileFactory()
         self.client.force_authenticate(user=shop_profile.user)
 
@@ -63,12 +63,12 @@ class TestProfile(APITestCase):
         email_db = ShopProfile.objects.get(pk=shop_profile.id).user.email
         self.assertEqual(email_response, email_db)
 
-    def test_get_profile_failure_access_denied_unauthenticated(self):
+    def test_shop_profile_get_failure_access_denied_unauthenticated(self):
         url = reverse("profile", kwargs={"profile_id": 2})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
 
-    def test_shop_profile_update_all_success(self):
+    def test_shop_profile_update_success_update_all_fields(self):
         shop_profile = ShopProfileFactory()
         shop_profile_id = shop_profile.id
         self.client.force_authenticate(user=shop_profile.user)
@@ -95,7 +95,7 @@ class TestProfile(APITestCase):
         self.assertEqual(profile_after.last_name, data_update["lastName"])
         self.assertNotEqual(shop_profile.user.password, profile_after.user.password)
 
-    def test_shop_profile_update_only_first_name(self):
+    def test_shop_profile_update_success_update_only_first_name(self):
         shop_profile = ShopProfileFactory()
         self.client.force_authenticate(user=shop_profile.user)
         shop_profile_id = shop_profile.id
@@ -119,7 +119,7 @@ class TestProfile(APITestCase):
         self.assertEqual(shop_profile.last_name, profile_after.last_name)
         self.assertEqual(shop_profile.user.password, profile_after.user.password)
 
-    def test_shop_profile_create_if_not_exists_success(self):
+    def test_shop_profile_create_success_create_if_not_exists(self):
         user = CoreUserFactory()
         self.client.force_authenticate(user=user)
         no_of_profiles = ShopProfile.objects.all().count()
@@ -149,7 +149,7 @@ class TestProfile(APITestCase):
         self.assertEqual(profile.first_name, data_update["firstName"])
         self.assertEqual(profile.last_name, data_update["lastName"])
 
-    def test_shop_profile_update_failure_not_authenticated(self):
+    def test_shop_profile_update_failure_unauthenticated(self):
         url = reverse("profile", kwargs={"profile_id": 1})
         response = self.client.put(
             url,
@@ -162,7 +162,7 @@ class TestAvatar(APITestCase):
     def setUp(self):
         self.client = APIClient()
 
-    def test_shop_profile_success_get_img_url(self):
+    def test_avatar_get_success_get_img_url_from_shop_profile(self):
         shop_profile = ShopProfileFactory()
 
         self.client.force_authenticate(user=shop_profile.user)
@@ -175,7 +175,7 @@ class TestAvatar(APITestCase):
         avatar_db = ShopProfile.objects.get(pk=shop_profile.id).avatar
         self.assertEqual(avatar_response, avatar_db.url)
 
-    def test_shop_profile_no_img_url(self):
+    def test_avatar_get_success_get_img_url_from_shop_profile_no_avatar(self):
         shop_profile = ShopProfileFactory(avatar=None)
 
         self.client.force_authenticate(user=shop_profile.user)
@@ -187,7 +187,7 @@ class TestAvatar(APITestCase):
         avatar_response = response.json()["avatar"]
         self.assertEqual(avatar_response, None)
 
-    def test_profile_contain_avatar_success(self):
+    def test_avatar_set_success_create_profile_containing_avatar_success(self):
         user_data = {
             "firstName": "Jane",
             "lastName": "Doe",
@@ -295,6 +295,9 @@ class TestGroup(APITestCase):
 
     # GET permission
     def test_permissions_get_success_permission_in_group(self):
+        """
+        The permission is not assigned to the user, but to the group in which the user is.
+        """
         url = reverse("permission_get")
 
         group = Group.objects.create(name="test_group")
