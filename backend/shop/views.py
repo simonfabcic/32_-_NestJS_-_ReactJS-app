@@ -8,14 +8,21 @@ from django.db import IntegrityError
 from math import ceil
 from django.core.paginator import Paginator
 from django.db import connection
+from django.contrib.auth.models import Permission, Group
+from .serializers import (
+    ShopProfileSerializer,
+    RoleSerializer,
+    PermissionSerializer,
+    GroupSerializer,
+)
+from django.contrib.auth.decorators import permission_required, login_required
 
-from .serializers import ShopProfileSerializer, RoleSerializer
 from shop.models import ShopProfile, Role
 from core.models import CoreUser
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@login_required()
 # URL: /profiles?page=[int]&page_size=[int]&sort_by=[options]&sort_order=[asc|desc]
 def get_profiles(request):
     headers = [
@@ -123,7 +130,6 @@ def profile_create(request):
             first_name=firstName,
             last_name=lastName,
             avatar=avatar,
-            # role = Role.objects.get(name=random.choice(ROLES)) # TODO add role
         )
         return Response(
             {"message": "Success. Profile created."}, status=status.HTTP_201_CREATED
@@ -139,7 +145,7 @@ def profile_create(request):
 
 
 @api_view(["PUT", "GET", "DELETE"])
-@permission_classes([IsAuthenticated])
+@login_required()
 def profile(request, profile_id):
     match request.method:
         case "PUT":
@@ -228,9 +234,36 @@ def profile(request, profile_id):
                 return Response({"message": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(["PUT", "GET", "DELETE"])
-@permission_classes([IsAuthenticated])
-def get_roles(request):
-    roles = Role.objects.all()
-    serializer = RoleSerializer(roles, many=True)
+@api_view(["GET"])
+@login_required()
+@permission_required("shop.change_role", raise_exception=True)
+def permission_get(request):
+    required_perms = [
+        "view_shopprofile",
+        "change_shopprofile",
+        "view_role",
+        "change_role",
+    ]
+    permissions = Permission.objects.filter(codename__in=required_perms)
+    serializer = PermissionSerializer(permissions, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@login_required()
+@permission_required("shop.view_role", raise_exception=True)
+def role_get(request):
+    roles = Group.objects.all()
+    serializer = GroupSerializer(roles, many=True)
     return Response(serializer.data)
+
+
+@api_view(["PUT"])
+@login_required()
+@permission_required("shop.change_role", raise_exception=True)
+def role_create(request):
+    serializer = GroupSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
