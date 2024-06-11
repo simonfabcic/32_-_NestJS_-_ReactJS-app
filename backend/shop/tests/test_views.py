@@ -3,6 +3,7 @@ from django.contrib.auth.models import Permission, Group
 from django.urls import reverse
 import json
 
+from core.models import CoreUser
 from shop.models import ShopProfile
 from core.factory import CoreUserFactory
 from shop.factory import ShopProfileFactory
@@ -286,7 +287,7 @@ class TestGroup(APITestCase):
     def test_role_get_failure_authenticated_wrong_permission(self):
         url = reverse("role_get")
 
-        permission_change_role = Permission.objects.get(codename="change_role")
+        permission_change_role = Permission.objects.get(codename="change_shopprofile")
         self.user.user_permissions.add(permission_change_role)
         self.client.force_authenticate(user=self.user)
 
@@ -360,3 +361,40 @@ class TestGroup(APITestCase):
 
         no_of_groups_after = Group.objects.all().count()
         self.assertEqual(no_of_groups_before, no_of_groups_after)
+
+
+class TestPermissionConnect(APITestCase):
+    def setUp(self):
+        self.user = CoreUserFactory()
+
+    def test_permission_connect_success_permission_added_directly_to_user(self):
+        permission_change_role = Permission.objects.get(codename="change_role")
+        permission_view_role = Permission.objects.get(codename="view_role")
+
+        self.user.user_permissions.add(permission_change_role)
+        self.assertTrue(permission_change_role in self.user.user_permissions.all())
+        self.assertTrue(permission_view_role in self.user.user_permissions.all())
+
+        self.user.user_permissions.remove(permission_change_role)
+        self.assertFalse(permission_change_role in self.user.user_permissions.all())
+        self.assertTrue(permission_view_role in self.user.user_permissions.all())
+
+        self.user.user_permissions.remove(permission_view_role)
+        self.assertFalse(permission_change_role in self.user.user_permissions.all())
+        self.assertFalse(permission_view_role in self.user.user_permissions.all())
+
+    def test_permission_connect_success_permission_added_to_group(self):
+        group = Group.objects.create(name="test_group")
+        permission_change_role = Permission.objects.get(codename="change_role")
+        permission_view_role = Permission.objects.get(codename="view_role")
+
+        group.permissions.add(permission_change_role)
+        self.user.groups.add(group)
+        self.assertTrue(self.user.has_perm("shop.change_role"))
+        self.assertTrue(self.user.has_perm("shop.view_role"))
+
+        group.permissions.remove(permission_view_role)
+        # Refresh the user's permissions cache by re-fetching the user object
+        self.user = CoreUser.objects.get(username=self.user.username)
+        self.assertFalse(self.user.has_perm("shop.change_role"))
+        self.assertFalse(self.user.has_perm("shop.view_role"))
