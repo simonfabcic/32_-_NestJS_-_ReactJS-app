@@ -7,6 +7,12 @@ from django.contrib.auth.models import Group, Permission, AbstractUser
 def manage_related_permissions(
     sender, instance, action, reverse, model, pk_set, **kwargs
 ):
+    """
+    Because of business logic,
+    we need to ensure that `change_` role always comes with `view_` role.
+    If `view_` permission is removed, the `change_` permission is removed as well.
+    """
+
     # Check if the 'instance' is a 'AbstractUser', because signal is triggered also when 'permission' is added to 'Group'
     if not isinstance(instance, AbstractUser):
         return
@@ -26,6 +32,11 @@ def manage_related_permissions(
 def manage_related_permission_in_group(
     sender, instance, action, reverse, model, pk_set, **kwargs
 ):
+    """
+    Because of business logic,
+    we need to ensure that `change_` role always comes with `view_` role.
+    If `view_` permission is removed, the `change_` permission is removed as well.
+    """
     if not isinstance(instance, Group):
         return
 
