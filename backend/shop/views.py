@@ -253,8 +253,8 @@ def permission_get(request):
 @login_required()
 @permission_required("shop.view_role", raise_exception=True)
 def role_get(request):
-    roles = Group.objects.all()
-    serializer = GroupSerializer(roles, many=True)
+    groups = Group.objects.all()
+    serializer = GroupSerializer(groups, many=True)
     return Response(serializer.data)
 
 

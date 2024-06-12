@@ -6,20 +6,22 @@ const Roles = () => {
         name: string;
     }
 
-    const [roles, setRoles] = useState<Role[]>([]);
     let api = useAxios();
-    let status = "";
+    const [roles, setRoles] = useState<Role[]>([]);
+    const [errMsg, setErrMsg] = useState("");
 
     useEffect(() => {
-        getProfiles();
+        getRoles();
     }, []);
-    let getProfiles = async () => {
+    const getRoles = async () => {
         try {
-            let response = await api.get(`/shop-api-v1/roles`);
+            let response = await api.get(`/shop-api-v1/role`);
             if (response.status === 200) {
                 setRoles(() => response.data);
-                if (response.data.rows.length < 1)
-                    status = "Didn't receive any roles. Nothing to show.";
+                if (response.data.length < 1)
+                    setErrMsg(
+                        "No roles available yet. Select 'Add role' to add one.",
+                    );
             }
         } catch (err: any) {
             console.error(
@@ -28,16 +30,28 @@ const Roles = () => {
                 "\nMessage from server:",
                 err.response?.data,
             );
-            status = "Can't get roles data. Contact admin...";
+            if (err.response.status == 403) {
+                setErrMsg("You don't have permissions to see roles...");
+                return;
+            }
+            setErrMsg("Can't get roles data. Contact admin...");
         }
     };
 
     return (
         <>
             <div>Roles</div>
-            {roles && <div>Test</div>}
-            {roles &&
-                roles.map((role, index) => <div key={index}>{role.name}</div>)}
+
+            {errMsg ? (
+                <div>{errMsg}</div>
+            ) : (
+                <>
+                    <div>Available roles:</div>
+                    {roles.map((role, index) => (
+                        <div key={index}>{role.name}</div>
+                    ))}
+                </>
+            )}
         </>
     );
 };

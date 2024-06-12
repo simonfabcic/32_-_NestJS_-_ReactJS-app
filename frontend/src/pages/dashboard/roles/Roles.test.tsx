@@ -15,7 +15,7 @@ const roles = [
 
 describe("axios mocking test", () => {
     test("should render loading followed by roles", async () => {
-        mock.onGet("/shop-api-v1/roles").reply(200, roles);
+        mock.onGet("/shop-api-v1/role").reply(200, roles);
 
         const wrapper = render(<Roles />);
         expect(wrapper).toBeTruthy();
