@@ -9,5 +9,5 @@ jobs:
             - run: cd backend
             - run: pip install pipenv
             - run: pipenv install -d # create venv and install all our dependencies for the project
-            - run: pipenv shell # enable venv
-            - run: python manage.py test # run tests
+            # - run: pipenv shell # enable venv
+            - run: pipenv run python manage.py test # run tests
