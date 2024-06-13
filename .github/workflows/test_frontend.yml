@@ -6,9 +6,13 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             - uses: actions/setup-node@v2
-            - run: pwd
-            - run: cd frontend
-            - run: pwd
-            - run: ls -l
-            - run: npm install # install dependences
-            - run: npm run test # run tests
+            - run: |
+                  cd frontend
+                  npm install
+                  npm run test
+            # - run: pwd
+            # - run: cd frontend
+            # - run: pwd
+            # - run: ls -l
+            # - run: npm install # install dependences
+            # - run: npm run test # run tests

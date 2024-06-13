@@ -8,10 +8,9 @@ jobs:
             - uses: actions/setup-python@v2
               with:
                   python-version: "3.12"
-            - run: pwd
-            - run: cd backend
-            - run: pwd
             - run: pip install pipenv
-            - run: pipenv install -d # create venv and install all our dependencies for the project
-            # - run: pipenv shell # enable venv
+            # create venv and install dependences
+            - run: |
+                  cd backend
+                  pipenv install -d
             - run: pipenv run python backend/manage.py test # run tests
