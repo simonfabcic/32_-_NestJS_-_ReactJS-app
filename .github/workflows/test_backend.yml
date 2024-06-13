@@ -1,0 +1,13 @@
+name: test_backend
+on: [pull_request, push] # activates the workflow when there is a push or pull request in the repo
+jobs:
+    test_project:
+        runs-on: ubuntu-latest # operating system your code will run on
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-python@v2
+            - run: cd .\32_-_NestJS_-_ReactJS-app\backend\
+            - run: pip install pipenv
+            - run: pipenv install -d # create venv and install all our dependencies for the project
+            - run: pipenv shell # enable venv
+            - run: python manage.py test # run tests
