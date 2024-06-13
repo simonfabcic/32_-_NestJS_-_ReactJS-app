@@ -10,4 +10,4 @@ jobs:
             - run: pip install pipenv
             - run: pipenv install -d # create venv and install all our dependencies for the project
             # - run: pipenv shell # enable venv
-            - run: pipenv run python manage.py test # run tests
+            - run: pipenv run python backend/manage.py test # run tests
