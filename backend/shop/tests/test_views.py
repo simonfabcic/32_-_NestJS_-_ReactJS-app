@@ -360,3 +360,40 @@ class TestGroup(APITestCase):
 
         no_of_groups_after = Group.objects.all().count()
         self.assertEqual(no_of_groups_before, no_of_groups_after)
+
+
+class TestRoleAccessWithDifferentPermissions(APITestCase):
+    def setUp(self):
+        self.user = CoreUserFactory()
+        self.url = reverse("role_get")
+
+    def test_view_permissions_success_access_with_change_permission(self):
+        permission_change_role = Permission.objects.get(codename="change_group")
+        self.user.user_permissions.add(permission_change_role)
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_permissions_success_access_with_view_permission(self):
+        permission_view_role = Permission.objects.get(codename="view_group")
+        self.user.user_permissions.add(permission_view_role)
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_permissions_success_superuser(self):
+        self.user.is_superuser = True
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_permissions_failure_no_access_with_wrong_permission(self):
+        permission_view_role = Permission.objects.get(codename="change_shopprofile")
+        self.user.user_permissions.add(permission_view_role)
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)

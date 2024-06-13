@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import IntegrityError
 from math import ceil
 from django.core.paginator import Paginator
@@ -17,8 +17,10 @@ from .serializers import (
 )
 from django.contrib.auth.decorators import permission_required, login_required
 
+
 from shop.models import ShopProfile, Role
 from core.models import CoreUser
+from .permissions import can_view_groups
 
 
 @api_view(["GET"])
@@ -251,10 +253,11 @@ def permission_get(request):
 
 @api_view(["GET"])
 @login_required()
-@permission_required("shop.view_role", raise_exception=True)
 def role_get(request):
-    groups = Group.objects.all()
-    serializer = GroupSerializer(groups, many=True)
+    if not can_view_groups(request.user):
+        raise PermissionDenied("You don't have permission to view groups.")
+    roles = Group.objects.all()
+    serializer = GroupSerializer(roles, many=True)
     return Response(serializer.data)
 
 
