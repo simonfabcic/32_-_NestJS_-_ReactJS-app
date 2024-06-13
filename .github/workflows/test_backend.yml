@@ -8,8 +8,7 @@ jobs:
             - uses: actions/setup-python@v2
               with:
                   python-version: "3.12"
-            # - run: cd backend
-            - run: ls -l
+            - run: cd backend
             - run: pip install backend/pipenv
             - run: pipenv install -d # create venv and install all our dependencies for the project
             # - run: pipenv shell # enable venv
