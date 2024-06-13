@@ -33,6 +33,10 @@ const Roles = () => {
                 "\nMessage from server:",
                 err.response?.data,
             );
+            if (err.response.status == 401) {
+                setErrMsg("You are not logged in...");
+                return;
+            }
             if (err.response.status == 403) {
                 setErrMsg("You don't have permissions to see roles...");
                 return;

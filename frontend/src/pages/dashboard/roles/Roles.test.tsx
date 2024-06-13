@@ -13,8 +13,8 @@ const roles = [
     { name: "Manager" },
 ];
 
-describe("axios mocking test", () => {
-    test("should render loading followed by roles", async () => {
+describe("rendering roles", () => {
+    test("render roles, success, should render loaded roles", async () => {
         mock.onGet("/shop-api-v1/role").reply(200, roles);
 
         const wrapper = render(<Roles />);
@@ -25,6 +25,46 @@ describe("axios mocking test", () => {
                 const text = screen.getByText(role.name);
                 expect(text.textContent).toBeTruthy();
             });
+        });
+    });
+
+    test("render roles, success, no roles", async () => {
+        mock.onGet("/shop-api-v1/role").reply(200, []);
+
+        const wrapper = render(<Roles />);
+        expect(wrapper).toBeTruthy();
+
+        await waitFor(() => {
+            const no_roles_msg = screen.getByText(
+                /No roles available yet. Select 'Add role' to add one./i,
+            );
+            expect(no_roles_msg).toBeTruthy();
+        });
+    });
+
+    test("render roles, failure, not authenticated", async () => {
+        mock.onGet("/shop-api-v1/role").reply(401);
+
+        const wrapper = render(<Roles />);
+        expect(wrapper).toBeTruthy();
+
+        await waitFor(() => {
+            const no_roles_msg = screen.getByText(/You are not logged in.../i);
+            expect(no_roles_msg).toBeTruthy();
+        });
+    });
+
+    test("render roles, failure, no permissions", async () => {
+        mock.onGet("/shop-api-v1/role").reply(403);
+
+        const wrapper = render(<Roles />);
+        expect(wrapper).toBeTruthy();
+
+        await waitFor(() => {
+            const no_roles_msg = screen.getByText(
+                /You don't have permissions to see roles.../i,
+            );
+            expect(no_roles_msg).toBeTruthy();
         });
     });
 });
