@@ -11,15 +11,15 @@ const Navbar: React.FC<NavbarProps> = ({ setShowNavbar, showNavbar }) => {
     return (
         <div
             className={`
-      fixed top-0 w-1/4 h-full rounded-r-2xl 
-      ${showNavbar ? "translate-x-0 opacity-100 duration-500 " : "-translate-x-full opacity-0 duration-500 "}
-    `}
+                fixed top-0 w-1/4 h-full rounded-r-2xl 
+                ${showNavbar ? "translate-x-0 opacity-100 duration-500 " : "-translate-x-full opacity-0 hidden duration-500 "}
+            `}
         >
             {/* <div className={`
-      fixed top-0 w-1/4 h-full rounded-r-2xl
-      ${showNavbar ? 'duration-300 ' : 'scale-0 duration-300 origin-top-left'}
-    `}
-    > */}
+                fixed top-0 w-1/4 h-full rounded-r-2xl
+                ${showNavbar ? 'duration-300 ' : 'scale-0 duration-300 origin-top-left'}
+                `}
+            > */}
 
             <div className="h-20 flex flex-col justify-end rounded-bl-2xl bg-gray-300">
                 <div className="flex h-11">
