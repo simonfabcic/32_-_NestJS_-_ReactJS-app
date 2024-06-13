@@ -6,8 +6,10 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             - uses: actions/setup-python@v2
-            - run: cd backend
-            - run: pip install pipenv
+              with:
+                  python-version: "3.12"
+            # - run: cd backend
+            - run: pip install backend/pipenv
             - run: pipenv install -d # create venv and install all our dependencies for the project
             # - run: pipenv shell # enable venv
             - run: pipenv run python backend/manage.py test # run tests
