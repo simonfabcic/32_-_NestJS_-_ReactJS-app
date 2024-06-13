@@ -9,6 +9,7 @@ jobs:
               with:
                   python-version: "3.12"
             # - run: cd backend
+            - run: ls -l
             - run: pip install backend/pipenv
             - run: pipenv install -d # create venv and install all our dependencies for the project
             # - run: pipenv shell # enable venv
