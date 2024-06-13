@@ -6,6 +6,6 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             - uses: actions/setup-node@v2
-            - run: cd .\frontend\
+            - run: cd frontend
             - run: npm install # install dependences
             - run: npm run test # run tests

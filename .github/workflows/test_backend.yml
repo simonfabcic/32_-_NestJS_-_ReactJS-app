@@ -6,7 +6,7 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             - uses: actions/setup-python@v2
-            - run: cd .\backend\
+            - run: cd backend
             - run: pip install pipenv
             - run: pipenv install -d # create venv and install all our dependencies for the project
             - run: pipenv shell # enable venv
