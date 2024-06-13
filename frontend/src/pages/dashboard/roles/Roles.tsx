@@ -18,10 +18,13 @@ const Roles = () => {
             let response = await api.get(`/shop-api-v1/role`);
             if (response.status === 200) {
                 setRoles(() => response.data);
-                if (response.data.length < 1)
+                if (response.data.length < 1) {
                     setErrMsg(
                         "No roles available yet. Select 'Add role' to add one.",
                     );
+                } else {
+                    setErrMsg("");
+                }
             }
         } catch (err: any) {
             console.error(
