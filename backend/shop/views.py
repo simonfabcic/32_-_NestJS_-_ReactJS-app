@@ -270,3 +270,15 @@ def role_create(request):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["GET"])
+# @login_required()
+def permission_user_get(request):
+    # permissions = request.user.get_all_permissions()
+    # print(permissions)
+    # serializer = PermissionSerializer(permissions, many=True)
+    # print(serializer)
+    # return Response(serializer.data, status=status.HTTP_200_OK)
+    permissions = list(request.user.get_all_permissions())
+    return Response({"permissions": permissions}, status=status.HTTP_200_OK)

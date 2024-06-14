@@ -10,4 +10,5 @@ urlpatterns = [
     path("role/", views.role_get, name="role_get"),
     path("permission/", views.permission_get, name="permission_get"),
     path("role/new/", views.role_create, name="role_create"),
+    path("permission-user/", views.permission_user_get, name="permission_user"),
 ]

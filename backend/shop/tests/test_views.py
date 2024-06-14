@@ -397,3 +397,39 @@ class TestRoleAccessWithDifferentPermissions(APITestCase):
 
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 403)
+
+
+class TestPermissionGetCurrentUser(APITestCase):
+    def setUp(self):
+        self.user = CoreUserFactory()
+        self.url = reverse("permission_user")
+
+    def test_permissions_current_user_get_success_direct_assign_permission(self):
+        perm_view_group = Permission.objects.get(codename="view_group")
+        perm_view_shopprofile = Permission.objects.get(codename="view_shopprofile")
+        self.user.user_permissions.add(perm_view_group)
+        self.user.user_permissions.add(perm_view_shopprofile)
+
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+        permissions_excepted = ["auth.view_group", "shop.view_shopprofile"]
+        permissions_response = response.json()["permissions"]
+        self.assertEqual(set(permissions_excepted), set(permissions_response))
+
+    def test_permissions_current_user_get_success_permission_in_group_and_direct(self):
+        group = Group.objects.create(name="test_group")
+        perm_view_group = Permission.objects.get(codename="view_group")
+        group.permissions.add(perm_view_group)
+        self.user.groups.add(group)
+        perm_view_shopprofile = Permission.objects.get(codename="view_shopprofile")
+        self.user.user_permissions.add(perm_view_shopprofile)
+
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+        permissions_excepted = ["auth.view_group", "shop.view_shopprofile"]
+        permissions_response = response.json()["permissions"]
+        self.assertEqual(set(permissions_excepted), set(permissions_response))
