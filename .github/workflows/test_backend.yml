@@ -13,5 +13,5 @@ jobs:
             - run: |
                   cd backend
                   pipenv install --dev
-                  pipenv shell
+                  python -m pip install django-configurations
                   pipenv run python backend/manage.py test # run tests
