@@ -9,7 +9,10 @@ jobs:
               with:
                   python-version: "3.12"
             - run: pip install pipenv
-            # create venv and install dependences
+            # create venv and install dependencies
+            - run: |
+                  cd backend
+                  pipenv install --dev
             - run: |
                   cd backend
                   pipenv run python manage.py test
