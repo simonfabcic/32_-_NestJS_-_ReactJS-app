@@ -12,5 +12,8 @@ jobs:
             # create venv and install dependences
             - run: |
                   cd backend
-                  pipenv install -d
-            - run: pipenv run python backend/manage.py test # run tests
+                  pipenv install --dev
+            # run tests
+            - run: |
+                  cd backend
+                  pipenv run python manage.py test
