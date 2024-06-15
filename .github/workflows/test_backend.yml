@@ -13,4 +13,5 @@ jobs:
             - run: |
                   cd backend
                   pipenv install --dev
-            - run: pipenv run python backend/manage.py test # run tests
+                  pipenv shell
+                  pipenv run python backend/manage.py test # run tests
