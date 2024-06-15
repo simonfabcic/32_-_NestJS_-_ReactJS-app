@@ -263,7 +263,7 @@ class TestGroup(APITestCase):
     def test_role_get_success(self):
         url = reverse("role_get")
 
-        permission_view_role = Permission.objects.get(codename="view_role")
+        permission_view_role = Permission.objects.get(codename="view_group")
         self.user.user_permissions.add(permission_view_role)
         self.client.force_authenticate(user=self.user)
 
