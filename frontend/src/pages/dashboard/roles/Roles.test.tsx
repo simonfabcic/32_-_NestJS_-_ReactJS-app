@@ -1,5 +1,5 @@
 import MockAdapter from "axios-mock-adapter";
-import { render, waitFor, screen } from "@testing-library/react";
+import { render, waitFor, screen, fireEvent } from "@testing-library/react";
 import { describe, test, expect } from "vitest";
 import axios from "axios";
 
@@ -65,6 +65,46 @@ describe("rendering roles", () => {
                 /You don't have permissions to see roles.../i,
             );
             expect(no_roles_msg).toBeTruthy();
+        });
+    });
+});
+
+describe("rendering roles", async () => {
+    test("saving role, success, should save role and re-render list of roles", async () => {
+        mock.onPut("/shop-api-v1/role/new/").reply(201);
+        mock.onGet("/shop-api-v1/role").reply(200, [
+            { name: "Test_role_name" },
+        ]);
+
+        const { container: wrapper } = render(<Roles />);
+        expect(wrapper).toBeTruthy();
+
+        // check if form is shown
+        fireEvent.click(screen.getByText(/Add role/i));
+        await waitFor(() => {
+            const form_label = screen.getByText(/Role name:/i);
+            expect(form_label).toBeTruthy();
+        });
+
+        // filling data into form
+        fireEvent.change(screen.getByLabelText(/Role name:/i), {
+            target: { value: "Test_role_name" },
+        });
+        // submit form
+        const form = wrapper.querySelector("form");
+        form && fireEvent.submit(form);
+
+        // check if submitted data sended
+        await waitFor(() => {
+            expect(mock.history.put.length).toBe(1);
+            const putData = JSON.parse(mock.history.put[0].data); // Parse the JSON string
+            expect(putData.name).toBe("Test_role_name");
+        });
+
+        // check if re-rendering new role name
+        await waitFor(() => {
+            const create_profile = screen.getByText(/Test_role_name/i);
+            expect(create_profile.textContent).toBeTruthy();
         });
     });
 });
