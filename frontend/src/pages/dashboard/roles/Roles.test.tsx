@@ -108,3 +108,8 @@ describe("rendering roles", async () => {
         });
     });
 });
+// CONTINUE
+describe("permissions in 'add role' form", async () => {
+    test("check, if permissions are rendered", async () => {});
+    test("check, if permissions are present in PUT request", async () => {});
+});
