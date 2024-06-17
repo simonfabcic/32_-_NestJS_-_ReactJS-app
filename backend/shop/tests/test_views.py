@@ -207,37 +207,49 @@ class TestPermission(APITestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = CoreUserFactory()
+        self.url = reverse("permission_get")
 
-    def test_permissions_get_success(self):
-        permission_view_role = Permission.objects.get(codename="change_role")
-        self.user.user_permissions.add(permission_view_role)
+    def test_permission_get_success_right_permissions_returned(self):
+        self.user.is_superuser = True
         self.client.force_authenticate(user=self.user)
 
-        url = reverse("permission_get")
-
-        response = self.client.get(url)
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
+
         returned_codenames = {permission["codename"] for permission in response.data}
         expected_codenames = {
-            "change_role",
-            "view_role",
+            "change_group",
+            "view_group",
             "change_shopprofile",
             "view_shopprofile",
         }
         self.assertTrue(expected_codenames.issubset(returned_codenames))
 
+    def test_permissions_get_success_permission_change_group(self):
+        permission_view_role = Permission.objects.get(codename="change_group")
+        self.user.user_permissions.add(permission_view_role)
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_permissions_get_success_permission_view_group(self):
+        permission_view_role = Permission.objects.get(codename="view_group")
+        self.user.user_permissions.add(permission_view_role)
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
     def test_permission_get_failure_authenticated_no_permission(self):
         self.client.force_authenticate(user=self.user)
 
-        url = reverse("permission_get")
-
-        response = self.client.get(url)
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, 403)
 
     def test_permission_get_failure_not_authenticated(self):
-        url = reverse("permission_get")
 
-        response = self.client.get(url)
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
 
     def test_permission_get_failure_authenticated_wrong_permission(self):
@@ -245,9 +257,7 @@ class TestPermission(APITestCase):
         self.user.user_permissions.add(permission_view_role)
         self.client.force_authenticate(user=self.user)
 
-        url = reverse("permission_get")
-
-        response = self.client.get(url)
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, 403)
 
 
@@ -301,7 +311,7 @@ class TestGroup(APITestCase):
         url = reverse("permission_get")
 
         group = Group.objects.create(name="test_group")
-        permission_change_role = Permission.objects.get(codename="change_role")
+        permission_change_role = Permission.objects.get(codename="change_group")
         group.permissions.add(permission_change_role)
         self.user.groups.add(group)
         self.client.force_authenticate(user=self.user)
@@ -313,8 +323,8 @@ class TestGroup(APITestCase):
     def test_role_put_success(self):
         url = reverse("role_create")
 
-        permission_change_role = Permission.objects.get(codename="change_role")
-        self.user.user_permissions.add(permission_change_role)
+        permission_change_group = Permission.objects.get(codename="change_group")
+        self.user.user_permissions.add(permission_change_group)
         self.client.force_authenticate(user=self.user)
 
         no_of_groups_before = Group.objects.all().count()
@@ -328,6 +338,25 @@ class TestGroup(APITestCase):
 
         no_of_groups_after = Group.objects.all().count()
         self.assertEqual(no_of_groups_before + 1, no_of_groups_after)
+
+    def test_role_put_failure_wrong_permission(self):
+        url = reverse("role_create")
+
+        permission_change_group = Permission.objects.get(codename="view_group")
+        self.user.user_permissions.add(permission_change_group)
+        self.client.force_authenticate(user=self.user)
+
+        no_of_groups_before = Group.objects.all().count()
+
+        data = {"name": "role_name"}
+        response = self.client.put(
+            url,
+            data,
+        )
+        self.assertEqual(response.status_code, 403)
+
+        no_of_groups_after = Group.objects.all().count()
+        self.assertEqual(no_of_groups_before, no_of_groups_after)
 
     def test_role_put_failure_not_authenticated(self):
         url = reverse("role_create")

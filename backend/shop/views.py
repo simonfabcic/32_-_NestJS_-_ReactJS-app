@@ -238,13 +238,14 @@ def profile(request, profile_id):
 
 @api_view(["GET"])
 @login_required()
-@permission_required("shop.change_role", raise_exception=True)
 def permission_get(request):
+    if not can_view_groups(request.user):
+        raise PermissionDenied("You don't have permission to view permissions.")
     required_perms = [
         "view_shopprofile",
         "change_shopprofile",
-        "view_role",
-        "change_role",
+        "view_group",
+        "change_group",
     ]
     permissions = Permission.objects.filter(codename__in=required_perms)
     serializer = PermissionSerializer(permissions, many=True)
@@ -263,7 +264,7 @@ def role_get(request):
 
 @api_view(["PUT"])
 @login_required()
-@permission_required("shop.change_role", raise_exception=True)
+@permission_required("auth.change_group", raise_exception=True)
 def role_create(request):
     serializer = GroupSerializer(data=request.data)
     if serializer.is_valid():
