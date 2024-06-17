@@ -9,6 +9,7 @@ const Roles = () => {
     let api = useAxios();
     const [roles, setRoles] = useState<Role[]>([]);
     const [errMsg, setErrMsg] = useState("");
+    const [showAddRoleForm, setShowAddRoleForm] = useState(false);
 
     useEffect(() => {
         getRoles();
@@ -45,9 +46,65 @@ const Roles = () => {
         }
     };
 
+    const addRole: React.FormEventHandler<HTMLFormElement> = async (event) => {
+        event.preventDefault();
+        const name = event.currentTarget.roleName.value;
+
+        try {
+            let response = await api.put(
+                `/shop-api-v1/role/new/`,
+                { name },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                },
+            );
+            if (response.status === 201) {
+                getRoles();
+            }
+        } catch (err) {
+            if (err instanceof Error) {
+                console.error(
+                    "During creating/editing 'Role', err occurred: ",
+                    err.message,
+                );
+            }
+        }
+    };
+
     return (
-        <>
+        <div>
             <div>Roles</div>
+
+            <button
+                className="px-4 py-2 bg-gray-400 rounded-md"
+                onClick={() => setShowAddRoleForm(!showAddRoleForm)}
+            >
+                Add role
+            </button>
+
+            {showAddRoleForm && (
+                <form action="submit" onSubmit={addRole}>
+                    <label htmlFor="roleName">Role name:</label>
+                    <br />
+                    <input
+                        className="border rounded-md mb-3 pl-2"
+                        type="text"
+                        id="roleName"
+                        name="roleName"
+                    />
+                    <br />
+
+                    <button
+                        className="px-4 py-2 bg-gray-400 rounded-md mb-3"
+                        type="submit"
+                    >
+                        Save role
+                    </button>
+                    <hr />
+                </form>
+            )}
 
             {errMsg ? (
                 <div>{errMsg}</div>
@@ -59,7 +116,7 @@ const Roles = () => {
                     ))}
                 </>
             )}
-        </>
+        </div>
     );
 };
 
