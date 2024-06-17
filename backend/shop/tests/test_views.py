@@ -339,6 +339,25 @@ class TestGroup(APITestCase):
         no_of_groups_after = Group.objects.all().count()
         self.assertEqual(no_of_groups_before + 1, no_of_groups_after)
 
+    def test_role_put_failure_wrong_permission(self):
+        url = reverse("role_create")
+
+        permission_change_group = Permission.objects.get(codename="view_group")
+        self.user.user_permissions.add(permission_change_group)
+        self.client.force_authenticate(user=self.user)
+
+        no_of_groups_before = Group.objects.all().count()
+
+        data = {"name": "role_name"}
+        response = self.client.put(
+            url,
+            data,
+        )
+        self.assertEqual(response.status_code, 403)
+
+        no_of_groups_after = Group.objects.all().count()
+        self.assertEqual(no_of_groups_before, no_of_groups_after)
+
     def test_role_put_failure_not_authenticated(self):
         url = reverse("role_create")
 

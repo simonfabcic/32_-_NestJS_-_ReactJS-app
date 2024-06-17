@@ -20,7 +20,7 @@ from django.contrib.auth.decorators import permission_required, login_required
 
 from shop.models import ShopProfile, Role
 from core.models import CoreUser
-from .permissions import can_view_groups
+from .permissions import can_view_groups, can_create_groups
 
 
 @api_view(["GET"])
@@ -265,7 +265,7 @@ def role_get(request):
 @api_view(["PUT"])
 @login_required()
 def role_create(request):
-    if not can_view_groups(request.user):
+    if not can_create_groups(request.user):
         raise PermissionDenied("You don't have permission to view groups.")
     serializer = GroupSerializer(data=request.data)
     if serializer.is_valid():
