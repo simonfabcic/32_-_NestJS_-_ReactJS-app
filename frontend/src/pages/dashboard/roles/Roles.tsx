@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import useAxios from "../../utils/useAxios";
 
 const Roles = () => {
@@ -45,11 +45,11 @@ const Roles = () => {
                 "\nMessage from server:",
                 err.response?.data,
             );
-            if (err.response.status == 401) {
+            if (err.response?.status == 401) {
                 setRoleErrMsg("You are not logged in...");
                 return;
             }
-            if (err.response.status == 403) {
+            if (err.response?.status == 403) {
                 setRoleErrMsg("You don't have permissions to see roles...");
                 return;
             }
@@ -64,12 +64,9 @@ const Roles = () => {
         try {
             let response = await api.get(`/shop-api-v1/permission`);
             if (response.status === 200) {
-                console.log(response.data);
                 setPermissions(() => response.data);
                 if (response.data.length < 1) {
-                    setPermErrMsg(
-                        "No roles available yet. Select 'Add role' to add one.",
-                    );
+                    setPermErrMsg("No permissions available yet.");
                 } else {
                     setPermErrMsg("");
                 }
@@ -81,11 +78,11 @@ const Roles = () => {
                 "\nMessage from server:",
                 err.response?.data,
             );
-            if (err.response.status == 401) {
+            if (err.response?.status === 401) {
                 setPermErrMsg("You are not logged in...");
                 return;
             }
-            if (err.response.status == 403) {
+            if (err.response?.status === 403) {
                 setPermErrMsg(
                     "You don't have permissions to see permissions...",
                 );
@@ -166,20 +163,23 @@ const Roles = () => {
                         <div>{permErrMsg}</div>
                     ) : (
                         <div className="grid grid-cols-2 gap-x-4 w-fit ">
-                            {permissions.map((perm) => (
-                                <div key={perm.id}>
-                                    <input
-                                        type="checkbox"
-                                        id={perm.codename}
-                                        name={perm.codename}
-                                        value={perm.codename}
-                                        onChange={handleChangeFormPermissions}
-                                    />
-                                    <label htmlFor={perm.codename}>
-                                        {perm.name}
-                                    </label>
-                                </div>
-                            ))}
+                            {permissions &&
+                                permissions.map((perm) => (
+                                    <div key={perm.id}>
+                                        <input
+                                            type="checkbox"
+                                            id={perm.codename}
+                                            name={perm.codename}
+                                            value={perm.codename}
+                                            onChange={
+                                                handleChangeFormPermissions
+                                            }
+                                        />
+                                        <label htmlFor={perm.codename}>
+                                            {perm.name}
+                                        </label>
+                                    </div>
+                                ))}
                         </div>
                     )}
                     <br />
