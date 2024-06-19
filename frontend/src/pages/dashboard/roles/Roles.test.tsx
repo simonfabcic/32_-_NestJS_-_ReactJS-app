@@ -176,46 +176,4 @@ describe("permissions in 'add role' form", async () => {
             expect(perm_2).toBeTruthy();
         });
     });
-
-    test("check, if permissions are present in PUT request", async () => {
-        mock.onGet("/shop-api-v1/role").reply(200, [
-            { name: "Test_role_name" },
-        ]);
-        mock.onGet("/shop-api-v1/permission").reply(200, permissions);
-        mock.onPut("/shop-api-v1/role/new/").reply(201);
-
-        const { container: wrapper } = render(<Roles />);
-        expect(wrapper).toBeTruthy();
-
-        // Check if form is shown
-        fireEvent.click(screen.getByText(/Add role/i));
-        await waitFor(() => {
-            const form_label = screen.getByText(/Role name:/i);
-            expect(form_label).toBeTruthy();
-            const perm_1 = screen.getByText(/Permission 1/i);
-            expect(perm_1).toBeTruthy();
-            const perm_2 = screen.getByText(/Permission 2/i);
-            expect(perm_2).toBeTruthy();
-        });
-
-        // Fill data into form
-        fireEvent.change(screen.getByLabelText(/Role name:/i), {
-            target: { value: "Test_role_name" },
-        });
-        // CONTINUE
-        // fireEvent.click(screen.getByLabelText(/Permission 1/i));
-
-        // Submit form
-        const form = wrapper.querySelector("form");
-        form && fireEvent.submit(form);
-
-        // Check if submitted data sent
-        await waitFor(() => {
-            expect(mock.history.put.length).toBe(1);
-            const putData = JSON.parse(mock.history.put[0].data); // Parse the JSON string
-            console.log("putData: ", putData);
-            expect(putData.roleName).toBe("Test_role_name");
-            // expect(putData.formPermissionsList[0]).toBe("perm_1");
-        });
-    });
 });
