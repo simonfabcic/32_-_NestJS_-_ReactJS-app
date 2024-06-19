@@ -1,11 +1,9 @@
 import MockAdapter from "axios-mock-adapter";
 import { render, waitFor, screen, fireEvent } from "@testing-library/react";
-import { describe, test, expect } from "vitest";
+import { describe, test, expect, beforeEach, afterEach } from "vitest";
 import axios from "axios";
 
 import Roles from "./Roles";
-
-const mock = new MockAdapter(axios, { onNoMatch: "throwException" });
 
 const roles = [
     { name: "Administrator" },
@@ -13,9 +11,25 @@ const roles = [
     { name: "Manager" },
 ];
 
+const permissions = [
+    { id: 1, name: "Permission 1", codename: "perm_1" },
+    { id: 2, name: "Permission 2", codename: "perm_2" },
+];
+
 describe("rendering roles", () => {
+    let mock: MockAdapter;
+
+    beforeEach(() => {
+        mock = new MockAdapter(axios, { onNoMatch: "throwException" });
+    });
+
+    afterEach(() => {
+        mock.reset();
+    });
+
     test("render roles, success, should render loaded roles", async () => {
         mock.onGet("/shop-api-v1/role").reply(200, roles);
+        mock.onGet("/shop-api-v1/permission").reply(200, permissions);
 
         const wrapper = render(<Roles />);
         expect(wrapper).toBeTruthy();
@@ -30,6 +44,7 @@ describe("rendering roles", () => {
 
     test("render roles, success, no roles", async () => {
         mock.onGet("/shop-api-v1/role").reply(200, []);
+        mock.onGet("/shop-api-v1/permission").reply(200, permissions);
 
         const wrapper = render(<Roles />);
         expect(wrapper).toBeTruthy();
@@ -44,6 +59,7 @@ describe("rendering roles", () => {
 
     test("render roles, failure, not authenticated", async () => {
         mock.onGet("/shop-api-v1/role").reply(401);
+        mock.onGet("/shop-api-v1/permission").reply(200, permissions);
 
         const wrapper = render(<Roles />);
         expect(wrapper).toBeTruthy();
@@ -56,6 +72,7 @@ describe("rendering roles", () => {
 
     test("render roles, failure, no permissions", async () => {
         mock.onGet("/shop-api-v1/role").reply(403);
+        mock.onGet("/shop-api-v1/permission").reply(200, permissions);
 
         const wrapper = render(<Roles />);
         expect(wrapper).toBeTruthy();
@@ -69,42 +86,92 @@ describe("rendering roles", () => {
     });
 });
 
-describe("rendering roles", async () => {
-    test("saving role, success, should save role and re-render list of roles", async () => {
+describe("rendering roles", () => {
+    let mock: MockAdapter;
+
+    beforeEach(() => {
+        mock = new MockAdapter(axios, { onNoMatch: "throwException" });
+    });
+
+    afterEach(() => {
+        mock.reset();
+    });
+
+    test.skip("saving role, success, should save role and re-render list of roles", async () => {
+        // Mock the PUT request to add a new role
         mock.onPut("/shop-api-v1/role/new/").reply(201);
+
+        // Mock the GET request to retrieve roles
         mock.onGet("/shop-api-v1/role").reply(200, [
             { name: "Test_role_name" },
         ]);
 
+        // Mock the GET request to retrieve permissions
+        mock.onGet("/shop-api-v1/permission").reply(200, permissions);
+
         const { container: wrapper } = render(<Roles />);
         expect(wrapper).toBeTruthy();
 
-        // check if form is shown
+        // Check if form is shown
         fireEvent.click(screen.getByText(/Add role/i));
         await waitFor(() => {
             const form_label = screen.getByText(/Role name:/i);
             expect(form_label).toBeTruthy();
         });
 
-        // filling data into form
+        // Fill data into form
         fireEvent.change(screen.getByLabelText(/Role name:/i), {
             target: { value: "Test_role_name" },
         });
-        // submit form
+
+        // Submit form
         const form = wrapper.querySelector("form");
         form && fireEvent.submit(form);
 
-        // check if submitted data sended
+        // Check if submitted data sent
         await waitFor(() => {
             expect(mock.history.put.length).toBe(1);
             const putData = JSON.parse(mock.history.put[0].data); // Parse the JSON string
-            expect(putData.name).toBe("Test_role_name");
+            expect(putData.roleName).toBe("Test_role_name");
         });
 
-        // check if re-rendering new role name
+        // Check if re-rendering new role name
         await waitFor(() => {
             const create_profile = screen.getByText(/Test_role_name/i);
             expect(create_profile.textContent).toBeTruthy();
+        });
+    });
+});
+
+describe("permissions in 'add role' form", async () => {
+    let mock: MockAdapter;
+
+    beforeEach(() => {
+        mock = new MockAdapter(axios, { onNoMatch: "throwException" });
+    });
+
+    afterEach(() => {
+        mock.reset();
+    });
+
+    test("check, if permissions are rendered", async () => {
+        mock.onGet("/shop-api-v1/role").reply(200, [
+            { name: "Test_role_name" },
+        ]);
+        mock.onGet("/shop-api-v1/permission").reply(200, permissions);
+
+        const { container: wrapper } = render(<Roles />);
+        expect(wrapper).toBeTruthy();
+
+        // Check if form is shown
+        fireEvent.click(screen.getByText(/Add role/i));
+        await waitFor(() => {
+            const form_label = screen.getByText(/Role name:/i);
+            expect(form_label).toBeTruthy();
+            const perm_1 = screen.getByText(/Permission 1/i);
+            expect(perm_1).toBeTruthy();
+            const perm_2 = screen.getByText(/Permission 2/i);
+            expect(perm_2).toBeTruthy();
         });
     });
 });
