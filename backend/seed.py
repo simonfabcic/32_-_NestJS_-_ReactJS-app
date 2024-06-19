@@ -1,6 +1,7 @@
 import os
-import django
 import random
+
+import django
 from configurations import importer
 
 os.environ.setdefault("DJANGO_CONFIGURATION", "Dev")
@@ -14,7 +15,7 @@ django.setup()
 print("Start seeding...")
 
 from core.models import CoreUser
-from shop.models import ShopProfile, Role
+from shop.models import Role, ShopProfile
 
 ROLES = [
     "Administrator",

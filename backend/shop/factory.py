@@ -1,7 +1,6 @@
 import factory
-
-from shop.models import ShopProfile
 from core.factory import CoreUserFactory
+from shop.models import ShopProfile
 
 
 class ShopProfileFactory(factory.django.DjangoModelFactory):

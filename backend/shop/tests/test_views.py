@@ -1,15 +1,14 @@
-from rest_framework.test import APITestCase, APIClient
-from django.contrib.auth.models import Permission, Group
-from django.urls import reverse
 import json
 
-from shop.models import ShopProfile
 from core.factory import CoreUserFactory
+from django.contrib.auth.models import Group, Permission
+from django.urls import reverse
+from rest_framework.test import APIClient, APITestCase
 from shop.factory import ShopProfileFactory
+from shop.models import ShopProfile
 
 
 class TestShopProfile(APITestCase):
-
     def setUp(self):
         self.client = APIClient()
 
@@ -158,7 +157,6 @@ class TestShopProfile(APITestCase):
 
 
 class TestAvatar(APITestCase):
-
     def setUp(self):
         self.client = APIClient()
 
@@ -248,7 +246,6 @@ class TestPermission(APITestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_permission_get_failure_not_authenticated(self):
-
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
 
@@ -262,7 +259,6 @@ class TestPermission(APITestCase):
 
 
 class TestGroup(APITestCase):
-
     def setUp(self):
         self.client = APIClient()
         self.user = CoreUserFactory()

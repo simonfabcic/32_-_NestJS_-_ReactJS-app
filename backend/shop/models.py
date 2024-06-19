@@ -1,5 +1,5 @@
-from django.db import models
 from core.models import CoreProfile
+from django.db import models
 
 # Create your models here.
 

@@ -38,7 +38,7 @@ This is a learning app for shop.
         ```
         pipenv shell
         ```
-    - [optional]  
+    - [optional]
       rename `.\32_-_NestJS_-_ReactJS-app\backend\config.example.py` to `config.py` and set your settings
 1. Applies migrations to your database:
     ```

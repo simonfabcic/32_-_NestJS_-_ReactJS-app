@@ -1,11 +1,11 @@
+from django.contrib.auth.models import Group, Permission
 from rest_framework.serializers import (
-    ModelSerializer,
-    EmailField,
     CharField,
+    EmailField,
+    ModelSerializer,
     SerializerMethodField,
 )
-from shop.models import ShopProfile, Role
-from django.contrib.auth.models import Permission, Group
+from shop.models import Role, ShopProfile
 
 
 class RoleSerializer(ModelSerializer):

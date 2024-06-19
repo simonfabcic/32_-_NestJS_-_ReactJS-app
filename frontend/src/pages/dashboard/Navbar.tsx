@@ -11,7 +11,7 @@ const Navbar: React.FC<NavbarProps> = ({ setShowNavbar, showNavbar }) => {
     return (
         <div
             className={`
-                fixed top-0 w-1/4 h-full rounded-r-2xl 
+                fixed top-0 w-1/4 h-full rounded-r-2xl
                 ${showNavbar ? "translate-x-0 opacity-100 duration-500 " : "-translate-x-full opacity-0 duration-500 "}
             `}
         >
