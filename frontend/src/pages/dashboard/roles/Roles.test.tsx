@@ -5,8 +5,6 @@ import axios from "axios";
 
 import Roles from "./Roles";
 
-// const mock = new MockAdapter(axios, { onNoMatch: "throwException" });
-
 const roles = [
     { name: "Administrator" },
     { name: "User" },

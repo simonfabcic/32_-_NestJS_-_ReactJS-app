@@ -266,7 +266,6 @@ def role_get(request):
 @login_required()
 @permission_required("auth.change_group", raise_exception=True)
 def role_create(request):
-    print(request.data)
     serializer = GroupSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
