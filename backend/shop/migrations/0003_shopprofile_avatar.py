@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('shop', '0002_alter_role_options'),
+        ("shop", "0002_alter_role_options"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='shopprofile',
-            name='avatar',
-            field=models.ImageField(default='', upload_to='images/avatars'),
+            model_name="shopprofile",
+            name="avatar",
+            field=models.ImageField(default="", upload_to="images/avatars"),
         ),
     ]

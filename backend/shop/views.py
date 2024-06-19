@@ -1,26 +1,25 @@
+from math import ceil
+
+from core.models import CoreUser
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models import Group, Permission
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.core.paginator import Paginator
+from django.db import IntegrityError, connection
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
-from django.db import IntegrityError
-from math import ceil
-from django.core.paginator import Paginator
-from django.db import connection
-from django.contrib.auth.models import Permission, Group
-from .serializers import (
-    ShopProfileSerializer,
-    RoleSerializer,
-    PermissionSerializer,
-    GroupSerializer,
-)
-from django.contrib.auth.decorators import permission_required, login_required
+from shop.models import Role, ShopProfile
 
-
-from shop.models import ShopProfile, Role
-from core.models import CoreUser
 from .permissions import can_view_groups
+from .serializers import (
+    GroupSerializer,
+    PermissionSerializer,
+    RoleSerializer,
+    ShopProfileSerializer,
+)
 
 
 @api_view(["GET"])
