@@ -263,7 +263,7 @@ class TestGroup(APITestCase):
         self.client = APIClient()
         self.user = CoreUserFactory()
 
-        self.permission_change_role = Permission.objects.get(codename="change_role")
+        self.permission_change_role = Permission.objects.get(codename="change_group")
 
     # GET role
     def test_role_get_success(self):
@@ -292,7 +292,7 @@ class TestGroup(APITestCase):
     def test_role_get_failure_authenticated_wrong_permission(self):
         url = reverse("role_get")
 
-        permission_change_role = Permission.objects.get(codename="change_role")
+        permission_change_role = Permission.objects.get(codename="change_shopprofile")
         self.user.user_permissions.add(permission_change_role)
         self.client.force_authenticate(user=self.user)
 

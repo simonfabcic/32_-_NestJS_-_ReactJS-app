@@ -51,7 +51,7 @@ const Users = () => {
             page_size: 0,
         },
     });
-    const [sortingColumn, setSortingColumn] = useState("role");
+    const [sortingColumn, setSortingColumn] = useState("full_name");
     const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("ASC");
     const [loadingState, setLoadingState] = useState("Loading...");
     const [deleteButtonPressed, setDeleteButtonPressed] = useState(false);

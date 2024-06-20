@@ -11,15 +11,10 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from shop.models import Role, ShopProfile
+from shop.models import ShopProfile
 
 from .permissions import can_view_groups
-from .serializers import (
-    GroupSerializer,
-    PermissionSerializer,
-    RoleSerializer,
-    ShopProfileSerializer,
-)
+from .serializers import GroupSerializer, PermissionSerializer, ShopProfileSerializer
 
 
 @api_view(["GET"])
@@ -30,7 +25,7 @@ def get_profiles(request):
         {"key": "avatar", "label": "Avatar", "sorting": False},
         {"key": "email", "label": "Email", "sorting": False},
         {"key": "full_name", "label": "Full name", "sorting": True},
-        {"key": "role", "label": "Role", "sorting": True},
+        {"key": "group", "label": "Role", "sorting": True},
     ]
 
     for header in headers:

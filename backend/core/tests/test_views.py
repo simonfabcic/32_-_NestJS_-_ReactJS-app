@@ -3,7 +3,7 @@ from core.models import CoreUser
 from django.test import Client, TestCase
 from django.urls import reverse
 from shop.factory import ShopProfileFactory
-from shop.models import Role, ShopProfile
+from shop.models import ShopProfile
 
 
 class TestAuthAPI(TestCase):
