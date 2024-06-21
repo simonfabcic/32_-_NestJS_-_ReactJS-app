@@ -11,9 +11,6 @@ from shop.models import ShopProfile
 class ShopProfileSerializer(ModelSerializer):
     email = EmailField(source="user.email")
     full_name = SerializerMethodField()
-    # role = CharField(source='role.name') # error if attribute not present
-    # role = SerializerMethodField()
-    # group = SerializerMethodField()
     username = CharField(source="user.username")
 
     class Meta:
