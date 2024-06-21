@@ -30,6 +30,16 @@ class ShopProfileSerializer(ModelSerializer):
         return f"{obj.first_name} {obj.last_name}"
 
 
+class ShopProfileSerializerPlusGroups(ShopProfileSerializer):
+    groups = SerializerMethodField()
+
+    class Meta(ShopProfileSerializer.Meta):
+        fields = ShopProfileSerializer.Meta.fields + ["groups"]
+
+    def get_groups(self, obj):
+        return [group.name for group in obj.user.groups.all()]
+
+
 class PermissionSerializer(ModelSerializer):
     class Meta:
         model = Permission
