@@ -458,3 +458,32 @@ class TestPermissionGetCurrentUser(APITestCase):
         permissions_excepted = ["auth.view_group", "shop.view_shopprofile"]
         permissions_response = response.json()["permissions"]
         self.assertEqual(set(permissions_excepted), set(permissions_response))
+
+
+class TestGetShopProfiles(APITestCase):
+    def setUp(self):
+        self.user = CoreUserFactory()
+        self.url = reverse("get_profiles")
+
+    def test_get_shop_profiles_failure_not_logged_in(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+
+    def test_get_shop_profiles_success(self):
+        self.client.force_authenticate(user=self.user)
+
+        # adding shop profile and assigning groups to it
+        shop_profile = ShopProfileFactory()
+        group = Group.objects.create(name="test_group_1")
+        shop_profile.user.groups.add(group)
+        group = Group.objects.create(name="test_group_2")
+        shop_profile.user.groups.add(group)
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+        returned_groups = response.data["rows"][0]["groups"]
+        expected_groups = ["test_group_1", "test_group_2"]
+
+        # Assert that the returned groups match the expected groups
+        self.assertEqual(set(returned_groups), set(expected_groups))

@@ -14,7 +14,12 @@ from rest_framework.response import Response
 from shop.models import ShopProfile
 
 from .permissions import can_view_groups
-from .serializers import GroupSerializer, PermissionSerializer, ShopProfileSerializer
+from .serializers import (
+    GroupSerializer,
+    PermissionSerializer,
+    ShopProfileSerializer,
+    ShopProfileSerializerPlusGroups,
+)
 
 
 @api_view(["GET"])
@@ -25,20 +30,22 @@ def get_profiles(request):
         {"key": "avatar", "label": "Avatar", "sorting": False},
         {"key": "email", "label": "Email", "sorting": False},
         {"key": "full_name", "label": "Full name", "sorting": True},
-        {"key": "group", "label": "Role", "sorting": True},
+        {"key": "group", "label": "Role", "sorting": False},
     ]
 
+    # set default sorting field - first available from 'headers'
     for header in headers:
         if header["sorting"]:
             default_sort_by = header["key"]
             break
 
+    # setting variables from URL
     current_page = request.GET.get("page", "1")
     page_size = request.GET.get("page_size", "15")
     sort_by = request.GET.get("sort_by", default_sort_by)
     sort_order = request.GET.get("sort_order", "ASC")
 
-    # checking if URL parameters are OK
+    # checking if URL parameters are OK, if not return error 400
     if not (
         current_page.isdigit()
         and page_size.isdigit()
@@ -81,8 +88,8 @@ def get_profiles(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    serializer = ShopProfileSerializer(page.object_list, many=True)
-    serialized_data = serializer.data
+    serializer = ShopProfileSerializerPlusGroups(page.object_list, many=True)
+    serialized_rows = serializer.data
 
     pagination_description = {
         "sort_order": sort_order,
@@ -98,7 +105,7 @@ def get_profiles(request):
     return Response(
         {
             "headers": headers,
-            "rows": serialized_data,
+            "rows": serialized_rows,
             "pagination_description": pagination_description,
         },
         status=status.HTTP_200_OK,
