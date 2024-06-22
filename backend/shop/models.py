@@ -14,14 +14,14 @@ class Order(models.Model):
     products = models.ManyToManyField("Product", through="OrderItem")
 
 
-class Product(models.model):
+class Product(models.Model):
     image = models.ImageField(blank=True, default="", upload_to="images/avatars")
     title = models.CharField(max_length=255)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
 
-class OrderItem(models.model):
+class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
