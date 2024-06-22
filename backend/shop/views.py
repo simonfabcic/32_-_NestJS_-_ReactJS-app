@@ -14,12 +14,7 @@ from rest_framework.response import Response
 from shop.models import ShopProfile
 
 from .permissions import can_view_groups
-from .serializers import (
-    GroupSerializer,
-    PermissionSerializer,
-    ShopProfileSerializer,
-    ShopProfileSerializerPlusGroups,
-)
+from .serializers import GroupSerializer, PermissionSerializer, ShopProfileSerializer
 
 
 @api_view(["GET"])
@@ -88,7 +83,7 @@ def get_profiles(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    serializer = ShopProfileSerializerPlusGroups(page.object_list, many=True)
+    serializer = ShopProfileSerializer(page.object_list, many=True)
     serialized_rows = serializer.data
 
     pagination_description = {

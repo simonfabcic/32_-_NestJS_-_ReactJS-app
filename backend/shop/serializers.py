@@ -10,8 +10,9 @@ from shop.models import ShopProfile
 
 class ShopProfileSerializer(ModelSerializer):
     email = EmailField(source="user.email")
-    full_name = SerializerMethodField()
+    full_name = SerializerMethodField(read_only=True)
     username = CharField(source="user.username")
+    groups = SerializerMethodField(read_only=True)
 
     class Meta:
         model = ShopProfile
@@ -23,18 +24,12 @@ class ShopProfileSerializer(ModelSerializer):
             "last_name",
             "username",
             "avatar",
+            "groups",
             # 'actions',
         ]
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
-
-
-class ShopProfileSerializerPlusGroups(ShopProfileSerializer):
-    groups = SerializerMethodField()
-
-    class Meta(ShopProfileSerializer.Meta):
-        fields = ShopProfileSerializer.Meta.fields + ["groups"]
 
     def get_groups(self, obj):
         return [group.name for group in obj.user.groups.all()]
