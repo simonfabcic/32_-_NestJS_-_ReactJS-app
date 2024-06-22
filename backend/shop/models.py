@@ -8,3 +8,23 @@ class ShopProfile(CoreProfile):
     def __str__(self) -> str:
         parent_string = super().__str__()
         return parent_string + ", prof. pk: " + str(self.pk)
+
+
+class Order(models.Model):
+    products = models.ManyToManyField("Product", through="OrderItem")
+
+
+class Product(models.model):
+    image = models.ImageField(blank=True, default="", upload_to="images/avatars")
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class OrderItem(models.model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+
+    class Meta:
+        unique_together = ("order", "product")
