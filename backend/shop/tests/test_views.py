@@ -1,11 +1,14 @@
 import json
+from io import BytesIO
 
 from core.factory import CoreUserFactory
 from django.contrib.auth.models import Group, Permission
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
+from PIL import Image
 from rest_framework.test import APIClient, APITestCase
-from shop.factory import ShopProfileFactory
-from shop.models import ShopProfile
+from shop.factory import ProductFactory, ShopProfileFactory
+from shop.models import Product, ShopProfile
 
 
 class TestShopProfile(APITestCase):
@@ -487,3 +490,118 @@ class TestGetShopProfiles(APITestCase):
 
         # Assert that the returned groups match the expected groups
         self.assertEqual(set(returned_groups), set(expected_groups))
+
+
+class TestProductGet(APITestCase):
+    def setUp(self):
+        self.user = CoreUserFactory()
+        self.url_all = reverse("product_get_all")
+
+    def test_product_get_success(self):
+        perm_view_product = Permission.objects.get(codename="view_product")
+        self.user.user_permissions.add(perm_view_product)
+        self.client.force_authenticate(user=self.user)
+
+        product = ProductFactory()
+        response = self.client.get(self.url_all)
+        self.assertEqual(response.status_code, 200)
+
+        # check if returned data is product
+        expected_keys = {"id", "image", "title", "description", "price"}
+        self.assertTrue(expected_keys.issubset(response.data[0].keys()))
+
+    def test_product_get_success_permission_change_product(self):
+        perm_view_product = Permission.objects.get(codename="change_product")
+        self.user.user_permissions.add(perm_view_product)
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.get(self.url_all)
+        self.assertEqual(response.status_code, 200)
+
+    def test_product_get_failure_not_authenticated(self):
+        response = self.client.get(self.url_all)
+        self.assertEqual(response.status_code, 302)
+
+    def test_product_get_failure_no_permissions(self):
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.get(self.url_all)
+        self.assertEqual(response.status_code, 403)
+
+    def test_product_get_one_success_using_product_id(self):
+        perm_view_product = Permission.objects.get(codename="view_product")
+        self.user.user_permissions.add(perm_view_product)
+        self.client.force_authenticate(user=self.user)
+
+        product = ProductFactory(title="test_title")
+        url = reverse("product_get", kwargs={"product_id": product.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(response.data["title"], "test_title")
+
+
+class TestProductCreate(APITestCase):
+    def setUp(self):
+        self.user = CoreUserFactory()
+        self.url = reverse("product_create")
+
+        # create an in-memory image
+        binary_stream = BytesIO()
+        Image.new("RGB", (100, 100)).save(binary_stream, format="JPEG")
+        # sets the file pointer to the beginning of the BytesIO object
+        binary_stream.seek(0)
+        self.product_data = {
+            "image": SimpleUploadedFile(
+                "test_image.jpg", binary_stream.read(), content_type="image/jpeg"
+            ),
+            "title": "how",
+            "description": "Group sing charge piece cut more indicate.",
+            "price": "566.04",
+        }
+
+    def test_product_create_success(self):
+        no_of_products_before = Product.objects.all().count()
+
+        perm_add_product = Permission.objects.get(codename="change_product")
+        self.user.user_permissions.add(perm_add_product)
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.put(self.url, data=self.product_data, format="multipart")
+        self.assertEqual(response.status_code, 201)
+
+        no_of_products_after = Product.objects.all().count()
+        self.assertEqual(no_of_products_before + 1, no_of_products_after)
+
+    def test_product_create_failure_not_authenticated(self):
+        no_of_products_before = Product.objects.all().count()
+
+        response = self.client.put(self.url, data=self.product_data, format="multipart")
+        self.assertEqual(response.status_code, 302)
+
+        no_of_products_after = Product.objects.all().count()
+        self.assertEqual(no_of_products_before, no_of_products_after)
+
+    def test_product_create_failure_no_permission(self):
+        no_of_products_before = Product.objects.all().count()
+
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.put(self.url, data=self.product_data, format="multipart")
+        self.assertEqual(response.status_code, 403)
+
+        no_of_products_after = Product.objects.all().count()
+        self.assertEqual(no_of_products_before, no_of_products_after)
+
+    def test_product_create_failure_wrong_permission(self):
+        no_of_products_before = Product.objects.all().count()
+
+        perm_add_product = Permission.objects.get(codename="view_product")
+        self.user.user_permissions.add(perm_add_product)
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.put(self.url, data=self.product_data, format="multipart")
+        self.assertEqual(response.status_code, 403)
+
+        no_of_products_after = Product.objects.all().count()
+        self.assertEqual(no_of_products_before, no_of_products_after)
