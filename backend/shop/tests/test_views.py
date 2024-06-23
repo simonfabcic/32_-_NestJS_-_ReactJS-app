@@ -498,11 +498,11 @@ class TestProductGet(APITestCase):
 
         self.user_product_viewer = CoreUserFactory()
         perm_view_product = Permission.objects.get(codename="view_product")
-        self.user_viewer.user_permissions.add(perm_view_product)
+        self.user_product_viewer.user_permissions.add(perm_view_product)
 
         self.user_product_editor = CoreUserFactory()
         perm_change_product = Permission.objects.get(codename="change_product")
-        self.user.user_permissions.add(perm_change_product)
+        self.user_product_editor.user_permissions.add(perm_change_product)
 
         self.url_all = reverse("product_get_all")
 
@@ -550,11 +550,11 @@ class TestProductCreate(APITestCase):
 
         self.user_product_viewer = CoreUserFactory()
         perm_view_product = Permission.objects.get(codename="view_product")
-        self.user_viewer.user_permissions.add(perm_view_product)
+        self.user_product_viewer.user_permissions.add(perm_view_product)
 
         self.user_product_editor = CoreUserFactory()
         perm_change_product = Permission.objects.get(codename="change_product")
-        self.user.user_permissions.add(perm_change_product)
+        self.user_product_editor.user_permissions.add(perm_change_product)
 
         self.url = reverse("product_create")
 
