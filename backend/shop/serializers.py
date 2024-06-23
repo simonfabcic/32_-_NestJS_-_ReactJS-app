@@ -50,4 +50,4 @@ class GroupSerializer(ModelSerializer):
 class ProductSerializer(ModelSerializer):
     class Meta:
         model = Product
-        fields = "__all__"
+        fields = ["id", "image", "title", "description", "price"]

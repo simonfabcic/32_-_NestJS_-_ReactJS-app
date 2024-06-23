@@ -495,12 +495,19 @@ class TestGetShopProfiles(APITestCase):
 class TestProductGet(APITestCase):
     def setUp(self):
         self.user = CoreUserFactory()
+
+        self.user_product_viewer = CoreUserFactory()
+        perm_view_product = Permission.objects.get(codename="view_product")
+        self.user_viewer.user_permissions.add(perm_view_product)
+
+        self.user_product_editor = CoreUserFactory()
+        perm_change_product = Permission.objects.get(codename="change_product")
+        self.user.user_permissions.add(perm_change_product)
+
         self.url_all = reverse("product_get_all")
 
     def test_product_get_success(self):
-        perm_view_product = Permission.objects.get(codename="view_product")
-        self.user.user_permissions.add(perm_view_product)
-        self.client.force_authenticate(user=self.user)
+        self.client.force_authenticate(user=self.user_product_viewer)
 
         product = ProductFactory()
         response = self.client.get(self.url_all)
@@ -511,9 +518,7 @@ class TestProductGet(APITestCase):
         self.assertTrue(expected_keys.issubset(response.data[0].keys()))
 
     def test_product_get_success_permission_change_product(self):
-        perm_view_product = Permission.objects.get(codename="change_product")
-        self.user.user_permissions.add(perm_view_product)
-        self.client.force_authenticate(user=self.user)
+        self.client.force_authenticate(user=self.user_product_editor)
 
         response = self.client.get(self.url_all)
         self.assertEqual(response.status_code, 200)
@@ -529,9 +534,7 @@ class TestProductGet(APITestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_product_get_one_success_using_product_id(self):
-        perm_view_product = Permission.objects.get(codename="view_product")
-        self.user.user_permissions.add(perm_view_product)
-        self.client.force_authenticate(user=self.user)
+        self.client.force_authenticate(user=self.user_product_viewer)
 
         product = ProductFactory(title="test_title")
         url = reverse("product_get", kwargs={"product_id": product.id})
@@ -544,6 +547,15 @@ class TestProductGet(APITestCase):
 class TestProductCreate(APITestCase):
     def setUp(self):
         self.user = CoreUserFactory()
+
+        self.user_product_viewer = CoreUserFactory()
+        perm_view_product = Permission.objects.get(codename="view_product")
+        self.user_viewer.user_permissions.add(perm_view_product)
+
+        self.user_product_editor = CoreUserFactory()
+        perm_change_product = Permission.objects.get(codename="change_product")
+        self.user.user_permissions.add(perm_change_product)
+
         self.url = reverse("product_create")
 
         # create an in-memory image
@@ -561,11 +573,9 @@ class TestProductCreate(APITestCase):
         }
 
     def test_product_create_success(self):
-        no_of_products_before = Product.objects.all().count()
+        self.client.force_authenticate(user=self.user_product_editor)
 
-        perm_add_product = Permission.objects.get(codename="change_product")
-        self.user.user_permissions.add(perm_add_product)
-        self.client.force_authenticate(user=self.user)
+        no_of_products_before = Product.objects.all().count()
 
         response = self.client.put(self.url, data=self.product_data, format="multipart")
         self.assertEqual(response.status_code, 201)
@@ -583,9 +593,9 @@ class TestProductCreate(APITestCase):
         self.assertEqual(no_of_products_before, no_of_products_after)
 
     def test_product_create_failure_no_permission(self):
-        no_of_products_before = Product.objects.all().count()
-
         self.client.force_authenticate(user=self.user)
+
+        no_of_products_before = Product.objects.all().count()
 
         response = self.client.put(self.url, data=self.product_data, format="multipart")
         self.assertEqual(response.status_code, 403)
@@ -594,11 +604,9 @@ class TestProductCreate(APITestCase):
         self.assertEqual(no_of_products_before, no_of_products_after)
 
     def test_product_create_failure_wrong_permission(self):
-        no_of_products_before = Product.objects.all().count()
+        self.client.force_authenticate(user=self.user_product_viewer)
 
-        perm_add_product = Permission.objects.get(codename="view_product")
-        self.user.user_permissions.add(perm_add_product)
-        self.client.force_authenticate(user=self.user)
+        no_of_products_before = Product.objects.all().count()
 
         response = self.client.put(self.url, data=self.product_data, format="multipart")
         self.assertEqual(response.status_code, 403)
