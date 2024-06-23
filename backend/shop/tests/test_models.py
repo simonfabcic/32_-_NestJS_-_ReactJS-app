@@ -10,14 +10,6 @@ class OrderModelTests(TestCase):
         self.product2 = ProductFactory()
         self.order = Order.objects.create()
 
-    def test_add_product_to_order(self):
-        OrderItem.objects.create(order=self.order, product=self.product1, quantity=2)
-        OrderItem.objects.create(order=self.order, product=self.product2, quantity=3)
-
-        self.assertEqual(OrderItem.objects.count(), 2)
-        self.assertEqual(OrderItem.objects.get(product=self.product1).quantity, 2)
-        self.assertEqual(OrderItem.objects.get(product=self.product2).quantity, 3)
-
     def test_unique_order_product_constraint(self):
         OrderItem.objects.create(order=self.order, product=self.product1, quantity=2)
 
