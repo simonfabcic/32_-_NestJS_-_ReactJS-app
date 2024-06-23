@@ -5,7 +5,7 @@ from rest_framework.serializers import (
     ModelSerializer,
     SerializerMethodField,
 )
-from shop.models import Product, ShopProfile
+from shop.models import Order, Product, ShopProfile
 
 
 class ShopProfileSerializer(ModelSerializer):
@@ -51,3 +51,9 @@ class ProductSerializer(ModelSerializer):
     class Meta:
         model = Product
         fields = ["id", "image", "title", "description", "price"]
+
+
+class OrderSerializer(ModelSerializer):
+    class Meta:
+        model = Order
+        # fields = ["order_item"]
