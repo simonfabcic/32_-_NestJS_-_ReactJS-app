@@ -7,7 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.core.paginator import Paginator
 from django.db import IntegrityError, connection
 from django.shortcuts import render
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -147,94 +147,100 @@ def profile_create(request):
         )
 
 
-@api_view(["PUT", "GET", "DELETE"])
-@login_required()
-def profile(request, profile_id):
-    match request.method:
-        case "PUT":
-            firstName = request.data.get("firstName")
-            lastName = request.data.get("lastName")
-            email = request.data.get("email")
-            password = request.data.get("password")
-            userID = request.data.get("userID")
-            avatar = request.data.get("avatar")
-            try:
-                if profile_id == "null":
-                    raise ObjectDoesNotExist("URL parameter profileID is 'null'.")
-                profile = ShopProfile.objects.get(id=profile_id)
-                if firstName is not None:
-                    profile.first_name = firstName
-                if lastName is not None:
-                    profile.last_name = lastName
-                if email is not None:
-                    profile.user.email = email
-                    profile.user.username = email
-                if password:
-                    profile.user.set_password(password)
-                if avatar:
-                    profile.avatar = avatar
-                profile.save()
-                profile.user.save()
+# https://www.django-rest-framework.org/api-guide/routers/#using-include-with-routers
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = ShopProfile.objects.all()
+    serializer_class = ShopProfileSerializer
 
-                return Response(
-                    {
-                        "message": "Success. Profile for user ID: "
-                        + str(profile_id)
-                        + " updated."
-                    },
-                    status=status.HTTP_204_NO_CONTENT,
-                )
-            except ObjectDoesNotExist:
-                # in case if we manually create a new user, without creating profile
-                if firstName is not None and lastName is not None:
-                    user = CoreUser.objects.get(email=email)
-                    ShopProfile.objects.create(
-                        user=user,
-                        first_name=firstName,
-                        last_name=lastName,
-                    )
-                return Response(
-                    {
-                        "message": "Success. Profile for user ID: "
-                        + str(profile_id)
-                        + " created."
-                    },
-                    status=status.HTTP_201_CREATED,
-                )
-            except IntegrityError as e:
-                if "unique constraint" in str(e).lower():
-                    return Response(
-                        {"error": "Email is already taken."},
-                        status=status.HTTP_409_CONFLICT,
-                    )
-                return Response(
-                    {"error": "Database error occurred."},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
-            except Exception as e:
-                return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        case "GET":
-            try:
-                profile = ShopProfile.objects.get(id=profile_id)
-                serializer = ShopProfileSerializer(profile, many=False)
-                serialized_data = serializer.data
-                return Response(serialized_data)
-            except Exception as e:
-                return Response({"message": str(e)}, status=status.HTTP_404_NOT_FOUND)
+# @api_view(["PUT", "GET", "DELETE"])
+# @login_required()
+# def profile(request, profile_id):
+#     match request.method:
+#         case "PUT":
+#             firstName = request.data.get("firstName")
+#             lastName = request.data.get("lastName")
+#             email = request.data.get("email")
+#             password = request.data.get("password")
+#             userID = request.data.get("userID")
+#             avatar = request.data.get("avatar")
+#             try:
+#                 if profile_id == "null":
+#                     raise ObjectDoesNotExist("URL parameter profileID is 'null'.")
+#                 profile = ShopProfile.objects.get(id=profile_id)
+#                 if firstName is not None:
+#                     profile.first_name = firstName
+#                 if lastName is not None:
+#                     profile.last_name = lastName
+#                 if email is not None:
+#                     profile.user.email = email
+#                     profile.user.username = email
+#                 if password:
+#                     profile.user.set_password(password)
+#                 if avatar:
+#                     profile.avatar = avatar
+#                 profile.save()
+#                 profile.user.save()
 
-        case "DELETE":
-            try:
-                user = CoreUser.objects.get(id=profile_id)
-                profile = ShopProfile.objects.get(user=user)
-                user.delete()
-                profile.delete()
-                return Response(
-                    {"message": "Success. User " + str(profile_id) + " deleted."},
-                    status=status.HTTP_204_NO_CONTENT,
-                )
-            except Exception as e:
-                return Response({"message": str(e)}, status=status.HTTP_404_NOT_FOUND)
+#                 return Response(
+#                     {
+#                         "message": "Success. Profile for user ID: "
+#                         + str(profile_id)
+#                         + " updated."
+#                     },
+#                     status=status.HTTP_204_NO_CONTENT,
+#                 )
+#             except ObjectDoesNotExist:
+#                 # in case if we manually create a new user, without creating profile
+#                 if firstName is not None and lastName is not None:
+#                     user = CoreUser.objects.get(email=email)
+#                     ShopProfile.objects.create(
+#                         user=user,
+#                         first_name=firstName,
+#                         last_name=lastName,
+#                     )
+#                 return Response(
+#                     {
+#                         "message": "Success. Profile for user ID: "
+#                         + str(profile_id)
+#                         + " created."
+#                     },
+#                     status=status.HTTP_201_CREATED,
+#                 )
+#             except IntegrityError as e:
+#                 if "unique constraint" in str(e).lower():
+#                     return Response(
+#                         {"error": "Email is already taken."},
+#                         status=status.HTTP_409_CONFLICT,
+#                     )
+#                 return Response(
+#                     {"error": "Database error occurred."},
+#                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#                 )
+#             except Exception as e:
+#                 return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+#         case "GET":
+#             try:
+#                 profile = ShopProfile.objects.get(id=profile_id)
+#                 serializer = ShopProfileSerializer(profile, many=False)
+#                 serialized_data = serializer.data
+#                 return Response(serialized_data)
+#             except Exception as e:
+#                 return Response({"message": str(e)}, status=status.HTTP_404_NOT_FOUND)
+
+#         case "DELETE":
+#             try:
+#                 user = CoreUser.objects.get(id=profile_id)
+#                 profile = ShopProfile.objects.get(user=user)
+#                 user.delete()
+#                 profile.delete()
+#                 return Response(
+#                     {"message": "Success. User " + str(profile_id) + " deleted."},
+#                     status=status.HTTP_204_NO_CONTENT,
+#                 )
+#             except Exception as e:
+#                 return Response({"message": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(["GET"])
