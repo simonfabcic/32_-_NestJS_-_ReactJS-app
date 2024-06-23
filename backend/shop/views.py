@@ -11,10 +11,15 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from shop.models import ShopProfile
+from shop.models import Product, ShopProfile
+from shop.serializers import (
+    GroupSerializer,
+    PermissionSerializer,
+    ProductSerializer,
+    ShopProfileSerializer,
+)
 
-from .permissions import can_view_groups
-from .serializers import GroupSerializer, PermissionSerializer, ShopProfileSerializer
+from .permissions import can_view_groups, can_view_products
 
 
 @api_view(["GET"])
@@ -274,3 +279,29 @@ def role_create(request):
 def permission_user_get(request):
     permissions = list(request.user.get_all_permissions())
     return Response({"permissions": permissions}, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@login_required()
+def product_get(request, product_id=None):
+    if not can_view_products(request.user):
+        raise PermissionDenied("You don't have permission to view products.")
+    if product_id:
+        product = Product.objects.get(id=product_id)
+        serializer = ProductSerializer(product)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        products = Product.objects.all()
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["PUT"])
+@login_required()
+@permission_required("shop.change_product", raise_exception=True)
+def product_create(request):
+    serializer = ProductSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -5,7 +5,7 @@ from rest_framework.serializers import (
     ModelSerializer,
     SerializerMethodField,
 )
-from shop.models import ShopProfile
+from shop.models import Product, ShopProfile
 
 
 class ShopProfileSerializer(ModelSerializer):
@@ -45,3 +45,9 @@ class GroupSerializer(ModelSerializer):
     class Meta:
         model = Group
         fields = ["id", "name"]
+
+
+class ProductSerializer(ModelSerializer):
+    class Meta:
+        model = Product
+        fields = "__all__"
