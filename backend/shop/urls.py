@@ -1,5 +1,9 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 from shop import views
+
+router = DefaultRouter()
+router.register(r"profile", views.OrderViewSet, basename="order_get_create")
 
 urlpatterns = [
     # prefix "shop-api-v1/"
@@ -13,6 +17,8 @@ urlpatterns = [
     path("product/", views.product_get, name="product_get_many"),
     path("product/<int:product_id>/", views.product_get, name="product_get"),
     path("product/create/", views.product_create, name="product_create"),
-    path("order/", views.order_get, name="order_get_many"),
-    path("order/<int:product_id>/", views.order_get, name="order_get"),
+    # path("order/", views.OrderViewSet.as_view, name="order_get_many"),
+    # path("order/", views.OrderViewSet.as_view(), name="order_get_create"),
 ]
+
+urlpatterns += router.urls

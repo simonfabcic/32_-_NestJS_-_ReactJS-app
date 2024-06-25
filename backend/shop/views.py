@@ -11,15 +11,20 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from shop.models import Product, ShopProfile
+from shop.models import Order, Product, ShopProfile
+from shop.permissions import (
+    CanModifyOrder,
+    CanViewOrder,
+    can_view_groups,
+    can_view_products,
+)
 from shop.serializers import (
     GroupSerializer,
+    OrderSerializer,
     PermissionSerializer,
     ProductSerializer,
     ShopProfileSerializer,
 )
-
-from .permissions import can_view_groups, can_view_products
 
 
 @api_view(["GET"])
@@ -310,3 +315,14 @@ def product_create(request):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated, CanViewOrder]
+
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        """
+        if self.action in ["create", "update", "partial_update", "destroy"]:
+            permission_classes = [IsAuthenticated, CanModifyOrder]
+        else:
+            permission_classes = [IsAuthenticated, CanViewOrder]
+        return [permission() for permission in permission_classes]

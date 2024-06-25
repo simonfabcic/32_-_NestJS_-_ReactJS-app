@@ -8,7 +8,7 @@ from django.urls import reverse
 from PIL import Image
 from rest_framework.test import APIClient, APITestCase
 from shop.factory import ProductFactory, ShopProfileFactory
-from shop.models import Product, ShopProfile
+from shop.models import Order, Product, ShopProfile
 
 
 class TestShopProfile(APITestCase):
@@ -613,3 +613,25 @@ class TestProductCreate(APITestCase):
 
         no_of_products_after = Product.objects.all().count()
         self.assertEqual(no_of_products_before, no_of_products_after)
+
+
+class TestOrder(APITestCase):
+    def setUp(self):
+        self.user = CoreUserFactory()
+
+        self.user_order_viewer = CoreUserFactory()
+        perm_view_order = Permission.objects.get(codename="view_order")
+        self.user_order_viewer.user_permissions.add(perm_view_order)
+
+        self.user_order_editor = CoreUserFactory()
+        perm_change_order = Permission.objects.get(codename="change_order")
+        self.user_order_editor.user_permissions.add(perm_change_order)
+
+        self.url = reverse("order_get_create-list")
+
+    def test_one(self):
+        self.client.force_authenticate(user=self.user_order_viewer)
+        order = Order.objects.create()
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
