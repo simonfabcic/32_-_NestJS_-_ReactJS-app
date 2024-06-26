@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from shop import views
 
 router = DefaultRouter()
-router.register(r"profile", views.OrderViewSet, basename="order_get_create")
+router.register(r"profile", views.OrderViewSet, basename="order")
 
 urlpatterns = [
     # prefix "shop-api-v1/"

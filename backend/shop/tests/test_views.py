@@ -6,6 +6,7 @@ from django.contrib.auth.models import Group, Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from PIL import Image
+from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 from shop.factory import ProductFactory, ShopProfileFactory
 from shop.models import Order, Product, ShopProfile
@@ -627,11 +628,48 @@ class TestOrder(APITestCase):
         perm_change_order = Permission.objects.get(codename="change_order")
         self.user_order_editor.user_permissions.add(perm_change_order)
 
-        self.url = reverse("order_get_create-list")
+        self.url_list = reverse("order-list")
 
     def test_one(self):
         self.client.force_authenticate(user=self.user_order_viewer)
         order = Order.objects.create()
 
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
+        response = self.client.get(self.url_list)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        response = self.client.post(self.url_list, {})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # order_url = reverse("order-detail", args=[order.id])
+        # response = self.client.put(order_url, {})
+        # self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # response = self.client.delete(order_url)
+        # self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    # def test_manage_order_with_change_permission(self):
+    #     self.client.force_authenticate(user=self.user_order_editor)
+
+    #     # Create an order
+    #     response = self.client.post(self.url, {})
+    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    #     order_id = response.data["id"]
+
+    #     order_url = reverse("order-detail", args=[order_id])
+
+    #     # Update the order
+    #     response = self.client.put(order_url, {})
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    #     # Delete the order
+    #     response = self.client.delete(order_url)
+    #     self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_unauthenticated_user(self):
+        # Try to access the list of orders without authentication
+        response = self.client.get(self.url_list)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # Try to create an order without authentication
+        response = self.client.post(self.url_list, {})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
