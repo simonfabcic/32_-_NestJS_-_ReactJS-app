@@ -315,7 +315,7 @@ def product_create(request):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    permission_classes = [IsAuthenticated, CanViewOrder]
+    ## permission_classes = [IsAuthenticated, CanViewOrder]
 
     def get_permissions(self):
         """

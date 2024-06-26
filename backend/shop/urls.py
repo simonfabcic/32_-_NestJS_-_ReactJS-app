@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from shop import views
 
 router = DefaultRouter()
-router.register(r"profile", views.OrderViewSet, basename="order")
+router.register(r"order", views.OrderViewSet, basename="order")
 
 urlpatterns = [
     # prefix "shop-api-v1/"
@@ -22,3 +22,6 @@ urlpatterns = [
 ]
 
 urlpatterns += router.urls
+
+# for i in urlpatterns:
+#     print(i)
