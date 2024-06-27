@@ -13,11 +13,15 @@ class ShopProfile(CoreProfile):
 class Order(models.Model):
     products = models.ManyToManyField("Product", through="OrderItem")
 
+    @property
+    def order_items(self):
+        return self.orderitem_set.all()
+
 
 class Product(models.Model):
-    image = models.ImageField(blank=True, default="", upload_to="images/products")
+    image = models.ImageField(null=True, default="", upload_to="images/products")
     title = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
+    description = models.TextField(null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
 

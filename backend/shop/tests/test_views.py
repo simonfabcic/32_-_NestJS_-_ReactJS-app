@@ -10,7 +10,7 @@ from PIL import Image
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 from shop.factory import ProductFactory, ShopProfileFactory
-from shop.models import Order, Product, ShopProfile
+from shop.models import Order, OrderItem, Product, ShopProfile
 
 
 class TestShopProfile(APITestCase):
@@ -630,7 +630,10 @@ class TestOrder(APITestCase):
         self.user_order_editor.user_permissions.add(perm_change_order)
 
         self.url_list = reverse("order-list")
-        print("self.url_list: ", self.url_list)
+
+        # Create sample products
+        self.product1 = Product.objects.create(title="Product 1", price=10.00)
+        self.product2 = Product.objects.create(title="Product 2", price=20.00)
 
     def test_one(self):
         self.client.force_authenticate(user=self.user_order_viewer)
@@ -646,7 +649,6 @@ class TestOrder(APITestCase):
 
         # Ensure the user with view_order permission cannot update an order
         url_detail = reverse("order-detail", args=[order.id])
-        print("self.url_detail: ", url_detail)
 
         response = self.client.put(url_detail, {})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -654,28 +656,27 @@ class TestOrder(APITestCase):
         response = self.client.delete(url_detail)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_manage_order_with_change_permission(self):
+    def test_create_order(self):
         self.client.force_authenticate(user=self.user_order_editor)
+        data = {
+            "order_items": [
+                {"product": self.product1.id, "quantity": 2},
+                {"product": self.product2.id, "quantity": 1},
+            ]
+        }
+        response = self.client.post(self.url_list, data, format="json")
+        if response.status_code != 201:
+            print("Response data:", response.data)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(Order.objects.count(), 1)
+        self.assertEqual(OrderItem.objects.count(), 2)
+        self.assertEqual(
+            OrderItem.objects.filter(product=self.product1).first().quantity, 2
+        )
+        self.assertEqual(
+            OrderItem.objects.filter(product=self.product2).first().quantity, 1
+        )
 
-        # Create an order
-        # order = Order.objects.create()
-        # self.url_list = reverse("order-detail", args=[order.id])
-        response = self.client.post(self.url_list, {})
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        order_id = response.data["id"]
-
-        # order_url = reverse("order-detail", args=[order_id])
-        order_url = reverse("order-detail", kwargs={"pk": order_id})
-
-        # Update the order
-        response = self.client.put(order_url, {})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # Delete the order
-        response = self.client.delete(order_url)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
-    @skip("Skipping this test for now")
     def test_unauthenticated_user(self):
         # Try to access the list of orders without authentication
         response = self.client.get(self.url_list)

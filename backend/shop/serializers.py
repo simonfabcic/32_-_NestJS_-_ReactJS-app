@@ -3,6 +3,7 @@ from rest_framework.serializers import (
     CharField,
     EmailField,
     ModelSerializer,
+    PrimaryKeyRelatedField,
     SerializerMethodField,
 )
 from shop.models import Order, OrderItem, Product, ShopProfile
@@ -54,7 +55,8 @@ class ProductSerializer(ModelSerializer):
 
 
 class OrderItemSerializer(ModelSerializer):
-    product = ProductSerializer()
+    product = PrimaryKeyRelatedField(queryset=Product.objects.all())
+    order = PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = OrderItem
@@ -62,8 +64,15 @@ class OrderItemSerializer(ModelSerializer):
 
 
 class OrderSerializer(ModelSerializer):
-    order_items = OrderItemSerializer(source="orderitem_set", many=True)
+    order_items = OrderItemSerializer(many=True)
 
     class Meta:
         model = Order
         fields = ["id", "order_items"]
+
+    def create(self, validated_data):
+        order_items_data = validated_data.pop("order_items")
+        order = Order.objects.create()
+        for order_item_data in order_items_data:
+            OrderItem.objects.create(order=order, **order_item_data)
+        return order
