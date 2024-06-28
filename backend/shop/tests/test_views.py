@@ -675,7 +675,7 @@ class TestOrder(APITestCase):
             OrderItem.objects.filter(product=self.product2).first().quantity, 1
         )
         order_item = OrderItem.objects.filter(product=self.product2).first()
-        breakpoint()
+        # breakpoint()
 
     def test_unauthenticated_user(self):
         # Try to access the list of orders without authentication
