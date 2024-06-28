@@ -13,9 +13,9 @@ class ShopProfile(CoreProfile):
 class Order(models.Model):
     products = models.ManyToManyField("Product", through="OrderItem")
 
-    @property
-    def order_items(self):
-        return self.orderitem_set.all()
+    # @property
+    # def order_items(self):
+    #     return self.orderitem_set.all()
 
 
 class Product(models.Model):
@@ -26,7 +26,9 @@ class Product(models.Model):
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(
+        Order, on_delete=models.CASCADE, related_name="order_items"
+    )
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
 

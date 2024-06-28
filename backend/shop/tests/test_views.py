@@ -665,8 +665,6 @@ class TestOrder(APITestCase):
             ]
         }
         response = self.client.post(self.url_list, data, format="json")
-        if response.status_code != 201:
-            print("Response data:", response.data)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Order.objects.count(), 1)
         self.assertEqual(OrderItem.objects.count(), 2)
@@ -676,6 +674,8 @@ class TestOrder(APITestCase):
         self.assertEqual(
             OrderItem.objects.filter(product=self.product2).first().quantity, 1
         )
+        order_item = OrderItem.objects.filter(product=self.product2).first()
+        breakpoint()
 
     def test_unauthenticated_user(self):
         # Try to access the list of orders without authentication

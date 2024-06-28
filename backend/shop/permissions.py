@@ -1,4 +1,4 @@
-from rest_framework.permissions import BasePermission
+from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 
 def can_view_groups(user):
@@ -17,25 +17,38 @@ def can_view_products(user):
     )
 
 
-class CanViewOrder(BasePermission):
+# class CanViewOrder(BasePermission):
+#     """
+#     Allows access only to logged in users with at least one of the permissions:
+#     shop.view_order or shop.change_order
+#     """
+
+#     def has_permission(self, request, view):
+#         return request.user.is_authenticated and (
+#             request.user.has_perm("shop.view_order")
+#             or request.user.has_perm("shop.change_order")
+#         )
+
+
+# class CanModifyOrder(BasePermission):
+#     """
+#     Allows access only to logged in users with the shop.change_order permission
+#     """
+
+#     def has_permission(self, request, view):
+#         return request.user.is_authenticated and request.user.has_perm(
+#             "shop.change_order"
+#         )
+
+
+class CanModifyOrViewOrder(BasePermission):
     """
-    Allows access only to logged in users with at least one of the permissions:
-    shop.view_order or shop.change_order
+    TODO add comment
     """
 
     def has_permission(self, request, view):
-        return request.user.is_authenticated and (
-            request.user.has_perm("shop.view_order")
+        return bool(
+            request.method in SAFE_METHODS  #  ('GET', 'HEAD', 'OPTIONS')
+            and request.user.has_perm("shop.view_order")
             or request.user.has_perm("shop.change_order")
-        )
-
-
-class CanModifyOrder(BasePermission):
-    """
-    Allows access only to logged in users with the shop.change_order permission
-    """
-
-    def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.has_perm(
-            "shop.change_order"
         )
