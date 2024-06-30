@@ -631,8 +631,9 @@ class TestOrder(APITestCase):
         self.url_list = reverse("order-list")
 
         # Create sample products
-        self.product1 = Product.objects.create(title="Product 1", price=10.00)
-        self.product2 = Product.objects.create(title="Product 2", price=20.00)
+        self.product1 = Product.objects.create(title="Product 1", price=30.00)
+        self.product2 = Product.objects.create(title="Product 2", price=50.00)
+        self.product3 = Product.objects.create(title="Product 2", price=70.00)
 
     def test_order_user_viewer(self):
         self.client.force_authenticate(user=self.user_order_viewer)
@@ -689,15 +690,20 @@ class TestOrder(APITestCase):
         order_data = {
             "order_items": [
                 {"product": self.product1.id, "quantity": 5},
+                {"product": self.product3.id, "quantity": 11},
             ]
         }
         response = self.client.put(url_detail, order_data, format="json")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(OrderItem.objects.get(product=self.product1).quantity, 5)
-        self.assertEqual(OrderItem.objects.get(product=self.product2).quantity, 3)
-
-        # order_item = OrderItem.objects.get(product=self.product2)
-        # breakpoint()
+        self.assertEqual(
+            OrderItem.objects.get(order=order, product=self.product1).quantity, 5
+        )
+        self.assertEqual(
+            OrderItem.objects.get(order=order, product=self.product3).quantity, 11
+        )
+        self.assertFalse(
+            OrderItem.objects.filter(order=order, product=self.product2).exists()
+        )
 
     def test_unauthenticated_user(self):
         # Try to access the list of orders without authentication

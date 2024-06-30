@@ -20,6 +20,9 @@ class Product(models.Model):
     description = models.TextField(null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
+    def __str__(self) -> str:
+        return self.title + ", " + str(self.price) + " $"
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(
