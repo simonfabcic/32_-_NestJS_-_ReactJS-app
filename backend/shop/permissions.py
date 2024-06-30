@@ -43,12 +43,20 @@ def can_view_products(user):
 
 class CanModifyOrViewOrder(BasePermission):
     """
-    TODO add comment
+    If HTTP method is 'GET', 'HEAD' or 'OPTIONS', allow access if user has
+    'view_order' or 'change_order' permission,
+    otherwise allow access only if user has 'change_order' permission.
     """
 
     def has_permission(self, request, view):
         return bool(
-            request.method in SAFE_METHODS  #  ('GET', 'HEAD', 'OPTIONS')
+            request.method in SAFE_METHODS
             and request.user.has_perm("shop.view_order")
             or request.user.has_perm("shop.change_order")
+            # request.method in SAFE_METHODS
+            # and (
+            #     request.user.has_perm("shop.view_order")
+            #     or request.user.has_perm("shop.change_order")
+            # )
+            # or request.user.has_perm("shop.change_order")
         )

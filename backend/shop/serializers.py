@@ -70,6 +70,7 @@ class OrderSerializer(ModelSerializer):
         model = Order
         fields = ["id", "order_items"]
 
+    # https://www.django-rest-framework.org/api-guide/relations/#writable-nested-serializers
     def create(self, validated_data):
         order_items_data = validated_data.pop("order_items")
         order = Order.objects.create(**validated_data)

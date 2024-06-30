@@ -1,6 +1,5 @@
 import json
 from io import BytesIO
-from unittest import skip
 
 from core.factory import CoreUserFactory
 from django.contrib.auth.models import Group, Permission
@@ -674,7 +673,7 @@ class TestOrder(APITestCase):
         self.assertEqual(
             OrderItem.objects.filter(product=self.product2).first().quantity, 1
         )
-        order_item = OrderItem.objects.filter(product=self.product2).first()
+        # order_item = OrderItem.objects.filter(product=self.product2).first()
         # breakpoint()
 
     def test_unauthenticated_user(self):

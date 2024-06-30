@@ -13,10 +13,6 @@ class ShopProfile(CoreProfile):
 class Order(models.Model):
     products = models.ManyToManyField("Product", through="OrderItem")
 
-    # @property
-    # def order_items(self):
-    #     return self.orderitem_set.all()
-
 
 class Product(models.Model):
     image = models.ImageField(null=True, default="", upload_to="images/products")

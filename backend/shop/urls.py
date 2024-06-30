@@ -17,11 +17,6 @@ urlpatterns = [
     path("product/", views.product_get, name="product_get_many"),
     path("product/<int:product_id>/", views.product_get, name="product_get"),
     path("product/create/", views.product_create, name="product_create"),
-    # path("order/", views.OrderViewSet.as_view, name="order_get_many"),
-    # path("order/", views.OrderViewSet.as_view(), name="order_get_create"),
 ]
 
 urlpatterns += router.urls
-
-# for i in urlpatterns:
-#     print(i)
