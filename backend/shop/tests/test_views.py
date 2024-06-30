@@ -633,7 +633,7 @@ class TestOrder(APITestCase):
         # Create sample products
         self.product1 = Product.objects.create(title="Product 1", price=30.00)
         self.product2 = Product.objects.create(title="Product 2", price=50.00)
-        self.product3 = Product.objects.create(title="Product 2", price=70.00)
+        self.product3 = Product.objects.create(title="Product 3", price=70.00)
 
     def test_order_user_viewer(self):
         self.client.force_authenticate(user=self.user_order_viewer)

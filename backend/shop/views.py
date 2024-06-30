@@ -311,13 +311,3 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated, CanModifyOrViewOrder]
-
-    # def get_permissions(self):
-    #     """
-    #     Instantiates and returns the list of permissions that this view requires.
-    #     """
-    #     if self.action in ["create", "update", "partial_update", "destroy"]:
-    #         permission_classes = [IsAuthenticated, CanModifyOrder]
-    #     else:
-    #         permission_classes = [IsAuthenticated, CanViewOrder]
-    #     return [permission() for permission in permission_classes]

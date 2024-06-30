@@ -17,34 +17,10 @@ def can_view_products(user):
     )
 
 
-# class CanViewOrder(BasePermission):
-#     """
-#     Allows access only to logged in users with at least one of the permissions:
-#     shop.view_order or shop.change_order
-#     """
-
-#     def has_permission(self, request, view):
-#         return request.user.is_authenticated and (
-#             request.user.has_perm("shop.view_order")
-#             or request.user.has_perm("shop.change_order")
-#         )
-
-
-# class CanModifyOrder(BasePermission):
-#     """
-#     Allows access only to logged in users with the shop.change_order permission
-#     """
-
-#     def has_permission(self, request, view):
-#         return request.user.is_authenticated and request.user.has_perm(
-#             "shop.change_order"
-#         )
-
-
 class CanModifyOrViewOrder(BasePermission):
     """
-    If HTTP method is 'GET', 'HEAD' or 'OPTIONS', allow access if user has
-    'view_order' or 'change_order' permission,
+    If HTTP method is 'GET', 'HEAD' or 'OPTIONS' (SAFE_METHODS), allow
+    access if user has 'view_order' or 'change_order' permission,
     otherwise allow access only if user has 'change_order' permission.
     """
 
@@ -53,10 +29,4 @@ class CanModifyOrViewOrder(BasePermission):
             request.method in SAFE_METHODS
             and request.user.has_perm("shop.view_order")
             or request.user.has_perm("shop.change_order")
-            # request.method in SAFE_METHODS
-            # and (
-            #     request.user.has_perm("shop.view_order")
-            #     or request.user.has_perm("shop.change_order")
-            # )
-            # or request.user.has_perm("shop.change_order")
         )
