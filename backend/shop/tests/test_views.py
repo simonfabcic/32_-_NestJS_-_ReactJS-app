@@ -634,7 +634,7 @@ class TestOrder(APITestCase):
         self.product1 = Product.objects.create(title="Product 1", price=10.00)
         self.product2 = Product.objects.create(title="Product 2", price=20.00)
 
-    def test_one(self):
+    def test_order_user_viewer(self):
         self.client.force_authenticate(user=self.user_order_viewer)
         order = Order.objects.create()
 
@@ -652,28 +652,51 @@ class TestOrder(APITestCase):
         response = self.client.put(url_detail, {})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+        # Ensure the user with view_order permission cannot delete an order
         response = self.client.delete(url_detail)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_create_order(self):
+    def test_order_user_editor(self):
         self.client.force_authenticate(user=self.user_order_editor)
-        data = {
+        order_data = {
             "order_items": [
-                {"product": self.product1.id, "quantity": 2},
-                {"product": self.product2.id, "quantity": 1},
+                {"product": self.product1.id, "quantity": 7},
+                {"product": self.product2.id, "quantity": 3},
             ]
         }
-        response = self.client.post(self.url_list, data, format="json")
+
+        # Ensure the user with change_order permission can view orders
+        response = self.client.get(self.url_list)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Ensure the user with change_order permission can create an order
+        no_of_orders_before = Order.objects.all().count()
+        no_of_order_items_before = OrderItem.objects.all().count()
+
+        response = self.client.post(self.url_list, order_data, format="json")
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(Order.objects.count(), 1)
-        self.assertEqual(OrderItem.objects.count(), 2)
-        self.assertEqual(
-            OrderItem.objects.filter(product=self.product1).first().quantity, 2
-        )
-        self.assertEqual(
-            OrderItem.objects.filter(product=self.product2).first().quantity, 1
-        )
-        # order_item = OrderItem.objects.filter(product=self.product2).first()
+        self.assertEqual(OrderItem.objects.get(product=self.product1).quantity, 7)
+        self.assertEqual(OrderItem.objects.get(product=self.product2).quantity, 3)
+
+        no_of_orders_after = Order.objects.all().count()
+        no_of_order_items_after = OrderItem.objects.all().count()
+        self.assertEqual(no_of_orders_before + 1, no_of_orders_after)
+        self.assertEqual(no_of_order_items_before + 2, no_of_order_items_after)
+
+        # Ensure the user with change_order permission can update an order
+        order = Order.objects.get()
+        url_detail = reverse("order-detail", args=[order.id])
+        order_data = {
+            "order_items": [
+                {"product": self.product1.id, "quantity": 5},
+            ]
+        }
+        response = self.client.put(url_detail, order_data, format="json")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(OrderItem.objects.get(product=self.product1).quantity, 5)
+        self.assertEqual(OrderItem.objects.get(product=self.product2).quantity, 3)
+
+        # order_item = OrderItem.objects.get(product=self.product2)
         # breakpoint()
 
     def test_unauthenticated_user(self):
