@@ -30,7 +30,7 @@ def get_profiles(request):
         {"key": "group", "label": "Role", "sorting": False},
     ]
 
-    # set default sorting field - first available from 'headers'
+    # set default sorting field - first available from "headers"
     for header in headers:
         if header["sorting"]:
             default_sort_by = header["key"]
