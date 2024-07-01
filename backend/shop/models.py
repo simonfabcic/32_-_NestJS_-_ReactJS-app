@@ -15,14 +15,19 @@ class Order(models.Model):
 
 
 class Product(models.Model):
-    image = models.ImageField(blank=True, default="", upload_to="images/products")
+    image = models.ImageField(null=True, default="", upload_to="images/products")
     title = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, default="")
     price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self) -> str:
+        return self.title + ", " + str(self.price) + " $"
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(
+        Order, on_delete=models.CASCADE, related_name="order_items"
+    )
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
 

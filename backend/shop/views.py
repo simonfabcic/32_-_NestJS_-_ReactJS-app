@@ -1,25 +1,22 @@
-from math import ceil
-
 from core.models import CoreUser
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.core.paginator import Paginator
-from django.db import IntegrityError, connection
-from django.shortcuts import render
-from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from django.db import IntegrityError
+from rest_framework import status, viewsets
+from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from shop.models import Product, ShopProfile
+from shop.models import Order, Product, ShopProfile
+from shop.permissions import CanModifyOrViewOrder, can_view_groups, can_view_products
 from shop.serializers import (
     GroupSerializer,
+    OrderSerializer,
     PermissionSerializer,
     ProductSerializer,
     ShopProfileSerializer,
 )
-
-from .permissions import can_view_groups, can_view_products
 
 
 @api_view(["GET"])
@@ -33,7 +30,7 @@ def get_profiles(request):
         {"key": "group", "label": "Role", "sorting": False},
     ]
 
-    # set default sorting field - first available from 'headers'
+    # set default sorting field - first available from "headers"
     for header in headers:
         if header["sorting"]:
             default_sort_by = header["key"]
@@ -45,7 +42,7 @@ def get_profiles(request):
     sort_by = request.GET.get("sort_by", default_sort_by)
     sort_order = request.GET.get("sort_order", "ASC")
 
-    # checking if URL parameters are OK, if not return error 400
+    # checking if URL parameters are OK, if not return error '400'
     if not (
         current_page.isdigit()
         and page_size.isdigit()
@@ -305,3 +302,9 @@ def product_create(request):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class OrderViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated, CanModifyOrViewOrder]
