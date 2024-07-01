@@ -10,7 +10,7 @@ from django.shortcuts import render
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from rest_framework.response import Response
+from rest_framework.response import Response, Serializer
 from shop.models import Order, Product, ShopProfile
 from shop.permissions import CanModifyOrViewOrder, can_view_groups, can_view_products
 from shop.serializers import (
@@ -45,7 +45,7 @@ def get_profiles(request):
     sort_by = request.GET.get("sort_by", default_sort_by)
     sort_order = request.GET.get("sort_order", "ASC")
 
-    # checking if URL parameters are OK, if not return error 400
+    # checking if URL parameters are OK, if not return error '400'
     if not (
         current_page.isdigit()
         and page_size.isdigit()
