@@ -17,7 +17,7 @@ class Order(models.Model):
 class Product(models.Model):
     image = models.ImageField(null=True, default="", upload_to="images/products")
     title = models.CharField(max_length=255)
-    description = models.TextField(null=True)
+    description = models.TextField(blank=True, default="")
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self) -> str:

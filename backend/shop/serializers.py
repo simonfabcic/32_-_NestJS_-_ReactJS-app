@@ -92,9 +92,8 @@ class OrderSerializer(ModelSerializer):
         for order_item_data in order_items_data:
             try:
                 order_item = OrderItem.objects.get(
-                    # order=instance, product=order_item_data["product"]
                     order=instance,
-                    product_id=order_item_data["product"].id,
+                    product=order_item_data["product"],
                 )
                 order_item.quantity = order_item_data["quantity"]
                 order_item.save()
