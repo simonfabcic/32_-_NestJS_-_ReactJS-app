@@ -4,13 +4,13 @@ from core.models import CoreUser
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
-from django.core.paginator import Paginator
+from django.core.paginator import EmptyPage, Paginator
 from django.db import IntegrityError, connection
 from django.shortcuts import render
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from rest_framework.response import Response, Serializer
+from rest_framework.response import Response
 from shop.models import Order, Product, ShopProfile
 from shop.permissions import CanModifyOrViewOrder, can_view_groups, can_view_products
 from shop.serializers import (
