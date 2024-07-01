@@ -505,7 +505,7 @@ class TestProductGet(APITestCase):
         perm_change_product = Permission.objects.get(codename="change_product")
         self.user_product_editor.user_permissions.add(perm_change_product)
 
-        self.url_all = reverse("product_get_many")
+        self.url_all = reverse("product_list")
 
     def test_product_get_success(self):
         self.client.force_authenticate(user=self.user_product_viewer)
