@@ -97,7 +97,7 @@ class OrderSerializer(ModelSerializer):
                 )
                 order_item.quantity = order_item_data["quantity"]
                 order_item.save()
-            except:
+            except OrderItem.DoesNotExist:
                 OrderItem.objects.create(order=instance, **order_item_data)
 
         return instance
