@@ -14,7 +14,9 @@ jobs:
                   cd backend
                   pipenv install --dev
             - name: Run Ruff
-              run: pipenv run ruff check --output-format=github .
+              run: |
+                  cd backend
+                  pipenv run ruff check --output-format=github .
             # run tests
             - run: |
                   cd backend
