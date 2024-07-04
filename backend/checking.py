@@ -1,14 +1,14 @@
 import os
 
 import django
+from core.models import User
+from shop.models import Profile
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
 django.setup()
 
 print("start testing")
 
-from core.models import User
-from shop.models import Profile, Role
 
 # profile_first = Profile.objects.first()
 

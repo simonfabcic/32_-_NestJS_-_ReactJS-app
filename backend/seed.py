@@ -3,6 +3,8 @@ import random
 
 import django
 from configurations import importer
+from core.models import CoreUser
+from shop.models import Role, ShopProfile
 
 os.environ.setdefault("DJANGO_CONFIGURATION", "Dev")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
@@ -14,8 +16,6 @@ django.setup()
 
 print("Start seeding...")
 
-from core.models import CoreUser
-from shop.models import Role, ShopProfile
 
 ROLES = [
     "Administrator",
@@ -110,7 +110,7 @@ for i in range(100):
             email=email,
             password="asdfggfdsa",
         )
-    except:
+    except Exception:
         print(i, ". user skipped. User wasn't created.")
     else:
         ShopProfile.objects.create(

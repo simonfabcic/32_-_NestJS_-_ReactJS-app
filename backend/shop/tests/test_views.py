@@ -510,7 +510,7 @@ class TestProductGet(APITestCase):
     def test_product_get_success(self):
         self.client.force_authenticate(user=self.user_product_viewer)
 
-        product = ProductFactory()
+        ProductFactory()
         response = self.client.get(self.url_product_list)
         self.assertEqual(response.status_code, 200)
 

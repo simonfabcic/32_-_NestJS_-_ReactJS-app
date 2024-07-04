@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from core.models import CoreUser
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Group, Permission
@@ -17,6 +18,7 @@ from shop.serializers import (
     ProductSerializer,
     ShopProfileSerializer,
 )
+from django.core.paginator import EmptyPage
 
 
 @api_view(["GET"])
@@ -79,7 +81,7 @@ def get_profiles(request):
     p = Paginator(profiles, page_size)
     try:
         page = p.page(current_page)
-    except:
+    except EmptyPage:
         return Response(
             {"error": "Parameters 'page' and 'page_size' not compatible"},
             status=status.HTTP_400_BAD_REQUEST,
@@ -125,7 +127,7 @@ def profile_create(request):
         user = CoreUser.objects.create_user(
             username=email, email=email, password=password
         )
-        profile = ShopProfile.objects.create(
+        ShopProfile.objects.create(
             user=user,
             first_name=firstName,
             last_name=lastName,
@@ -138,7 +140,9 @@ def profile_create(request):
         return Response(
             {"error": "Email already taken."}, status=status.HTTP_409_CONFLICT
         )
-    except:
+    except ValidationError as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception:
         return Response(
             {"error": "Error creating new user."}, status=status.HTTP_400_BAD_REQUEST
         )
@@ -153,7 +157,6 @@ def profile(request, profile_id):
             lastName = request.data.get("lastName")
             email = request.data.get("email")
             password = request.data.get("password")
-            userID = request.data.get("userID")
             avatar = request.data.get("avatar")
             try:
                 if profile_id == "null":
