@@ -505,13 +505,13 @@ class TestProductGet(APITestCase):
         perm_change_product = Permission.objects.get(codename="change_product")
         self.user_product_editor.user_permissions.add(perm_change_product)
 
-        self.url_all = reverse("product_list")
+        self.url_product_list = reverse("product_list")
 
     def test_product_get_success(self):
         self.client.force_authenticate(user=self.user_product_viewer)
 
         product = ProductFactory()
-        response = self.client.get(self.url_all)
+        response = self.client.get(self.url_product_list)
         self.assertEqual(response.status_code, 200)
 
         # check if returned data is product
@@ -521,17 +521,17 @@ class TestProductGet(APITestCase):
     def test_product_get_success_permission_change_product(self):
         self.client.force_authenticate(user=self.user_product_editor)
 
-        response = self.client.get(self.url_all)
+        response = self.client.get(self.url_product_list)
         self.assertEqual(response.status_code, 200)
 
     def test_product_get_failure_not_authenticated(self):
-        response = self.client.get(self.url_all)
+        response = self.client.get(self.url_product_list)
         self.assertEqual(response.status_code, 302)
 
     def test_product_get_failure_no_permissions(self):
         self.client.force_authenticate(user=self.user)
 
-        response = self.client.get(self.url_all)
+        response = self.client.get(self.url_product_list)
         self.assertEqual(response.status_code, 403)
 
     def test_product_get_one_success_using_product_id(self):

@@ -5,3 +5,4 @@ from .models import *
 
 admin.site.register(ShopProfile)
 admin.site.register(Permission)
+admin.site.register(Product)
