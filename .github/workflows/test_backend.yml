@@ -9,15 +9,9 @@ jobs:
               with:
                   python-version: "3.12"
             - run: pip install pipenv
-            # create venv and install dependences
-            - run: |
-                  cd backend
-                  pipenv install --dev
-            - name: Run Ruff
+            - name: Setup and run tests
+              working-directory: ./backend
               run: |
-                  cd backend
+                  pipenv install --dev
                   pipenv run ruff check --output-format=github .
-            # run tests
-            - run: |
-                  cd backend
                   pipenv run python manage.py test
