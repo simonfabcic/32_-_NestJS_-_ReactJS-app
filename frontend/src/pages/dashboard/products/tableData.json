@@ -1,0 +1,51 @@
+{
+    "no_products": {
+        "headers": [],
+        "pagination_description": [],
+        "rows": []
+    },
+    "six_products": [
+        {
+            "description": "This is product description 1",
+            "id": "1",
+            "image": "/media/images/products/image-1.webp",
+            "price": "23.22",
+            "title": "Product 1"
+        },
+        {
+            "description": "This is product description 2",
+            "id": "2",
+            "image": "/media/images/products/image-2.webp",
+            "price": "23.22",
+            "title": "Product 2"
+        },
+        {
+            "description": "This is product description 3",
+            "id": "3",
+            "image": "/media/images/products/image-3.webp",
+            "price": "23.22",
+            "title": "Product 3"
+        },
+        {
+            "description": "This is product description 4",
+            "id": "4",
+            "image": "/media/images/products/image-4.webp",
+            "price": "23.22",
+            "title": "Product 4"
+        },
+        {
+            "description": "This is product description 5",
+            "id": "5",
+            "image": "/media/images/products/image-5.webp",
+            "price": "23.22",
+            "title": "Product 5"
+        },
+        {
+            "description": "This is product description 6",
+            "id": "6",
+            "image": "/media/images/products/image-6.webp",
+            "price": "23.22",
+            "title": "Product 6"
+        }
+    ]
+}

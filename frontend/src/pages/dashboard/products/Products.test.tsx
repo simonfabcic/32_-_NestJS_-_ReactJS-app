@@ -3,6 +3,7 @@ import { describe, test, expect, beforeEach, afterEach } from "vitest";
 import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
 import { render, waitFor, screen, fireEvent } from "@testing-library/react";
+import tableData from "./tableData.json";
 
 describe("product create", () => {
     let mock: MockAdapter;
@@ -63,6 +64,41 @@ describe("product create", () => {
             );
 
             expect(sent_data_entries).toEqual(form_data_entries);
+        });
+    });
+
+    test("product render, check if data from backend are rendered", async () => {
+        const apiUrl = "/shop-api-v1/product";
+        const data = tableData.six_products;
+        mock.onGet(apiUrl).reply(200, data);
+
+        const { container: wrapper } = render(<Products />);
+        expect(wrapper).toBeTruthy();
+
+        await waitFor(() => {
+            data.forEach((product) => {
+                // title
+                const title = screen.getAllByText(product.title);
+                expect(title).toBeTruthy();
+
+                // price
+                const price = screen.getAllByText(product.price);
+                expect(price).toBeTruthy();
+
+                // description
+                const description = screen.getAllByText(product.description);
+                expect(description).toBeTruthy();
+
+                // image URL
+                const images = screen.getAllByAltText(
+                    "product_image",
+                ) as HTMLImageElement[];
+                const image = images.find((img) =>
+                    img.src.includes(product.image),
+                );
+                expect(image).toBeTruthy();
+                expect(image!.src).toContain(product.image);
+            });
         });
     });
 });

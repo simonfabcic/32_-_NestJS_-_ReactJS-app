@@ -1,9 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useAxios from "../../utils/useAxios";
 const Products = () => {
+    interface Product {
+        id: number;
+        title: string;
+        price: number;
+        description: string;
+        image: string;
+    }
+
     let api = useAxios();
     const baseURL = import.meta.env.VITE_BACKEND_BASE_URL;
     const [showAddProductForm, setShowAddProductForm] = useState(false);
+    const [products, setProducts] = useState<Product[]>([]);
+
+    useEffect(() => {
+        getProducts();
+    }, []);
+    const getProducts = async () => {
+        try {
+            const response = await api.get(`/shop-api-v1/product`);
+            if (response.status === 200) {
+                setProducts(response.data);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
 
     const handleAddProduct: React.FormEventHandler<HTMLFormElement> = async (
         event,
@@ -32,6 +55,7 @@ const Products = () => {
             );
             if (response.status === 201) {
                 console.log("Product added successfully");
+                getProducts();
             } else {
                 console.log(response);
             }
@@ -80,6 +104,9 @@ const Products = () => {
                             name="price"
                             id="price"
                             className="border rounded-md mb-3 p-2"
+                            step="0.01"
+                            min="0"
+                            max="1000000"
                             required
                         />
                     </>
@@ -101,6 +128,38 @@ const Products = () => {
                     </button>
                 </form>
             )}
+            <table>
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Image</th>
+                        <th>Title</th>
+                        <th>Price</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {products.map((product, index) => (
+                        <tr key={product.id}>
+                            <td>{index + 1}</td>
+                            <td>
+                                {product.image === null ? (
+                                    "/"
+                                ) : (
+                                    <img
+                                        src={baseURL + product.image}
+                                        className="h-8 rounded-lg block mx-auto"
+                                        alt="product_image"
+                                    />
+                                )}
+                            </td>
+                            <td>{product.title}</td>
+                            <td>{product.price}</td>
+                            <td>{product.description}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 };
