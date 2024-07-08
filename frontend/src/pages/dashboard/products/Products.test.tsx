@@ -77,19 +77,15 @@ describe("product create", () => {
 
         await waitFor(() => {
             data.forEach((product) => {
-                // title
                 const title = screen.getAllByText(product.title);
                 expect(title).toBeTruthy();
 
-                // price
                 const price = screen.getAllByText(product.price);
                 expect(price).toBeTruthy();
 
-                // description
                 const description = screen.getAllByText(product.description);
                 expect(description).toBeTruthy();
 
-                // image URL
                 const images = screen.getAllByAltText(
                     "product_image",
                 ) as HTMLImageElement[];

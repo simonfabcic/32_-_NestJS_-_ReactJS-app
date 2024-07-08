@@ -54,7 +54,6 @@ const Products = () => {
                 },
             );
             if (response.status === 201) {
-                console.log("Product added successfully");
                 getProducts();
             } else {
                 console.log(response);
