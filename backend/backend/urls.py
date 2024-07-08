@@ -21,6 +21,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
+    path("admin/doc/", include("django.contrib.admindocs.urls")),
     path("admin/", admin.site.urls),
     path("core-api-v1/", include("core.urls")),
     path("shop-api-v1/", include("shop.urls")),

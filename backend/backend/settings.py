@@ -49,6 +49,7 @@ class Base(Configuration):
         "corsheaders",
         "core.apps.CoreConfig",
         "shop.apps.ShopConfig",
+        "django.contrib.admindocs",
     ]
 
     AUTH_USER_MODEL = "core.CoreUser"
