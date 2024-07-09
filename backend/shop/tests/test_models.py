@@ -1,6 +1,6 @@
 from django.db import IntegrityError
 from django.test import TestCase
-from shop.factory import ProductFactory
+from shop.factory import ProductFactory, ShopProfileFactory
 from shop.models import Order, OrderItem
 
 
@@ -8,7 +8,8 @@ class OrderModelTests(TestCase):
     def setUp(self):
         self.product1 = ProductFactory()
         self.product2 = ProductFactory()
-        self.order = Order.objects.create()
+        self.shopProfile = ShopProfileFactory()
+        self.order = Order.objects.create(buyer=self.shopProfile)
 
     def test_unique_order_product_constraint(self):
         OrderItem.objects.create(order=self.order, product=self.product1, quantity=2)
@@ -42,7 +43,7 @@ class OrderModelTests(TestCase):
         self.assertEqual(order_items.count(), 0)
 
     def test_multiple_orders(self):
-        order2 = Order.objects.create()
+        order2 = Order.objects.create(buyer=self.shopProfile)
         OrderItem.objects.create(order=self.order, product=self.product1, quantity=2)
         OrderItem.objects.create(order=order2, product=self.product1, quantity=1)
 

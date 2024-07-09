@@ -634,10 +634,11 @@ class TestOrder(APITestCase):
         self.product1 = Product.objects.create(title="Product 1", price=30.00)
         self.product2 = Product.objects.create(title="Product 2", price=50.00)
         self.product3 = Product.objects.create(title="Product 3", price=70.00)
+        self.shopProfile = ShopProfileFactory()
 
     def test_order_user_viewer(self):
         self.client.force_authenticate(user=self.user_order_viewer)
-        order = Order.objects.create()
+        order = Order.objects.create(buyer=self.shopProfile)
 
         # Ensure the user with view_order permission can view orders
         response = self.client.get(self.url_list)
@@ -663,7 +664,8 @@ class TestOrder(APITestCase):
             "order_items": [
                 {"product": self.product1.id, "quantity": 7},
                 {"product": self.product2.id, "quantity": 3},
-            ]
+            ],
+            "buyer": self.shopProfile.id,
         }
 
         # Ensure the user with change_order permission can view orders
@@ -691,7 +693,8 @@ class TestOrder(APITestCase):
             "order_items": [
                 {"product": self.product1.id, "quantity": 5},
                 {"product": self.product3.id, "quantity": 11},
-            ]
+            ],
+            "buyer": self.shopProfile.id,
         }
         response = self.client.put(url_detail, order_data, format="json")
         self.assertEqual(response.status_code, 200)

@@ -62,13 +62,23 @@ class OrderItemSerializer(ModelSerializer):
         model = OrderItem
         fields = ["id", "order", "product", "quantity"]
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation["product"] = ProductSerializer(instance.product).data
+        return representation
+
 
 class OrderSerializer(ModelSerializer):
     order_items = OrderItemSerializer(many=True)
 
     class Meta:
         model = Order
-        fields = ["id", "order_items"]
+        fields = ["id", "order_items", "buyer"]
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation["buyer"] = ShopProfileSerializer(instance.buyer).data
+        return representation
 
     def create(self, validated_data):
         order_items_data = validated_data.pop("order_items")
