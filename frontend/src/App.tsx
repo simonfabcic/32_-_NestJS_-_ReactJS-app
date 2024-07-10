@@ -5,7 +5,7 @@ import Login from "./pages/restricted/Login";
 import RegisterMe from "./pages/restricted/RegisterMe";
 import PrivateRoute from "./pages/utils/PrivateRoute";
 import Dashboard from "./pages/dashboard/Dashboard";
-import Orders from "./pages/Orders";
+import Orders from "./pages/dashboard/orders/Orders";
 import Users from "./pages/dashboard/users/Users";
 import { AuthProvider } from "./pages/context/AuthContext";
 import RestrictedRoute from "./pages/utils/RestrictedRoute";
