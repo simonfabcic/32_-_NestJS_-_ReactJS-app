@@ -8,8 +8,8 @@ class OrderModelTests(TestCase):
     def setUp(self):
         self.product1 = ProductFactory()
         self.product2 = ProductFactory()
-        self.shopProfile = ShopProfileFactory()
-        self.order = Order.objects.create(buyer=self.shopProfile)
+        self.shop_profile = ShopProfileFactory()
+        self.order = Order.objects.create(buyer=self.shop_profile)
 
     def test_unique_order_product_constraint(self):
         OrderItem.objects.create(order=self.order, product=self.product1, quantity=2)
@@ -43,7 +43,7 @@ class OrderModelTests(TestCase):
         self.assertEqual(order_items.count(), 0)
 
     def test_multiple_orders(self):
-        order2 = Order.objects.create(buyer=self.shopProfile)
+        order2 = Order.objects.create(buyer=self.shop_profile)
         OrderItem.objects.create(order=self.order, product=self.product1, quantity=2)
         OrderItem.objects.create(order=order2, product=self.product1, quantity=1)
 

@@ -12,7 +12,7 @@ class ShopProfile(CoreProfile):
 
 class Order(models.Model):
     products = models.ManyToManyField("Product", through="OrderItem")
-    buyer = models.ForeignKey(ShopProfile, on_delete=models.CASCADE, null=False)
+    buyer = models.ForeignKey(ShopProfile, on_delete=models.CASCADE)
 
 
 class Product(models.Model):
