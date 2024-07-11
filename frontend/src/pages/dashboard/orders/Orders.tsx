@@ -38,9 +38,9 @@ const Orders = () => {
     const [orders, setOrders] = useState<Order[]>([]);
 
     useEffect(() => {
-        getProducts();
+        getOrders();
     }, []);
-    const getProducts = async () => {
+    const getOrders = async () => {
         try {
             const response = await api.get(`/shop-api-v1/order`);
             if (response.status === 200) {
