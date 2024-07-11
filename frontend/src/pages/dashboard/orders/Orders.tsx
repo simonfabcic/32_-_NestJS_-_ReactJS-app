@@ -51,6 +51,44 @@ const Orders = () => {
         }
     };
 
+    const handleQuantityChange = (
+        orderId: number,
+        orderItemId: number,
+        newQuantity: number,
+    ) => {
+        setOrders((prevOrders) =>
+            prevOrders.map((order) =>
+                order.id === orderId
+                    ? {
+                          ...order,
+                          order_items: order.order_items.map((orderItem) =>
+                              orderItem.id === orderItemId
+                                  ? { ...orderItem, quantity: newQuantity }
+                                  : orderItem,
+                          ),
+                      }
+                    : order,
+            ),
+        );
+    };
+
+    const handleRemoveItem = (orderId: number, orderItemId: number) => {
+        setOrders((prevOrders) =>
+            prevOrders
+                .map((order) =>
+                    order.id === orderId
+                        ? {
+                              ...order,
+                              order_items: order.order_items.filter(
+                                  (orderItem) => orderItem.id !== orderItemId,
+                              ),
+                          }
+                        : order,
+                )
+                .filter((order) => order.order_items.length > 0),
+        );
+    };
+
     return (
         <>
             <div>Orders</div>
@@ -68,6 +106,27 @@ const Orders = () => {
                             <div>Product ID: {order_item.product.id}</div>
                             <div>Product title: {order_item.product.title}</div>
                             <div>Product price: {order_item.product.price}</div>
+                            <label htmlFor="quantity"></label>
+                            <input
+                                type="number"
+                                value={order_item.quantity}
+                                onChange={(e) =>
+                                    handleQuantityChange(
+                                        order.id,
+                                        order_item.id,
+                                        parseInt(e.target.value),
+                                    )
+                                }
+                                min={0}
+                                className="border rounded-lg px-2"
+                            />
+                            <button
+                                onClick={() =>
+                                    handleRemoveItem(order.id, order_item.id)
+                                }
+                            >
+                                Remove item
+                            </button>
                         </div>
                     ))}
                 </div>
