@@ -120,10 +120,12 @@ const Orders = () => {
                                 min={0}
                                 className="border rounded-lg px-2"
                             />
+                            <br />
                             <button
                                 onClick={() =>
                                     handleRemoveItem(order.id, order_item.id)
                                 }
+                                className="border bg-slate-500 rounded-lg mt-3 px-2"
                             >
                                 Remove item
                             </button>
