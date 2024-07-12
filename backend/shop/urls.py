@@ -4,6 +4,7 @@ from shop import views
 
 router = DefaultRouter()
 router.register(r"order", views.OrderViewSet, basename="order")
+router.register(r"order-item", views.OrderItemViewSet, basename="order-item")
 
 urlpatterns = [
     # prefix "shop-api-v1/"

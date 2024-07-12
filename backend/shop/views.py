@@ -9,7 +9,7 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from shop.models import Order, Product, ShopProfile
+from shop.models import Order, Product, ShopProfile, OrderItem
 from shop.permissions import CanModifyOrViewOrder, can_view_groups, can_view_products
 from shop.serializers import (
     GroupSerializer,
@@ -17,6 +17,7 @@ from shop.serializers import (
     PermissionSerializer,
     ProductSerializer,
     ShopProfileSerializer,
+    OrderItemSerializer,
 )
 from django.core.paginator import EmptyPage
 
@@ -311,3 +312,8 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated, CanModifyOrViewOrder]
+
+
+class OrderItemViewSet(viewsets.ModelViewSet):
+    queryset = OrderItem.objects.all()
+    serializer_class = OrderItemSerializer
