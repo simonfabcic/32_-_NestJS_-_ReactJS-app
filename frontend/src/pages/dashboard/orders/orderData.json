@@ -1,0 +1,31 @@
+{
+    "one_order": [
+        {
+            "id": 3,
+            "order_items": [
+                {
+                    "id": 16,
+                    "order": 3,
+                    "product": {
+                        "id": 8,
+                        "image": null,
+                        "title": "This is product title",
+                        "description": "Product description",
+                        "price": "566.04"
+                    },
+                    "quantity": 7
+                }
+            ],
+            "buyer": {
+                "id": 18,
+                "email": "alexander.jackson@email.com",
+                "full_name": "Alexander Jackson",
+                "first_name": "Alexander",
+                "last_name": "Jackson",
+                "username": "alexander.jackson@email.com",
+                "avatar": "/media/images/avatars/download_3.jpg",
+                "groups": []
+            }
+        }
+    ]
+}

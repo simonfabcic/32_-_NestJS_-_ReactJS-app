@@ -106,7 +106,7 @@ const Orders = () => {
                             <div>Product ID: {order_item.product.id}</div>
                             <div>Product title: {order_item.product.title}</div>
                             <div>Product price: {order_item.product.price}</div>
-                            <label htmlFor="quantity"></label>
+                            <label htmlFor="quantity">Quantity</label>
                             <input
                                 type="number"
                                 value={order_item.quantity}
