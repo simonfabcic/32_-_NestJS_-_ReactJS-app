@@ -72,21 +72,58 @@ const Orders = () => {
         );
     };
 
-    const handleRemoveItem = (orderId: number, orderItemId: number) => {
-        setOrders((prevOrders) =>
-            prevOrders
-                .map((order) =>
-                    order.id === orderId
-                        ? {
-                              ...order,
-                              order_items: order.order_items.filter(
-                                  (orderItem) => orderItem.id !== orderItemId,
-                              ),
-                          }
-                        : order,
-                )
-                .filter((order) => order.order_items.length > 0),
-        );
+    const handleRemoveItem = async (orderId: number, orderItemId: number) => {
+        try {
+            const response = await api.delete(
+                `/shop-api-v1/order-item/${orderItemId}`,
+            );
+            if (response.status === 204) {
+                setOrders((prevOrders) =>
+                    prevOrders
+                        .map((order) =>
+                            order.id === orderId
+                                ? {
+                                      ...order,
+                                      order_items: order.order_items.filter(
+                                          (orderItem) =>
+                                              orderItem.id !== orderItemId,
+                                      ),
+                                  }
+                                : order,
+                        )
+                        .filter(async (order) => {
+                            if (order.order_items.length === 0) {
+                                // Call deleteOrder, if order is empty, to remove the order from the backend
+                                try {
+                                    const response = await api.delete(
+                                        `/shop-api-v1/order/${orderId}`,
+                                    );
+                                    if (response.status === 204) {
+                                        console.log(
+                                            `Order ${orderId} deleted successfully.`,
+                                        );
+                                    } else {
+                                        console.error(
+                                            `Failed to delete order ${orderId}.`,
+                                        );
+                                    }
+                                } catch (err) {
+                                    console.error(
+                                        `Error deleting order ${orderId}:`,
+                                        err,
+                                    );
+                                }
+                                return false;
+                            }
+                            return true;
+                        }),
+                );
+            } else {
+                console.error(`Failed to delete order item ${orderItemId}.`);
+            }
+        } catch (err) {
+            console.error(`Error deleting order item ${orderItemId}:`, err);
+        }
     };
 
     return (
