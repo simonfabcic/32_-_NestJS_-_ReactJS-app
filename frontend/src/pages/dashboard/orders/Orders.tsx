@@ -51,25 +51,41 @@ const Orders = () => {
         }
     };
 
-    const handleQuantityChange = (
+    const handleQuantityChange = async (
         orderId: number,
         orderItemId: number,
         newQuantity: number,
     ) => {
-        setOrders((prevOrders) =>
-            prevOrders.map((order) =>
-                order.id === orderId
-                    ? {
-                          ...order,
-                          order_items: order.order_items.map((orderItem) =>
-                              orderItem.id === orderItemId
-                                  ? { ...orderItem, quantity: newQuantity }
-                                  : orderItem,
-                          ),
-                      }
-                    : order,
-            ),
-        );
+        try {
+            const response = await api.patch(
+                `/shop-api-v1/order-item/${orderItemId}/`,
+                { quantity: newQuantity },
+            );
+            if (response.status === 200) {
+                setOrders((prevOrders) =>
+                    prevOrders.map((order) =>
+                        order.id === orderId
+                            ? {
+                                  ...order,
+                                  order_items: order.order_items.map(
+                                      (orderItem) =>
+                                          orderItem.id === orderItemId
+                                              ? {
+                                                    ...orderItem,
+                                                    quantity: newQuantity,
+                                                }
+                                              : orderItem,
+                                  ),
+                              }
+                            : order,
+                    ),
+                );
+            } else {
+                console.error(`Failed to update order item ${orderItemId}.`);
+            }
+        } catch (err) {
+            console.error(`Error updating order item ${orderItemId}:`, err);
+        }
     };
 
     const handleRemoveItem = async (orderId: number, orderItemId: number) => {
